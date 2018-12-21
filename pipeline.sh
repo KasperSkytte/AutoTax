@@ -331,7 +331,7 @@ R --slave << 'generateTaxonomy'
   
   #split tax into individual taxonomy variables
   ESV_SILVA_tax <- suppressWarnings(
-    separate(ESV_SILVA_tax,
+    tidyr::separate(ESV_SILVA_tax,
              col = "tax",
              into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus"),
              sep = ";"))
@@ -345,6 +345,9 @@ R --slave << 'generateTaxonomy'
   
   #clean
   ESV_SILVA_tax <- clean_tax(ESV_SILVA_tax)
+  
+  #manual curation
+  ESV_SILVA_tax[which(tolower(ESV_SILVA_tax$Genus) %in% "allorhizobium-neorhizobium-pararhizobium-rhizobium"),"Genus"] <- "Rhizobium"
   
   #write out
   write_tax(tax = ESV_SILVA_tax,
