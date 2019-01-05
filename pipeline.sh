@@ -454,4 +454,3 @@ mv temp/ESVs.fa output/ESVs.fa
 #echoWithHeader "Removing temporary files..."
 #rm -rf temp/
 duration=$(printf '%02dh:%02dm:%02ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $(($SECONDS%60)))
-echoWithHeader "Done in: $duration! Results are in the output/ folder, enjoy!"
