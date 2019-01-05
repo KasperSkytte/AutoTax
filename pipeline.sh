@@ -78,9 +78,10 @@ sina_align () {
   --log-file temp/${OUTPUTID}_log.txt
 
   echoWithHeader "Trimming, formatting, and sorting data..."
-  #trim sequences and remove all characters but ACTGUactgu from sequences (not from headers)
-  awk '!/^>/ {$0=substr($0, 1048, 41788)}1' temp/${OUTPUTID}_aligned.fa |\
-    sed -e '/^[^>]/s/[^ATGCUatgcu]//g' > temp/${OUTPUTID}_trimmed.fa
+  #trim sequences and strip alignment gaps
+  awk '!/^>/ {$0=substr($0, 1048, 41788)}1' temp/${OUTPUTID}_aligned.fa > temp/${OUTPUTID}_trimmed.fa
+  $usearch10 -quiet -fasta_stripgaps temp/${OUTPUTID}_trimmed.fa -fastaout temp/tmp.fa \
+    && mv temp/tmp.fa temp/${OUTPUTID}_trimmed.fa
   
   #sort sequences and stats files by ESV ID using R
   #careful with the order of arguments passed on to R
