@@ -200,9 +200,9 @@ sina_align temp/ESVs.fa ESVs_SILVA $silva_db $((MAX_THREADS / 2)) $MAX_THREADS
 #Assign LCA taxonomy 
 ##############
 #typestrains
-usearch10 -quiet -usearch_global temp/ESVs_typestrains_trimmed_sorted.fa -db $typestrains_udb -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out temp/tax_typestrains.txt -threads $MAX_THREADS
+$usearch10 -quiet -usearch_global temp/ESVs_typestrains_trimmed_sorted.fa -db $typestrains_udb -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out temp/tax_typestrains.txt -threads $MAX_THREADS
 #SILVA
-usearch10 -quiet -usearch_global temp/ESVs_SILVA_trimmed_sorted.fa -db $silva_udb -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out temp/tax_SILVA.txt -threads $MAX_THREADS
+$usearch10 -quiet -usearch_global temp/ESVs_SILVA_trimmed_sorted.fa -db $silva_udb -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out temp/tax_SILVA.txt -threads $MAX_THREADS
 
 #########################################################################################
 #Denovo taxonomy 
