@@ -412,6 +412,53 @@ R --slave << 'generateTaxonomy'
   #order by ESV ID
   merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]", "", ESV))), 1:8]
   
+  #fix taxa with more than one parent (aggregate unique names by "-", sorted alphabetically)
+  polyTaxa <- list()
+  polyTaxa$Species <- merged_tax[, .(nParents = uniqueN(Genus), Genus = paste0(sort(unique(Genus)), collapse = "-or-")), by = Species][nParents > 1,]
+  merged_tax[, Genus := paste0(sort(unique(Genus)), collapse = "-or-"), by = Species]
+  
+  polyTaxa$Genus <- merged_tax[, .(nParents = uniqueN(Family), Family = paste0(sort(unique(Family)), collapse = "-or-")), by = Genus][nParents > 1,]
+  merged_tax[, Family := paste0(sort(unique(Family)), collapse = "-or-"), by = Genus]
+  
+  polyTaxa$Family <- merged_tax[, .(nParents = uniqueN(Order), Order = paste0(sort(unique(Order)), collapse = "-or-")), by = Family][nParents > 1,]
+  merged_tax[, Order := paste0(sort(unique(Order)), collapse = "-or-"), by = Family]
+  
+  polyTaxa$Order <- merged_tax[, .(nParents = uniqueN(Class), Class = paste0(sort(unique(Class)), collapse = "-or-")), by = Order][nParents > 1,]
+  merged_tax[, Class := paste0(sort(unique(Class)), collapse = "-or-"), by = Order]
+  
+  polyTaxa$Class <- merged_tax[, .(nParents = uniqueN(Phylum), Phylum = paste0(sort(unique(Phylum)), collapse = "-or-")), by = Class][nParents > 1,]
+  merged_tax[, Phylum := paste0(sort(unique(Phylum)), collapse = "-or-"), by = Class]
+  
+  polyTaxa$Phylum <- merged_tax[, .(nParents = uniqueN(Kingdom), Kingdom = paste0(sort(unique(Kingdom)), collapse = "-or-")), by = Phylum][nParents > 1,]
+  merged_tax[, Kingdom := paste0(sort(unique(Kingdom)), collapse = "-or-"), by = Phylum]
+  
+  polyTaxaLog <- unlist(sapply(polyTaxa, function(x) {
+    if(nrow(x) > 1) {
+      paste(colnames(x)[1],
+            x[[1]], 
+            "has", 
+            x[[2]],
+            "parents and has been assigned the",
+            colnames(x)[3], 
+            ":", 
+            x[[3]])
+    }
+  }), use.names = FALSE)
+  nTaxa <- length(polyTaxaLog)
+  
+  if(nTaxa > 0) {
+    warning(paste0(nTaxa, 
+                   " taxa ",
+                   if(nTaxa > 1)
+                     "have" 
+                   else 
+                     "has",
+                   " more than one parent, see the logfile \"./output/polyphyletics.log\" for details"), 
+            call. = FALSE)
+    writeLines(polyTaxaLog,
+               "./output/polyphyletics.log",)
+  }
+  
   #write out
   write_tax(merged_tax,
             file = "./output/tax_complete.csv")
@@ -454,3 +501,4 @@ mv temp/ESVs.fa output/ESVs.fa
 #echoWithHeader "Removing temporary files..."
 #rm -rf temp/
 duration=$(printf '%02dh:%02dm:%02ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $(($SECONDS%60)))
+echoWithHeader "Done in: $duration! Results are in the ./output/ folder, enjoy!"
