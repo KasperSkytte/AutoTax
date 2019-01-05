@@ -302,10 +302,10 @@ R --slave << 'generateTaxonomy'
   ## read and sort mappings ##
   read_sort_mappings <- function(input) {
     x <- data.table::fread(input,
-               sep = "\t",
-               fill = TRUE,
-               check.names = FALSE,
-               stringsAsFactors = FALSE)
+                           sep = "\t",
+                           fill = TRUE,
+                           check.names = FALSE,
+                           stringsAsFactors = FALSE)
     x <- x[,1:2]
     colnames(x) <- c("V1", "V2")
     x[] <- lapply(x, gsub, pattern = "\\..*$", replacement = "")
@@ -316,24 +316,14 @@ R --slave << 'generateTaxonomy'
   ##### Fix taxonomy #####
   ##### typestrains
   #read typestrains tax
-  ESV_typestrain_tax <- read_tax("temp/tax_typestrains.txt")
+  ESV_typestrain_tax <- select(read_clean_tax("temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
   
-  #split tax into individual taxonomy variables
-  ESV_typestrain_tax <- suppressWarnings(
-    tidyr::separate(ESV_typestrain_tax,
-                    col = "tax",
-                    into = c("Genus", "Species"),
-                    sep = ";"))
-  
-  #remove strain info from Species names (keep everything before the first " ")
-  ESV_typestrain_tax$Species <- gsub(" +.*$", "", ESV_typestrain_tax$Species)
-  
-  #remove entries below identity threshold per level
-  ESV_typestrain_tax[which(ESV_typestrain_tax$idty < 98.7), "Species"] <- ""
-  ESV_typestrain_tax[which(ESV_typestrain_tax$idty < 94.5), "Genus"] <- ""
-  
-  #clean
-  ESV_typestrain_tax <- clean_tax(ESV_typestrain_tax)
+  #remove strain information from Species names (keep only first to words)
+  ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <- 
+    sapply(stringr::str_split(ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")], "_"), 
+           function(x) {
+             paste0(x[1:2], collapse = "_")
+             })
   
   #write out
   write_tax(tax = ESV_typestrain_tax,
@@ -341,27 +331,7 @@ R --slave << 'generateTaxonomy'
   
   ##### SILVA
   #read SILVA tax
-  ESV_SILVA_tax <- read_tax(input = "./temp/tax_SILVA.txt")
-  
-  #split tax into individual taxonomy variables
-  ESV_SILVA_tax <- suppressWarnings(
-    tidyr::separate(ESV_SILVA_tax,
-             col = "tax",
-             into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus"),
-             sep = ";"))
-  
-  #remove entries below identity threshold per level
-  ESV_SILVA_tax[which(ESV_SILVA_tax$idty < 94.5), "Genus"] <- ""
-  ESV_SILVA_tax[which(ESV_SILVA_tax$idty < 86.5), "Family"] <- ""
-  ESV_SILVA_tax[which(ESV_SILVA_tax$idty < 82.0), "Order"] <- ""
-  ESV_SILVA_tax[which(ESV_SILVA_tax$idty < 78.5), "Class"] <- ""
-  ESV_SILVA_tax[which(ESV_SILVA_tax$idty < 75.0), "Phylum"] <- ""
-  
-  #clean
-  ESV_SILVA_tax <- clean_tax(ESV_SILVA_tax)
-  
-  #manual curation
-  ESV_SILVA_tax[which(tolower(ESV_SILVA_tax$Genus) %in% "allorhizobium-neorhizobium-pararhizobium-rhizobium"),"Genus"] <- "Rhizobium"
+  ESV_SILVA_tax <- select(read_clean_tax(input = "./temp/tax_SILVA.txt"), -Species)
   
   #write out
   write_tax(tax = ESV_SILVA_tax,
@@ -377,10 +347,10 @@ R --slave << 'generateTaxonomy'
   
   ##### denovo taxonomy #####
   ESV_S <- data.table::fread("./temp/SILVA_ESV-S.txt",
-                 sep = "\t",
-                 fill = TRUE,
-                 check.names = FALSE,
-                 stringsAsFactors = FALSE)
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
   #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
   ESV_S <- ESV_S[V1 %in% c("H", "S"),.(V9, V10)]
   #if * in V10, replace with V9
