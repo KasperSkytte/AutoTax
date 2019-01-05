@@ -240,7 +240,7 @@ R --slave << 'generateTaxonomy'
   
   ##### FUNCTIONS #####
   ## read/write taxonomy ##
-  read_tax <- function(input) {
+  read_clean_tax <- function(input) {
     tax <- read.delim(input,
                       sep = "\t",
                       header = FALSE,
@@ -253,30 +253,43 @@ R --slave << 'generateTaxonomy'
     colnames(tax) <- c("ESV", "idty", "tax")
     #remove database ID's (keep everything after first " ", and remove ";" from the end if any)
     tax[["tax"]] <- gsub("^[^ ]* *|;$", "", tax[["tax"]])
-    invisible(tax)
-  }
-  
-  #replace NA's with empty string and remove all entries containing any of:
-  #"uncultured"
-  #"unknown"
-  #"unidentified"
-  #"incertae sedis"
-  #"metagenome"
-  #"bacterium" (whole word, so fx methanobacterium will NOT be removed)
-  #"possible" (whole word)
-  clean_tax <- function(tax) {
+    
+    #split tax into individual taxonomic levels
+    tax <- suppressWarnings(
+      tidyr::separate(tax,
+                      col = "tax",
+                      into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
+                      sep = ";"))
+    
+    #replace NA's with empty string and remove all entries containing any of:
+    #"uncultured"
+    #"unknown"
+    #"unidentified"
+    #"incertae sedis"
+    #"metagenome"
+    #"bacterium" (whole word, so fx methanobacterium will NOT be removed)
+    #"possible" (whole word)
     tax[,-c(1,2)] <- lapply(tax[,-c(1,2)], function(x) {
       x[grepl("uncultured|unknown|unidentified|incertae sedis|metagenome|\\bbacterium\\b|\\bpossible\\b", tolower(x))] <- ""
       x <- stringr::str_replace_all(x,
-                               c("candidatus" = "Candidatus",
-                                 " " = "_",
-                                 #keep only letters, numbers and ".", "-", and "_"
-                                 "[^[:alnum:]_\\.\\-]" = ""
-                                 ))
+                                    c("candidatus" = "Candidatus",
+                                      " " = "_",
+                                      #keep only letters, numbers and ".", "-", and "_"
+                                      "[^[:alnum:]_\\.\\-]" = ""
+                                    ))
       return(x)
     })
+    
+    #remove entries below identity threshold per level
+    tax[which(tax$idty < 98.7), "Species"] <- ""
+    tax[which(tax$idty < 94.5), "Genus"] <- ""
+    tax[which(tax$idty < 86.5), "Family"] <- ""
+    tax[which(tax$idty < 82.0), "Order"] <- ""
+    tax[which(tax$idty < 78.5), "Class"] <- ""
+    tax[which(tax$idty < 75.0), "Phylum"] <- ""
+    
     tax[is.na(tax)] <- ""
-    return(tax)
+    invisible(tax)
   }
   
   write_tax <- function(tax, file) {
