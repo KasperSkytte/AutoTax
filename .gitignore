@@ -3,3 +3,6 @@
 .RData
 .Ruserdata
 *.Rproj
+temp/
+output/
+Rscript.R
