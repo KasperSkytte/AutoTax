@@ -315,22 +315,22 @@ R --slave << 'generateTaxonomy'
   
   ##### Fix taxonomy #####
   ##### typestrains
-  #read typestrains tax
+  #read typestrains tax, only Genus and Species
   ESV_typestrain_tax <- select(read_clean_tax("temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
   
-  #remove strain information from Species names (keep only first to words)
+  #remove strain information from Species names (keep only first two words)
   ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <- 
     sapply(stringr::str_split(ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")], "_"), 
            function(x) {
              paste0(x[1:2], collapse = "_")
-             })
+           })
   
   #write out
   write_tax(tax = ESV_typestrain_tax,
             file = "./output/tax_typestrains.csv")
   
   ##### SILVA
-  #read SILVA tax
+  #read SILVA tax, without Species
   ESV_SILVA_tax <- select(read_clean_tax(input = "./temp/tax_SILVA.txt"), -Species)
   
   #write out
@@ -361,7 +361,7 @@ R --slave << 'generateTaxonomy'
   #order by ESV ID
   ESV_S <- ESV_S[order(as.integer(gsub("[^0-9+$]", "", ESV))),]
   
-  #sort
+  #read and sort mappings
   S_G <- read_sort_mappings("temp/SILVA_S-G.txt")
   colnames(S_G) <- c("Species", "Genus")
   G_F <- read_sort_mappings("temp/SILVA_G-F.txt")
@@ -373,15 +373,16 @@ R --slave << 'generateTaxonomy'
   C_P <- read_sort_mappings("temp/SILVA_C-P.txt")
   colnames(C_P) <- c("Class", "Phylum")
   
-  #merge each taxonomic level mapping
+  #merge each taxonomic level according to the mapping results
   denovo_midas <- left_join(ESV_S, S_G, by = "Species")
   denovo_midas <- left_join(denovo_midas, G_F, by = "Genus")
   denovo_midas <- left_join(denovo_midas, F_O, by = "Family")
   denovo_midas <- left_join(denovo_midas, O_C, by = "Order")
   denovo_midas <- left_join(denovo_midas, C_P, by = "Class")
+  #reorder columns
   denovo_midas <- denovo_midas[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
   
-  #generate new names per taxonomic level
+  #generate denovo names per taxonomic level based on ESV ID
   denovo_midas[["Species"]] <- gsub("^[^0-9]+", "midas_s_", denovo_midas[["Species"]])
   denovo_midas[["Genus"]] <- gsub("^[^0-9]+", "midas_g_", denovo_midas[["Genus"]])
   denovo_midas[["Family"]] <- gsub("^[^0-9]+", "midas_f_", denovo_midas[["Family"]])
