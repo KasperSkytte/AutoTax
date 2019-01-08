@@ -12,7 +12,7 @@
 
 ##### setup #####
 DATA=$1
-MAX_THREADS=${2:-36}
+MAX_THREADS=${2:-$((`nproc`-2))}
 #path to sina executable
 export sina140=$(which sina)
 export usearch10=$(which usearch10)
@@ -61,7 +61,7 @@ if [ -d "output" ]
 		else
 		mkdir output
 fi
-echoWithHeader "Running fSSU taxonomy pipeline..."
+echoWithHeader "Running fSSU taxonomy pipeline (max threads: $MAX_THREADS)..."
 
 ################################## functions ##################################
 #They probably only work here in this script!
