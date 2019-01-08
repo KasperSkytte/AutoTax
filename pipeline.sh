@@ -413,40 +413,36 @@ R --slave << 'generateTaxonomy'
   #order by ESV ID
   merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]", "", ESV))), 1:8]
   
-  #fix taxa with more than one parent (aggregate unique names by "-", sorted alphabetically)
+  #fix taxa with more than one parent
+  #generate a log file first
   polyTaxa <- list()
-  polyTaxa$Species <- merged_tax[, .(nParents = uniqueN(Genus), Genus = paste0(sort(unique(Genus)), collapse = "-or-")), by = Species][nParents > 1,]
-  merged_tax[, Genus := paste0(sort(unique(Genus)), collapse = "-or-"), by = Species]
-  
-  polyTaxa$Genus <- merged_tax[, .(nParents = uniqueN(Family), Family = paste0(sort(unique(Family)), collapse = "-or-")), by = Genus][nParents > 1,]
-  merged_tax[, Family := paste0(sort(unique(Family)), collapse = "-or-"), by = Genus]
-  
-  polyTaxa$Family <- merged_tax[, .(nParents = uniqueN(Order), Order = paste0(sort(unique(Order)), collapse = "-or-")), by = Family][nParents > 1,]
-  merged_tax[, Order := paste0(sort(unique(Order)), collapse = "-or-"), by = Family]
-  
-  polyTaxa$Order <- merged_tax[, .(nParents = uniqueN(Class), Class = paste0(sort(unique(Class)), collapse = "-or-")), by = Order][nParents > 1,]
-  merged_tax[, Class := paste0(sort(unique(Class)), collapse = "-or-"), by = Order]
-  
-  polyTaxa$Class <- merged_tax[, .(nParents = uniqueN(Phylum), Phylum = paste0(sort(unique(Phylum)), collapse = "-or-")), by = Class][nParents > 1,]
-  merged_tax[, Phylum := paste0(sort(unique(Phylum)), collapse = "-or-"), by = Class]
-  
-  polyTaxa$Phylum <- merged_tax[, .(nParents = uniqueN(Kingdom), Kingdom = paste0(sort(unique(Kingdom)), collapse = "-or-")), by = Phylum][nParents > 1,]
-  merged_tax[, Kingdom := paste0(sort(unique(Kingdom)), collapse = "-or-"), by = Phylum]
+  polyTaxa$Species <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Genus), Genus = paste0(sort(unique(Genus)), collapse = ", "), new = first(Genus)), by = Species][nParents > 1,]
+  polyTaxa$Genus <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Family), Family = paste0(sort(unique(Family)), collapse = ", "), new = first(Family)), by = Genus][nParents > 1,]
+  polyTaxa$Family <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Order), Order = paste0(sort(unique(Order)), collapse = ", "), new = first(Order)), by = Family][nParents > 1,]
+  polyTaxa$Order <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Class), Class = paste0(sort(unique(Class)), collapse = ", "), new = first(Class)), by = Order][nParents > 1,]
+  polyTaxa$Class <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Phylum), Phylum = paste0(sort(unique(Phylum)), collapse = ", "), new = first(Phylum)), by = Class][nParents > 1,]
+  polyTaxa$Phylum <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Kingdom), Kingdom = paste0(sort(unique(Kingdom)), collapse = ", "), new = first(Kingdom)), by = Phylum][nParents > 1,]
   
   polyTaxaLog <- unlist(sapply(polyTaxa, function(x) {
     if(nrow(x) > 1) {
-      paste(colnames(x)[1],
-            x[[1]], 
-            "has", 
-            x[[2]],
-            "parents and has been assigned the",
-            colnames(x)[3], 
-            ":", 
-            x[[3]])
+      paste0(colnames(x)[1],
+             " ",
+             x[[1]], 
+             " has ", 
+             x[[3]],
+             " parents: \"",
+             x[[4]],
+             "\", and has been assigned the ",
+             colnames(x)[4],
+             " of ",
+             x[[2]],
+             ": ",
+             x[[5]])
     }
   }), use.names = FALSE)
   nTaxa <- length(polyTaxaLog)
   
+  #issue a warning if one or more taxa have more than one parent, write out logfile
   if(nTaxa > 0) {
     warning(paste0(nTaxa, 
                    " taxa ",
@@ -459,6 +455,29 @@ R --slave << 'generateTaxonomy'
     writeLines(polyTaxaLog,
                "./output/polyphyletics.log",)
   }
+  
+  #fix them
+  merged_tax[, Genus := first(Genus), by = Species]
+  merged_tax[, Family := first(Family), by = Genus]
+  merged_tax[, Order := first(Order), by = Family]
+  merged_tax[, Class := first(Class), by = Order]
+  merged_tax[, Phylum := first(Phylum), by = Class]
+  merged_tax[, Kingdom := first(Kingdom), by = Phylum]
+  
+  ##### search and replace according to a replacement file #####
+  replacements <- fread("190107_replacements.txt", data.table = FALSE)
+  if(any(duplicated(replacements[[1]])))
+    stop("All taxa in the replacements file must be unique", call. = FALSE)
+  
+  #per taxonomic level, search by first column in replacements, and replace by second column
+  merged_tax[] <- lapply(merged_tax, function(col) {
+    unlist(lapply(col, function(taxa) {
+      if(any(taxa == replacements[[1]])) {
+        taxa <- replacements[which(replacements[[1]] == taxa),][[2]]
+      } else
+        taxa <- taxa
+    }), use.names = FALSE)
+  })
   
   #write out
   write_tax(merged_tax,
