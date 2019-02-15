@@ -13,7 +13,7 @@
 ##### setup #####
 DATA=$1
 MAX_THREADS=${2:-$((`nproc`-2))}
-#path to sina executable
+#path to executables
 export sina140=$(which sina)
 export usearch10=$(which usearch10)
 
@@ -414,19 +414,30 @@ R --slave << 'generateTaxonomy'
   merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]", "", ESV))), 1:8]
   
   ##### search and replace according to a replacement file #####
-  replacements <- fread("190107_replacements.txt", data.table = FALSE)
-  if(any(duplicated(replacements[[1]])))
-    stop("All taxa in the replacements file must be unique", call. = FALSE)
-  
-  #per taxonomic level, search by first column in replacements, and replace by second column
-  merged_tax[] <- lapply(merged_tax, function(col) {
-    unlist(lapply(col, function(taxa) {
-      if(any(taxa == replacements[[1]])) {
-        taxa <- replacements[which(replacements[[1]] == taxa),][[2]]
-      } else
-        taxa <- taxa
-    }), use.names = FALSE)
-  })
+  replacement_file <- list.files(".",
+                                 pattern = "replacement",
+                                 ignore.case = TRUE, 
+                                 recursive = FALSE,
+                                 include.dirs = FALSE,
+                                 full.names = TRUE)
+  if(length(replacement_file) == 1 && file.exists(replacement_file)) {
+    replacements <- fread(replacement_file, data.table = FALSE)
+    if(any(duplicated(replacements[[1]])))
+      stop("All taxa in the replacements file must be unique", call. = FALSE)
+    
+    #per taxonomic level, search by first column in replacements, and replace by second column
+    merged_tax[] <- lapply(merged_tax, function(col) {
+      unlist(lapply(col, function(taxa) {
+        if(any(taxa == replacements[[1]])) {
+          taxa <- replacements[which(replacements[[1]] == taxa),][[2]]
+        } else
+          taxa <- taxa
+      }), use.names = FALSE)
+    })
+  } else if (length(replacement_file) > 1) {
+    message("More than one replacement file found, skipping...")
+  } else
+    message("No replacement file found, skipping...")
   
   ##### fix taxa with more than one parent #####
   #generate a log file first
