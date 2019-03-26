@@ -363,45 +363,107 @@ R --slave << 'generateTaxonomy'
   S_G <- S_G[V1 %in% c("H", "S"),.(V9, V10)]
   #if * in V10, replace with V9
   S_G <- S_G[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(S_g) <- c("Species","Genus")
+  colnames(S_G) <- c("Species","Genus")
   #remove length from ESV ID's (".xxxx")
   S_G$Species <- gsub("\\..*$", "", S_G$Species)
   S_G$Genus <- gsub("\\..*$", "", S_G$Genus)
   #order by Species ID
   S_G <- S_G[order(as.integer(gsub("[^0-9+$]", "", Species))),]
   
- # Comment to above: I am not sure if the last two lines are correct.
+  G_F <- data.table::fread("./temp/SILVA_G-F.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  G_F <- G_F[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  G_F <- G_F[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(G_F) <- c("Genus","Family")
+  #remove length from ESV ID's (".xxxx")
+  G_F$Genus <- gsub("\\..*$", "", G_F$Genus)
+  G_F$Family <- gsub("\\..*$", "", G_F$Family)
+  #order by Genus ID
+  G_F <- G_F[order(as.integer(gsub("[^0-9+$]", "", Genus))),]
+  
+ F_O <- data.table::fread("./temp/SILVA_F-O.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  F_O <- F_O[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  F_O <- F_O[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(F_O) <- c("Family","Order")
+  #remove length from ID's (".xxxx")
+  F_O$Family <- gsub("\\..*$", "", F_O$Family)
+  F_O$Order <- gsub("\\..*$", "", F_O$Order)
+  #order by Family ID
+  F_O <- F_O[order(as.integer(gsub("[^0-9+$]", "", Family))),]
+  
+  O_C <- data.table::fread("./temp/SILVA_O-C.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  O_C <- O_C[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  O_C <- O_C[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(O_C) <- c("Order","Class")
+  #remove length from ID's (".xxxx")
+  O_C$Order <- gsub("\\..*$", "", O_C$Order)
+  O_C$Class <- gsub("\\..*$", "", O_C$Class)
+  #order by Order ID
+  O_C <- O_C[order(as.integer(gsub("[^0-9+$]", "", Order))),]
+  
+ C_P <- data.table::fread("./temp/SILVA_C-P.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  C_P <- C_P[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  C_P <- C_P[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(C_P) <- c("Class","Phylum")
+  #remove length from ID's (".xxxx")
+  C_P$Class <- gsub("\\..*$", "", C_P$Class)
+  C_P$Phylum <- gsub("\\..*$", "", C_P$Phylum)
+  #order by Class ID
+  C_P <- C_P[order(as.integer(gsub("[^0-9+$]", "", Class))),]
   
   #merge each taxonomic level according to the mapping results
-  denovo_midas <- left_join(ESV_S, S_G, by = "Species")
-  denovo_midas <- left_join(denovo_midas, G_F, by = "Genus")
-  denovo_midas <- left_join(denovo_midas, F_O, by = "Family")
-  denovo_midas <- left_join(denovo_midas, O_C, by = "Order")
-  denovo_midas <- left_join(denovo_midas, C_P, by = "Class")
+  denovo_tax <- left_join(ESV_S, S_G, by = "Species")
+  denovo_tax <- left_join(denovo_tax, G_F, by = "Genus")
+  denovo_tax <- left_join(denovo_tax, F_O, by = "Family")
+  denovo_tax <- left_join(denovo_tax, O_C, by = "Order")
+  denovo_tax <- left_join(denovo_tax, C_P, by = "Class")
   #reorder columns
-  denovo_midas <- denovo_midas[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
+  denovo_tax <- denovo_tax[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
   
   #generate denovo names per taxonomic level based on ESV ID
-  denovo_midas[["Species"]] <- gsub("^[^0-9]+", "midas_s_", denovo_midas[["Species"]])
-  denovo_midas[["Genus"]] <- gsub("^[^0-9]+", "midas_g_", denovo_midas[["Genus"]])
-  denovo_midas[["Family"]] <- gsub("^[^0-9]+", "midas_f_", denovo_midas[["Family"]])
-  denovo_midas[["Order"]] <- gsub("^[^0-9]+", "midas_o_", denovo_midas[["Order"]])
-  denovo_midas[["Class"]] <- gsub("^[^0-9]+", "midas_c_", denovo_midas[["Class"]])
-  denovo_midas[["Phylum"]] <- gsub("^[^0-9]+", "midas_p_", denovo_midas[["Phylum"]])
+  denovo_tax[["Species"]] <- gsub("^[^0-9]+", "denovo_s_", denovo_tax[["Species"]])
+  denovo_tax[["Genus"]] <- gsub("^[^0-9]+", "denovo_g_", denovo_tax[["Genus"]])
+  denovo_tax[["Family"]] <- gsub("^[^0-9]+", "denovo_f_", denovo_tax[["Family"]])
+  denovo_tax[["Order"]] <- gsub("^[^0-9]+", "denovo_o_", denovo_tax[["Order"]])
+  denovo_tax[["Class"]] <- gsub("^[^0-9]+", "denovo_c_", denovo_tax[["Class"]])
+  denovo_tax[["Phylum"]] <- gsub("^[^0-9]+", "denovo_p_", denovo_tax[["Phylum"]])
   
   #write out
-  write_tax(denovo_midas,
-            file = "./output/tax_midas_denovo.csv")
+  write_tax(denovo_tax,
+            file = "./output/tax_denovo.csv")
   
-  #merge SILVA+typestrains+denovo MiDAS taxonomy
+  #merge SILVA+typestrains+denovo taxonomy
   #make data.tables
   ESV_slv_typestr_tax <- data.table(ESV_slv_typestr_tax, key = "ESV")
-  denovo_midas <- data.table(denovo_midas, key = "ESV")
+  denovo_tax <- data.table(denovo_tax, key = "ESV")
   
   #merge by ESV
-  merged_tax <- ESV_slv_typestr_tax[denovo_midas]
+  merged_tax <- ESV_slv_typestr_tax[denovo_tax]
   
-  #fill out empty entries in typestrains+SILVA with denovo MiDAS taxonomy
+  #fill out empty entries in typestrains+SILVA with denovo taxonomy
   merged_tax[which(Species %in% c(NA, "")), Species:=i.Species]
   merged_tax[which(Genus %in% c(NA, "")), Genus:=i.Genus]
   merged_tax[which(Family %in% c(NA, "")), Family:=i.Family]
