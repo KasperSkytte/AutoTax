@@ -18,10 +18,10 @@ export sina140=$(which sina)
 export usearch10=$(which usearch10)
 
 # Provide the path the the SILVA nr99 arb-database and the typestrains database extracted from the SILVA nr99 arb-database.
-silva_db="refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
-silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
-typestrains_db="refdatabases/SILVA132-typestrains.arb"
-typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
+silva_db="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
+silva_udb="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
+typestrains_db="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA132-typestrains.arb"
+typestrains_udb="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
 ##### end of setup #####
 #adds a header to echo, for a better console output overview
@@ -150,7 +150,7 @@ $usearch10 -fastx_uniques $DATA -quiet -fastaout temp/preESV_wsize.fa -sizeout -
 
 # Run the orientation check
 echoWithHeader "Orienting sequences..."
-$usearch10 -quiet -orient temp/preESV_wsize.fa -db refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
+$usearch10 -quiet -orient temp/preESV_wsize.fa -db /space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
 
 echoWithHeader "Clustering sequences and finding representative sequences (cluster centroids)..."
 $usearch10 -quiet -cluster_fast temp/preESV_wsize_oriented.fa -sizein -sizeout -sort length -id 1 -maxrejects 0 -centroids temp/ESVs_wsize.fa -uc temp/preESVs_redundancy.uc -threads 1
@@ -353,7 +353,6 @@ R --slave << 'generateTaxonomy'
   #order by ESV ID
   ESV_S <- ESV_S[order(as.integer(gsub("[^0-9+$]", "", ESV))),]
   
-  # Process all other taxonomic in the same manner (example below for species to genus level)
   S_G <- data.table::fread("./temp/SILVA_S-G.txt",
                              sep = "\t",
                              fill = TRUE,
@@ -442,7 +441,11 @@ R --slave << 'generateTaxonomy'
   denovo_tax <- left_join(denovo_tax, C_P, by = "Class")
   #reorder columns
   denovo_tax <- denovo_tax[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  
+ 
+#write out
+  write_tax(denovo_tax,
+            file = "./output/pre_tax_denovo.csv")
+ 
   #generate denovo names per taxonomic level based on ESV ID
   denovo_tax[["Species"]] <- gsub("^[^0-9]+", "denovo_s_", denovo_tax[["Species"]])
   denovo_tax[["Genus"]] <- gsub("^[^0-9]+", "denovo_g_", denovo_tax[["Genus"]])
