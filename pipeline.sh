@@ -18,10 +18,10 @@ export sina140=$(which sina)
 export usearch10=$(which usearch10)
 
 # Provide the path the the SILVA nr99 arb-database and the typestrains database extracted from the SILVA nr99 arb-database.
-silva_db="refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
-silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
-typestrains_db="refdatabases/SILVA132-typestrains.arb"
-typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
+silva_db="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
+silva_udb="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
+typestrains_db="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA132-typestrains.arb"
+typestrains_udb="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
 ##### end of setup #####
 #adds a header to echo, for a better console output overview
@@ -150,7 +150,7 @@ $usearch10 -fastx_uniques $DATA -quiet -fastaout temp/preESV_wsize.fa -sizeout -
 
 # Run the orientation check
 echoWithHeader "Orienting sequences..."
-$usearch10 -quiet -orient temp/preESV_wsize.fa -db refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
+$usearch10 -quiet -orient temp/preESV_wsize.fa -db /space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
 
 echoWithHeader "Clustering sequences and finding representative sequences (cluster centroids)..."
 $usearch10 -quiet -cluster_fast temp/preESV_wsize_oriented.fa -sizein -sizeout -sort length -id 1 -maxrejects 0 -centroids temp/ESVs_wsize.fa -uc temp/preESVs_redundancy.uc -threads 1
@@ -211,20 +211,12 @@ $usearch10 -quiet -usearch_global temp/ESVs_SILVA_trimmed_sorted.fa -db $silva_u
 #using cluster_smallmem (no multithread support) and not cluster_fast to preserve order
 #of input sequences, and cluster_fast runs on 1 thread anyways even if set to more than 1
 echoWithHeader "Clustering..."
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -centroids temp/SILVA_DeNovoSpecies.fa -uc temp/SILVA_ESV-S.txt -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -centroids temp/SILVA_DeNovoGenus.fa -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -centroids temp/SILVA_DeNovoFamily.fa -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -centroids temp/SILVA_DeNovoOrder.fa -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -centroids temp/SILVA_DeNovoClass.fa -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -centroids temp/SILVA_DeNovoPhylum.fa -sortedby other
-
-#map per taxonomic level
-echoWithHeader "Mapping each taxonomic level..."
-$usearch10 -quiet -usearch_global temp/SILVA_DeNovoSpecies.fa -db temp/SILVA_DeNovoGenus.fa -maxrejects 0 -strand plus -id 0.5 -blast6out temp/SILVA_S-G.txt -threads $MAX_THREADS
-$usearch10 -quiet -usearch_global temp/SILVA_DeNovoGenus.fa -db temp/SILVA_DeNovoFamily.fa -maxrejects 0 -strand plus -id 0.5 -blast6out temp/SILVA_G-F.txt -threads $MAX_THREADS
-$usearch10 -quiet -usearch_global temp/SILVA_DeNovoFamily.fa -db temp/SILVA_DeNovoOrder.fa -maxrejects 0 -strand plus -id 0.5 -blast6out temp/SILVA_F-O.txt -threads $MAX_THREADS
-$usearch10 -quiet -usearch_global temp/SILVA_DeNovoOrder.fa -db temp/SILVA_DeNovoClass.fa -maxrejects 0 -strand plus -id 0.5 -blast6out temp/SILVA_O-C.txt -threads $MAX_THREADS
-$usearch10 -quiet -usearch_global temp/SILVA_DeNovoClass.fa -db temp/SILVA_DeNovoPhylum.fa -maxrejects 0 -strand plus -id 0.5 -blast6out temp/SILVA_C-P.txt -threads $MAX_THREADS
+$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -sortedby other
+$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -sortedby other
+$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -uc temp/SILVA_G-F.txt -sortedby other
+$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -uc temp/SILVA_F-O.txt -sortedby other
+$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -uc temp/SILVA_O-C.txt -sortedby other
+$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -uc temp/SILVA_C-P.txt -sortedby other
 
 #########################################################################################
 echoWithHeader "Merging and reformatting taxonomy..."
@@ -361,48 +353,120 @@ R --slave << 'generateTaxonomy'
   #order by ESV ID
   ESV_S <- ESV_S[order(as.integer(gsub("[^0-9+$]", "", ESV))),]
   
-  #read and sort mappings
-  S_G <- read_sort_mappings("temp/SILVA_S-G.txt")
-  colnames(S_G) <- c("Species", "Genus")
-  G_F <- read_sort_mappings("temp/SILVA_G-F.txt")
-  colnames(G_F) <- c("Genus", "Family")
-  F_O <- read_sort_mappings("temp/SILVA_F-O.txt")
-  colnames(F_O) <- c("Family", "Order")
-  O_C <- read_sort_mappings("temp/SILVA_O-C.txt")
-  colnames(O_C) <- c("Order", "Class")
-  C_P <- read_sort_mappings("temp/SILVA_C-P.txt")
-  colnames(C_P) <- c("Class", "Phylum")
+  S_G <- data.table::fread("./temp/SILVA_S-G.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  S_G <- S_G[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  S_G <- S_G[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(S_G) <- c("Species","Genus")
+  #remove length from ESV ID's (".xxxx")
+  S_G$Species <- gsub("\\..*$", "", S_G$Species)
+  S_G$Genus <- gsub("\\..*$", "", S_G$Genus)
+  #order by Species ID
+  S_G <- S_G[order(as.integer(gsub("[^0-9+$]", "", Species))),]
+  
+  G_F <- data.table::fread("./temp/SILVA_G-F.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  G_F <- G_F[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  G_F <- G_F[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(G_F) <- c("Genus","Family")
+  #remove length from ESV ID's (".xxxx")
+  G_F$Genus <- gsub("\\..*$", "", G_F$Genus)
+  G_F$Family <- gsub("\\..*$", "", G_F$Family)
+  #order by Genus ID
+  G_F <- G_F[order(as.integer(gsub("[^0-9+$]", "", Genus))),]
+  
+ F_O <- data.table::fread("./temp/SILVA_F-O.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  F_O <- F_O[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  F_O <- F_O[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(F_O) <- c("Family","Order")
+  #remove length from ID's (".xxxx")
+  F_O$Family <- gsub("\\..*$", "", F_O$Family)
+  F_O$Order <- gsub("\\..*$", "", F_O$Order)
+  #order by Family ID
+  F_O <- F_O[order(as.integer(gsub("[^0-9+$]", "", Family))),]
+  
+  O_C <- data.table::fread("./temp/SILVA_O-C.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  O_C <- O_C[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  O_C <- O_C[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(O_C) <- c("Order","Class")
+  #remove length from ID's (".xxxx")
+  O_C$Order <- gsub("\\..*$", "", O_C$Order)
+  O_C$Class <- gsub("\\..*$", "", O_C$Class)
+  #order by Order ID
+  O_C <- O_C[order(as.integer(gsub("[^0-9+$]", "", Order))),]
+  
+ C_P <- data.table::fread("./temp/SILVA_C-P.txt",
+                             sep = "\t",
+                             fill = TRUE,
+                             check.names = FALSE,
+                             stringsAsFactors = FALSE)
+  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
+  C_P <- C_P[V1 %in% c("H", "S"),.(V9, V10)]
+  #if * in V10, replace with V9
+  C_P <- C_P[,V10 := ifelse(V10 == "*", V9, V10)]
+  colnames(C_P) <- c("Class","Phylum")
+  #remove length from ID's (".xxxx")
+  C_P$Class <- gsub("\\..*$", "", C_P$Class)
+  C_P$Phylum <- gsub("\\..*$", "", C_P$Phylum)
+  #order by Class ID
+  C_P <- C_P[order(as.integer(gsub("[^0-9+$]", "", Class))),]
   
   #merge each taxonomic level according to the mapping results
-  denovo_midas <- left_join(ESV_S, S_G, by = "Species")
-  denovo_midas <- left_join(denovo_midas, G_F, by = "Genus")
-  denovo_midas <- left_join(denovo_midas, F_O, by = "Family")
-  denovo_midas <- left_join(denovo_midas, O_C, by = "Order")
-  denovo_midas <- left_join(denovo_midas, C_P, by = "Class")
+  denovo_tax <- left_join(ESV_S, S_G, by = "Species")
+  denovo_tax <- left_join(denovo_tax, G_F, by = "Genus")
+  denovo_tax <- left_join(denovo_tax, F_O, by = "Family")
+  denovo_tax <- left_join(denovo_tax, O_C, by = "Order")
+  denovo_tax <- left_join(denovo_tax, C_P, by = "Class")
   #reorder columns
-  denovo_midas <- denovo_midas[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  
+  denovo_tax <- denovo_tax[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
+ 
+#write out
+  write_tax(denovo_tax,
+            file = "./output/pre_tax_denovo.csv")
+ 
   #generate denovo names per taxonomic level based on ESV ID
-  denovo_midas[["Species"]] <- gsub("^[^0-9]+", "midas_s_", denovo_midas[["Species"]])
-  denovo_midas[["Genus"]] <- gsub("^[^0-9]+", "midas_g_", denovo_midas[["Genus"]])
-  denovo_midas[["Family"]] <- gsub("^[^0-9]+", "midas_f_", denovo_midas[["Family"]])
-  denovo_midas[["Order"]] <- gsub("^[^0-9]+", "midas_o_", denovo_midas[["Order"]])
-  denovo_midas[["Class"]] <- gsub("^[^0-9]+", "midas_c_", denovo_midas[["Class"]])
-  denovo_midas[["Phylum"]] <- gsub("^[^0-9]+", "midas_p_", denovo_midas[["Phylum"]])
+  denovo_tax[["Species"]] <- gsub("^[^0-9]+", "denovo_s_", denovo_tax[["Species"]])
+  denovo_tax[["Genus"]] <- gsub("^[^0-9]+", "denovo_g_", denovo_tax[["Genus"]])
+  denovo_tax[["Family"]] <- gsub("^[^0-9]+", "denovo_f_", denovo_tax[["Family"]])
+  denovo_tax[["Order"]] <- gsub("^[^0-9]+", "denovo_o_", denovo_tax[["Order"]])
+  denovo_tax[["Class"]] <- gsub("^[^0-9]+", "denovo_c_", denovo_tax[["Class"]])
+  denovo_tax[["Phylum"]] <- gsub("^[^0-9]+", "denovo_p_", denovo_tax[["Phylum"]])
   
   #write out
-  write_tax(denovo_midas,
-            file = "./output/tax_midas_denovo.csv")
+  write_tax(denovo_tax,
+            file = "./output/tax_denovo.csv")
   
-  #merge SILVA+typestrains+denovo MiDAS taxonomy
+  #merge SILVA+typestrains+denovo taxonomy
   #make data.tables
   ESV_slv_typestr_tax <- data.table(ESV_slv_typestr_tax, key = "ESV")
-  denovo_midas <- data.table(denovo_midas, key = "ESV")
+  denovo_tax <- data.table(denovo_tax, key = "ESV")
   
   #merge by ESV
-  merged_tax <- ESV_slv_typestr_tax[denovo_midas]
+  merged_tax <- ESV_slv_typestr_tax[denovo_tax]
   
-  #fill out empty entries in typestrains+SILVA with denovo MiDAS taxonomy
+  #fill out empty entries in typestrains+SILVA with denovo taxonomy
   merged_tax[which(Species %in% c(NA, "")), Species:=i.Species]
   merged_tax[which(Genus %in% c(NA, "")), Genus:=i.Genus]
   merged_tax[which(Family %in% c(NA, "")), Family:=i.Family]
