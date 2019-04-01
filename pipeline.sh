@@ -10,20 +10,32 @@
 #   if it desides to update base R packages like MASS, mgcv, lattice and others.
 #   If so run R as root and run: install.packages("BiocManager"); BiocManager::install()
 
-##### setup #####
+#################################
+############# setup #############
+#################################
+
 DATA=$1
 MAX_THREADS=${2:-$((`nproc`-2))}
-#path to executables
+#paths to executables
 export sina140=$(which sina)
 export usearch10=$(which usearch10)
+export Rscript=$(which Rscript)
 
-# Provide the path the the SILVA nr99 arb-database and the typestrains database extracted from the SILVA nr99 arb-database.
-silva_db="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
-silva_udb="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
-typestrains_db="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA132-typestrains.arb"
-typestrains_udb="/space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
+# Paths to SILVA nr99 database, and typestrains database extracted from there. 
+# .udb files have to be created first from fasta files using for example:
+# $usearch10 -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output $silva_udb
+silva_db="refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
+silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
+typestrains_db="refdatabases/SILVA132-typestrains.arb"
+typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
-##### end of setup #####
+#denovo taxonomy prefix. Results in fx "prefix_g_123" for a denovo Genus based on ESV 123
+denovo_prefix="midas"
+
+##################################
+########## end of setup ##########
+##################################
+
 #adds a header to echo, for a better console output overview
 echoWithHeader() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')]: $1"
@@ -144,13 +156,9 @@ checkRpkgs
 echoWithHeader "Finding unique sequences occuring at least 2 times..."
 $usearch10 -fastx_uniques $DATA -quiet -fastaout temp/preESV_wsize.fa -sizeout -minuniquesize 2 -strand both -relabel preESV -threads 1
 
-### Orient to the same strand
-# Create reference database, only needed once
-#$usearch10 -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb
-
-# Run the orientation check
+# Orient to the same strand
 echoWithHeader "Orienting sequences..."
-$usearch10 -quiet -orient temp/preESV_wsize.fa -db /space/users/ksa/Documents/Work/ESV_pipeline_final/refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
+$usearch10 -quiet -orient temp/preESV_wsize.fa -db $silva_udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
 
 echoWithHeader "Clustering sequences and finding representative sequences (cluster centroids)..."
 $usearch10 -quiet -cluster_fast temp/preESV_wsize_oriented.fa -sizein -sizeout -sort length -id 1 -maxrejects 0 -centroids temp/ESVs_wsize.fa -uc temp/preESVs_redundancy.uc -threads 1
@@ -209,7 +217,7 @@ $usearch10 -quiet -usearch_global temp/ESVs_SILVA_trimmed_sorted.fa -db $silva_u
 ##############
 #assign with identity thresholds based on Yarza et al, 2014
 #using cluster_smallmem (no multithread support) and not cluster_fast to preserve order
-#of input sequences, and cluster_fast runs on 1 thread anyways even if set to more than 1
+#of input sequences, cluster_fast runs on 1 thread anyways even if set to more than 1
 echoWithHeader "Clustering..."
 $usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -sortedby other
 $usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -sortedby other
@@ -220,379 +228,13 @@ $usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -
 
 #########################################################################################
 echoWithHeader "Merging and reformatting taxonomy..."
-#Use R to fix output
-R --slave << 'generateTaxonomy'
-  #load R packages
-  suppressPackageStartupMessages({
-    require("stringr")
-    require("tidyr")
-    require("dplyr")
-    require("data.table")
-  })
-  
-  ##### FUNCTIONS #####
-  ## read/write taxonomy ##
-  read_clean_tax <- function(input) {
-    tax <- read.delim(input,
-                      sep = "\t",
-                      header = FALSE,
-                      quote = "\"",
-                      fill = TRUE,
-                      check.names = FALSE,
-                      stringsAsFactors = FALSE)
-    #order by ESV ID
-    tax <- tax[,c(1,3,2)][order(as.integer(gsub("[^0-9+$]|\\..*$", "", tax[[1]]))),]
-    colnames(tax) <- c("ESV", "idty", "tax")
-    #remove database ID's (keep everything after first " ", and remove ";" from the end if any)
-    tax[["tax"]] <- gsub("^[^ ]* *|;$", "", tax[["tax"]])
-    
-    #split tax into individual taxonomic levels
-    tax <- suppressWarnings(
-      tidyr::separate(tax,
-                      col = "tax",
-                      into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
-                      sep = ";"))
-    
-    #replace NA's with empty string and remove all entries containing any of:
-    #"uncultured"
-    #"unknown"
-    #"unidentified"
-    #"incertae sedis"
-    #"metagenome"
-    #"bacterium" (whole word, so fx methanobacterium will NOT be removed)
-    #"possible" (whole word)
-    tax[,-c(1,2)] <- lapply(tax[,-c(1,2)], function(x) {
-      x[grepl("uncultured|unknown|unidentified|incertae sedis|metagenome|\\bbacterium\\b|\\bpossible\\b", tolower(x))] <- ""
-      x <- stringr::str_replace_all(x,
-                                    c("candidatus" = "Candidatus",
-                                      " " = "_",
-                                      #keep only letters, numbers and ".", "-", and "_"
-                                      "[^[:alnum:]_\\.\\-]" = ""
-                                    ))
-      return(x)
-    })
-    
-    #remove entries below identity threshold per level
-    tax[which(tax$idty < 98.7), "Species"] <- ""
-    tax[which(tax$idty < 94.5), "Genus"] <- ""
-    tax[which(tax$idty < 86.5), "Family"] <- ""
-    tax[which(tax$idty < 82.0), "Order"] <- ""
-    tax[which(tax$idty < 78.5), "Class"] <- ""
-    tax[which(tax$idty < 75.0), "Phylum"] <- ""
-    
-    tax[is.na(tax)] <- ""
-    invisible(tax)
-  }
-  
-  write_tax <- function(tax, file) {
-    data.table::fwrite(tax,
-                       file,
-                       quote = TRUE,
-                       sep = ",")
-  }
-  
-  ## read and sort mappings ##
-  read_sort_mappings <- function(input) {
-    x <- data.table::fread(input,
-                           sep = "\t",
-                           fill = TRUE,
-                           check.names = FALSE,
-                           stringsAsFactors = FALSE)
-    x <- x[,1:2]
-    colnames(x) <- c("V1", "V2")
-    x[] <- lapply(x, gsub, pattern = "\\..*$", replacement = "")
-    x <- x[order(as.integer(gsub("[^0-9+$]", "", V1))),]
-    invisible(x)
-  }
-  
-  ##### Fix taxonomy #####
-  ##### typestrains
-  #read typestrains tax, only Genus and Species
-  ESV_typestrain_tax <- select(read_clean_tax("temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
-  
-  #remove strain information from Species names (keep only first two words)
-  ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <- 
-    sapply(stringr::str_split(ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")], "_"), 
-           function(x) {
-             paste0(x[1:2], collapse = "_")
-           })
-  
-  #write out
-  write_tax(tax = ESV_typestrain_tax,
-            file = "./output/tax_typestrains.csv")
-  
-  ##### SILVA
-  #read SILVA tax, without Species
-  ESV_SILVA_tax <- select(read_clean_tax(input = "./temp/tax_SILVA.txt"), -Species)
-  
-  #write out
-  write_tax(tax = ESV_SILVA_tax,
-            file = "./output/tax_SILVA.csv")
-  
-  ##### merge typestrains+SILVA taxonomy by ESV and Genus #####
-  ESV_slv_typestr_tax <- left_join(ESV_SILVA_tax[,-2], ESV_typestrain_tax[,-2], by = c("ESV", "Genus"))
-  ESV_slv_typestr_tax[is.na(ESV_slv_typestr_tax)] <- ""
-  
-  #write out
-  write_tax(ESV_slv_typestr_tax,
-            file = "./output/tax_slv_typestr.csv")
-  
-  ##### denovo taxonomy #####
-  ESV_S <- data.table::fread("./temp/SILVA_ESV-S.txt",
-                             sep = "\t",
-                             fill = TRUE,
-                             check.names = FALSE,
-                             stringsAsFactors = FALSE)
-  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
-  ESV_S <- ESV_S[V1 %in% c("H", "S"),.(V9, V10)]
-  #if * in V10, replace with V9
-  ESV_S <- ESV_S[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(ESV_S) <- c("ESV", "Species")
-  #remove length from ESV ID's (".xxxx")
-  ESV_S$Species <- gsub("\\..*$", "", ESV_S$Species)
-  #order by ESV ID
-  ESV_S <- ESV_S[order(as.integer(gsub("[^0-9+$]", "", ESV))),]
-  
-  S_G <- data.table::fread("./temp/SILVA_S-G.txt",
-                             sep = "\t",
-                             fill = TRUE,
-                             check.names = FALSE,
-                             stringsAsFactors = FALSE)
-  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
-  S_G <- S_G[V1 %in% c("H", "S"),.(V9, V10)]
-  #if * in V10, replace with V9
-  S_G <- S_G[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(S_G) <- c("Species","Genus")
-  #remove length from ESV ID's (".xxxx")
-  S_G$Species <- gsub("\\..*$", "", S_G$Species)
-  S_G$Genus <- gsub("\\..*$", "", S_G$Genus)
-  #order by Species ID
-  S_G <- S_G[order(as.integer(gsub("[^0-9+$]", "", Species))),]
-  
-  G_F <- data.table::fread("./temp/SILVA_G-F.txt",
-                             sep = "\t",
-                             fill = TRUE,
-                             check.names = FALSE,
-                             stringsAsFactors = FALSE)
-  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
-  G_F <- G_F[V1 %in% c("H", "S"),.(V9, V10)]
-  #if * in V10, replace with V9
-  G_F <- G_F[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(G_F) <- c("Genus","Family")
-  #remove length from ESV ID's (".xxxx")
-  G_F$Genus <- gsub("\\..*$", "", G_F$Genus)
-  G_F$Family <- gsub("\\..*$", "", G_F$Family)
-  #order by Genus ID
-  G_F <- G_F[order(as.integer(gsub("[^0-9+$]", "", Genus))),]
-  
- F_O <- data.table::fread("./temp/SILVA_F-O.txt",
-                             sep = "\t",
-                             fill = TRUE,
-                             check.names = FALSE,
-                             stringsAsFactors = FALSE)
-  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
-  F_O <- F_O[V1 %in% c("H", "S"),.(V9, V10)]
-  #if * in V10, replace with V9
-  F_O <- F_O[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(F_O) <- c("Family","Order")
-  #remove length from ID's (".xxxx")
-  F_O$Family <- gsub("\\..*$", "", F_O$Family)
-  F_O$Order <- gsub("\\..*$", "", F_O$Order)
-  #order by Family ID
-  F_O <- F_O[order(as.integer(gsub("[^0-9+$]", "", Family))),]
-  
-  O_C <- data.table::fread("./temp/SILVA_O-C.txt",
-                             sep = "\t",
-                             fill = TRUE,
-                             check.names = FALSE,
-                             stringsAsFactors = FALSE)
-  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
-  O_C <- O_C[V1 %in% c("H", "S"),.(V9, V10)]
-  #if * in V10, replace with V9
-  O_C <- O_C[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(O_C) <- c("Order","Class")
-  #remove length from ID's (".xxxx")
-  O_C$Order <- gsub("\\..*$", "", O_C$Order)
-  O_C$Class <- gsub("\\..*$", "", O_C$Class)
-  #order by Order ID
-  O_C <- O_C[order(as.integer(gsub("[^0-9+$]", "", Order))),]
-  
- C_P <- data.table::fread("./temp/SILVA_C-P.txt",
-                             sep = "\t",
-                             fill = TRUE,
-                             check.names = FALSE,
-                             stringsAsFactors = FALSE)
-  #keep only rows with H (hits) and S (singletons) in V1, keep only V9+V10
-  C_P <- C_P[V1 %in% c("H", "S"),.(V9, V10)]
-  #if * in V10, replace with V9
-  C_P <- C_P[,V10 := ifelse(V10 == "*", V9, V10)]
-  colnames(C_P) <- c("Class","Phylum")
-  #remove length from ID's (".xxxx")
-  C_P$Class <- gsub("\\..*$", "", C_P$Class)
-  C_P$Phylum <- gsub("\\..*$", "", C_P$Phylum)
-  #order by Class ID
-  C_P <- C_P[order(as.integer(gsub("[^0-9+$]", "", Class))),]
-  
-  #merge each taxonomic level according to the mapping results
-  denovo_tax <- left_join(ESV_S, S_G, by = "Species")
-  denovo_tax <- left_join(denovo_tax, G_F, by = "Genus")
-  denovo_tax <- left_join(denovo_tax, F_O, by = "Family")
-  denovo_tax <- left_join(denovo_tax, O_C, by = "Order")
-  denovo_tax <- left_join(denovo_tax, C_P, by = "Class")
-  #reorder columns
-  denovo_tax <- denovo_tax[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
- 
-#write out
-  write_tax(denovo_tax,
-            file = "./output/pre_tax_denovo.csv")
- 
-  #generate denovo names per taxonomic level based on ESV ID
-  denovo_tax[["Species"]] <- gsub("^[^0-9]+", "denovo_s_", denovo_tax[["Species"]])
-  denovo_tax[["Genus"]] <- gsub("^[^0-9]+", "denovo_g_", denovo_tax[["Genus"]])
-  denovo_tax[["Family"]] <- gsub("^[^0-9]+", "denovo_f_", denovo_tax[["Family"]])
-  denovo_tax[["Order"]] <- gsub("^[^0-9]+", "denovo_o_", denovo_tax[["Order"]])
-  denovo_tax[["Class"]] <- gsub("^[^0-9]+", "denovo_c_", denovo_tax[["Class"]])
-  denovo_tax[["Phylum"]] <- gsub("^[^0-9]+", "denovo_p_", denovo_tax[["Phylum"]])
-  
-  #write out
-  write_tax(denovo_tax,
-            file = "./output/tax_denovo.csv")
-  
-  #merge SILVA+typestrains+denovo taxonomy
-  #make data.tables
-  ESV_slv_typestr_tax <- data.table(ESV_slv_typestr_tax, key = "ESV")
-  denovo_tax <- data.table(denovo_tax, key = "ESV")
-  
-  #merge by ESV
-  merged_tax <- ESV_slv_typestr_tax[denovo_tax]
-  
-  #fill out empty entries in typestrains+SILVA with denovo taxonomy
-  merged_tax[which(Species %in% c(NA, "")), Species:=i.Species]
-  merged_tax[which(Genus %in% c(NA, "")), Genus:=i.Genus]
-  merged_tax[which(Family %in% c(NA, "")), Family:=i.Family]
-  merged_tax[which(Order %in% c(NA, "")), Order:=i.Order]
-  merged_tax[which(Class %in% c(NA, "")), Class:=i.Class]
-  merged_tax[which(Phylum %in% c(NA, "")), Phylum:=i.Phylum]
-  
-  #order by ESV ID
-  merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]", "", ESV))), 1:8]
-  
-  ##### search and replace according to a replacement file #####
-  replacement_file <- list.files(".",
-                                 pattern = "replacement",
-                                 ignore.case = TRUE, 
-                                 recursive = FALSE,
-                                 include.dirs = FALSE,
-                                 full.names = TRUE)
-  if(length(replacement_file) == 1 && file.exists(replacement_file)) {
-    replacements <- fread(replacement_file, data.table = FALSE)
-    if(any(duplicated(replacements[[1]])))
-      stop("All taxa in the replacements file must be unique", call. = FALSE)
-    
-    #per taxonomic level, search by first column in replacements, and replace by second column
-    merged_tax[] <- lapply(merged_tax, function(col) {
-      unlist(lapply(col, function(taxa) {
-        if(any(taxa == replacements[[1]])) {
-          taxa <- replacements[which(replacements[[1]] == taxa),][[2]]
-        } else
-          taxa <- taxa
-      }), use.names = FALSE)
-    })
-  } else if (length(replacement_file) > 1) {
-    message("More than one replacement file found, skipping...")
-  } else
-    message("No replacement file found, skipping...")
-  
-  ##### fix taxa with more than one parent #####
-  #generate a log file first
-  polyTaxa <- list()
-  polyTaxa$Species <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Genus), Genus = paste0(sort(unique(Genus)), collapse = ", "), new = first(Genus)), by = Species][nParents > 1,]
-  polyTaxa$Genus <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Family), Family = paste0(sort(unique(Family)), collapse = ", "), new = first(Family)), by = Genus][nParents > 1,]
-  polyTaxa$Family <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Order), Order = paste0(sort(unique(Order)), collapse = ", "), new = first(Order)), by = Family][nParents > 1,]
-  polyTaxa$Order <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Class), Class = paste0(sort(unique(Class)), collapse = ", "), new = first(Class)), by = Order][nParents > 1,]
-  polyTaxa$Class <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Phylum), Phylum = paste0(sort(unique(Phylum)), collapse = ", "), new = first(Phylum)), by = Class][nParents > 1,]
-  polyTaxa$Phylum <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Kingdom), Kingdom = paste0(sort(unique(Kingdom)), collapse = ", "), new = first(Kingdom)), by = Phylum][nParents > 1,]
-  
-  polyTaxaLog <- unlist(sapply(polyTaxa, function(x) {
-    if(nrow(x) > 1) {
-      paste0(colnames(x)[1],
-             " ",
-             x[[1]], 
-             " has ", 
-             x[[3]],
-             " parents: \"",
-             x[[4]],
-             "\", and has been assigned the ",
-             colnames(x)[4],
-             " of ",
-             x[[2]],
-             ": ",
-             x[[5]])
-    }
-  }), use.names = FALSE)
-  nTaxa <- length(polyTaxaLog)
-  
-  #issue a warning if one or more taxa have more than one parent, write out logfile
-  if(nTaxa > 0) {
-    warning(paste0(nTaxa, 
-                   " taxa ",
-                   if(nTaxa > 1)
-                     "have" 
-                   else 
-                     "has",
-                   " more than one parent, see the logfile \"./output/polyphyletics.log\" for details"), 
-            call. = FALSE)
-    writeLines(polyTaxaLog,
-               "./output/polyphyletics.log",)
-  }
-  
-  #fix them
-  merged_tax[, Genus := first(Genus), by = Species]
-  merged_tax[, Family := first(Family), by = Genus]
-  merged_tax[, Order := first(Order), by = Family]
-  merged_tax[, Class := first(Class), by = Order]
-  merged_tax[, Phylum := first(Phylum), by = Class]
-  merged_tax[, Kingdom := first(Kingdom), by = Phylum]
-  
-  #write out
-  write_tax(merged_tax,
-            file = "./output/tax_complete.csv")
-  
-  ##### export as different formats #####
-  ## export ESVs with SINTAX taxonomy in headers 
-  ESVs.fa <- Biostrings::readBStringSet("temp/ESVs.fa")
-  sintax <- left_join(data.frame(ESV = names(ESVs.fa), stringsAsFactors = FALSE), 
-                      merged_tax,
-                      by = "ESV")
-  sintax[["Kingdom"]] <- paste0("d:", sintax[["Kingdom"]])
-  sintax[["Phylum"]] <- paste0("p:", sintax[["Phylum"]])
-  sintax[["Class"]] <- paste0("c:", sintax[["Class"]])
-  sintax[["Order"]] <- paste0("o:", sintax[["Order"]])
-  sintax[["Family"]] <- paste0("f:", sintax[["Family"]])
-  sintax[["Genus"]] <- paste0("g:", sintax[["Genus"]])
-  sintax[["Species"]] <- paste0("s:", sintax[["Species"]])
-  sintax <- sintax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  sintax_header <- paste0(sintax[["ESV"]], ";tax=", apply(sintax[,-1], 1, paste0, collapse = ","), ";")
-  names(ESVs.fa) <- sintax_header
-  Biostrings::writeXStringSet(ESVs.fa, "output/ESVs_w_sintax.fa")
-  
-  ## export taxonomy in QIIME format
-  qiime_tax <- merged_tax
-  qiime_tax[["Kingdom"]] <- paste0("k__", qiime_tax[["Kingdom"]])
-  qiime_tax[["Phylum"]] <- paste0("p__", qiime_tax[["Phylum"]])
-  qiime_tax[["Class"]] <- paste0("c__", qiime_tax[["Class"]])
-  qiime_tax[["Order"]] <- paste0("o__", qiime_tax[["Order"]])
-  qiime_tax[["Family"]] <- paste0("f__", qiime_tax[["Family"]])
-  qiime_tax[["Genus"]] <- paste0("g__", qiime_tax[["Genus"]])
-  qiime_tax[["Species"]] <- paste0("s__", qiime_tax[["Species"]])
-  qiime_tax <- qiime_tax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  writeLines(paste0(qiime_tax[["ESV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), "output/tax_complete_qiime.txt")
-generateTaxonomy
+#run R script to format, merge, and ultimately generate denovo taxonomy
+$Rscript --vanilla Rscript.R $denovo_prefix
 
 #########################################################################################
-###### NEED TO REMOVE TEMP FILES ######
 mv temp/ESVs.fa output/ESVs.fa
 
+#uncomment the below to remove temporary files
 #echoWithHeader "Removing temporary files..."
 #rm -rf temp/
 duration=$(printf '%02dh:%02dm:%02ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $(($SECONDS%60)))
