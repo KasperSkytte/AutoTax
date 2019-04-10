@@ -37,6 +37,18 @@ denovo_prefix="midas"
 ##################################
 ########## end of setup ##########
 ##################################
+# Script must be run in bash, not shell
+if [ ! -n "$BASH" ]
+    then
+    echo "This script must be run with BASH (bash), not Shell (sh)" 1>&2
+    exit 1
+fi
+
+#set appropriate error handling
+set -o errexit -o pipefail -o noclobber -o nounset
+
+################################## functions ##################################
+#They probably only work here in this script!
 
 #adds a header to echo, for a better console output overview
 echoWithHeader() {
