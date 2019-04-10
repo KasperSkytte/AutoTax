@@ -1,10 +1,11 @@
 #!/bin/bash
-# usage: ./pipeline.sh fSSU.fa 36
+VERSION="1.2"
 
 ##### requirements (tested with) #####
 # SILVA database files (SSURef+typestrains) in arb format (use latest)
+# awk+grep+cat (included in most linux distributions)
 # usearch (version10)
-# SINA (version 1.4.0)
+# SINA (version 1.6.0)
 # R version (version 3.5.x)
 #   Note: The required R packages will install automatically, but Bioconductor can cause trouble
 #   if it desides to update base R packages like MASS, mgcv, lattice and others.
@@ -17,8 +18,9 @@
 DATA=$1
 MAX_THREADS=${2:-$((`nproc`-2))}
 #paths to executables
-export sina140=$(which sina)
-export usearch10=$(which usearch10)
+export sina=$(which sina)
+export usearch=$(which usearch10)
+export R=$(which R)
 export Rscript=$(which Rscript)
 
 # Paths to SILVA nr99 database, and typestrains database extracted from there. 
@@ -29,7 +31,7 @@ silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
 typestrains_db="refdatabases/SILVA132-typestrains.arb"
 typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
-#denovo taxonomy prefix. Results in fx "prefix_g_123" for a denovo Genus based on ESV 123
+#de novo taxonomy prefix. Results in fx "prefix_g_123" for a de novo Genus based on ESV 123
 denovo_prefix="midas"
 
 ##################################
