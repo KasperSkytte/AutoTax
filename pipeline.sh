@@ -271,7 +271,7 @@ generateESVs $DATA
 ##############
 if [ -n "${ESVDB:-}" ]; then
   echoWithHeader "Finding new unique ESVs and adding them to the existing database..."
-  $usearch -usearch_global temp/ESVs.fa -db $ESVDB -id 1 \
+  $usearch -usearch_global temp/ESVs.fa -db "$ESVDB" -id 1 \
     -maxaccepts 0 -maxrejects 0 -strand both -notmatched temp/newESVs.fa \
     -userout temp/ESVsearch.txt -userfields query+ql+id+target+tl+tseq\
     -threads $MAX_THREADS -quiet
@@ -283,7 +283,7 @@ if [ -n "${ESVDB:-}" ]; then
   #z
   
   #extract ID of the last sequence in the ESV database
-  lastID=$(grep "^>[^\.]*" -o $ESVDB | tail -n 1 | grep "[0-9]*$" -o)
+  lastID=$(grep "^>[^\.]*" -o "$ESVDB" | tail -n 1 | grep "[0-9]*$" -o)
   
   #rename the new ESVs to continue ID from that of the last sequence in the ESV database
   $R --slave --args $lastID << 'renameNewESVs'
@@ -302,7 +302,7 @@ if [ -n "${ESVDB:-}" ]; then
 renameNewESVs
     
   #append the new ESVs to the end of the ESV database
-  cat $ESVDB temp/newESVs.fa > temp/ESVs.fa
+  cat "$ESVDB" temp/newESVs.fa > temp/ESVs.fa
 fi
 
 #########################################################################################
