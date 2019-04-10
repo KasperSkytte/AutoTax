@@ -266,28 +266,42 @@ checkRpkgs
 echoWithHeader "Generating ESVs..."
 generateESVs $DATA
 
-# Orient to the same strand
-echoWithHeader "Orienting sequences..."
-$usearch10 -quiet -orient temp/preESV_wsize.fa -db $silva_udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
-
-echoWithHeader "Clustering sequences and finding representative sequences (cluster centroids)..."
-$usearch10 -quiet -cluster_fast temp/preESV_wsize_oriented.fa -sizein -sizeout -sort length -id 1 -maxrejects 0 -centroids temp/ESVs_wsize.fa -uc temp/preESVs_redundancy.uc -threads 1
-
-#The output centroids will be ordered by size (coverage), but sequences with identical size
-#will be ordered randomly between runs. The below R script first orders by size (descending) 
-#and then by ESV ID (ascending) when sizes are identical. 
-#Rename with new ID's to "ESV(ID).(length)" fx: "ESV1.1413"
-R --slave << 'sortESVsBySizeAndID'
-  #load R packages
-  suppressPackageStartupMessages({
-    require("Biostrings")
-  })
+#########################################################################################
+#if -d is provided, identify redundant ESVs compared to the ESV database
+#and merge the two before continuing
+##############
+if [ -n "${ESVDB:-}" ]; then
+  echoWithHeader "Finding new unique ESVs and adding them to the existing database..."
+  $usearch -usearch_global temp/ESVs.fa -db $ESVDB -id 1 \
+    -maxaccepts 0 -maxrejects 0 -strand both -notmatched temp/newESVs.fa \
+    -userout temp/ESVsearch.txt -userfields query+ql+id+target+tl+tseq\
+    -threads $MAX_THREADS -quiet
+  mv temp/ESVs.fa temp/ESVs_old.fa
   
-  #read sequences
-  ESVs <- Biostrings::readBStringSet("temp/ESVs_wsize.fa")
-  #extract names
-  headernames <- names(ESVs)
-  #make a data frame with the FASTA header split in ID and size
+  ###### replace shorter ESVs with longer sequences ######
+  #x
+  #y
+  #z
+  
+  #extract ID of the last sequence in the ESV database
+  lastID=$(grep "^>[^\.]*" -o $ESVDB | tail -n 1 | grep "[0-9]*$" -o)
+  
+  #rename the new ESVs to continue ID from that of the last sequence in the ESV database
+  $R --slave --args $lastID << 'renameNewESVs'
+    #extract passed args from shell script
+  	args <- commandArgs(trailingOnly = TRUE)
+  	lastID <- as.integer(args[[1]])
+  	
+  	#load R packages
+    suppressPackageStartupMessages({
+      require("Biostrings")
+    })
+    
+    newESVs <- Biostrings::readBStringSet("temp/newESVs.fa")
+    names(newESVs) <- paste0("ESV", 1:length(newESVs)+lastID, ".", gsub("^.*\\.", "", names(newESVs)))
+    Biostrings::writeXStringSet(newESVs, "temp/newESVs.fa")
+renameNewESVs
+    
   names <- data.frame(name = headernames,
                       ID = as.numeric(gsub("[^0-9*$]", "", gsub(";size=.*$", "", headernames))),
                       size = as.numeric(gsub(".*;size=", "", gsub(";$", "", headernames))),
