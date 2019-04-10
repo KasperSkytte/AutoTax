@@ -1,6 +1,5 @@
 #!/bin/bash
 VERSION="1.2"
-
 ##### requirements (tested with) #####
 # SILVA database files (SSURef+typestrains) in arb format (use latest)
 # awk+grep+cat (included in most linux distributions)
@@ -302,9 +301,9 @@ if [ -n "${ESVDB:-}" ]; then
     Biostrings::writeXStringSet(newESVs, "temp/newESVs.fa")
 renameNewESVs
     
-  names <- data.frame(name = headernames,
-                      ID = as.numeric(gsub("[^0-9*$]", "", gsub(";size=.*$", "", headernames))),
-                      size = as.numeric(gsub(".*;size=", "", gsub(";$", "", headernames))),
+  #append the new ESVs to the end of the ESV database
+  cat $ESVDB temp/newESVs.fa > temp/ESVs.fa
+fi
                       length = lengths(ESVs),
                       check.names = FALSE,
                       stringsAsFactors = FALSE)
