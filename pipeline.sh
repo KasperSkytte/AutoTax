@@ -180,9 +180,59 @@ searchTaxDB() {
   $usearch -quiet -usearch_global $IN -db $DB -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
 }
 
+################################## end of functions ##################################
+################################## start of pipeline ##################################
+#fetch and check options provided by user
+while getopts ":hi:d:t:" opt; do
+  case ${opt} in
+    h )
+      echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
+      echo "Version: $VERSION"
+      echo "Options:"
+      echo "  -h    Display this help text."
+      echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
+      echo "  -d    FASTA file with previously processed ESV sequences."
+      echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
+      echo "  -t    Number of threads to use. Default is all available cores except 2."
+      exit 1
+      ;;
+    i )
+      DATA=$OPTARG
+      ;;
+    d )
+      ESVDB=$OPTARG
+      ;;
+    t )
+      MAX_THREADS=$OPTARG
+      ;;
+    \? )
+      userError "Invalid Option: -$OPTARG"
+      exit 1
+      ;;
+    : )
+      userError "Option -$OPTARG requires an argument"
+      exit 1
+      ;;
+  esac
+done
+shift $((OPTIND -1))
+
+#exit if no data provided
+if [ -z "${DATA:-}" ]; then
+  userError "No input data provided"
+  exit 1
+fi
+
+#set threads to a default value if not provided by the user
+MAX_THREADS=${MAX_THREADS:-$((`nproc`-2))}
+
+#continue if no errors
+echoWithHeader "Running fSSU de novo taxonomy pipeline (max threads: $MAX_THREADS)..."
+checkFolder temp
+checkFolder output
 echoWithHeader "Checking for required R packages and installing if missing..."
 #Run R and check for installed packages, install if needed
-R --slave << 'checkRpkgs'
+$R --slave << 'checkRpkgs'
   suppressPackageStartupMessages({
     #Biostrings (and BiocManager which is used to install Biostrings)
     if(!require("Biostrings")) {
@@ -213,11 +263,8 @@ checkRpkgs
 #########################################################################################
 #Generate ESVs
 ##############
-# note: must set threads to 1 in the below usearch10 commands or the ordering of sequences
-# will be scrambled and inconsistent between individual runs. It doesn't use more than one 
-# thread anyways, so no speedup will be gained.
-echoWithHeader "Finding unique sequences occuring at least 2 times..."
-$usearch10 -fastx_uniques $DATA -quiet -fastaout temp/preESV_wsize.fa -sizeout -minuniquesize 2 -strand both -relabel preESV -threads 1
+echoWithHeader "Generating ESVs..."
+generateESVs $DATA
 
 # Orient to the same strand
 echoWithHeader "Orienting sequences..."
