@@ -14,9 +14,6 @@ VERSION="1.2"
 #################################
 ############# setup #############
 #################################
-
-DATA=$1
-MAX_THREADS=${2:-$((`nproc`-2))}
 #paths to executables
 export sina=$(which sina)
 export usearch=$(which usearch10)
@@ -25,11 +22,11 @@ export Rscript=$(which Rscript)
 
 # Paths to SILVA nr99 database, and typestrains database extracted from there. 
 # .udb files have to be created first from fasta files using for example:
-# $usearch10 -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output $silva_udb
-silva_db="refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
-silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
-typestrains_db="refdatabases/SILVA132-typestrains.arb"
-typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
+# $usearch -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output $silva_udb
+silva_db="../refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
+silva_udb="../refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
+typestrains_db="../refdatabases/SILVA132-typestrains.arb"
+typestrains_udb="../refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
 #de novo taxonomy prefix. Results in fx "prefix_g_123" for a de novo Genus based on ESV 123
 denovo_prefix="midas"
@@ -55,63 +52,108 @@ echoWithHeader() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')]: $1"
 }
 
-#check folders
-if [ -d "temp" ]
-    then
-        echoWithHeader "A directory named 'temp' already exists and is needed for this script to run. Do you want to clear the contents and continue (y/n)?"
-        read ANSWER
-        if [ $ANSWER = "y" ]
-            then 
-            echoWithHeader "Clearing the folder 'temp'..."
-            rm -rf temp/*
-            else 
-            if [ $ANSWER = "n" ]
-                then
-                echoWithHeader "Exiting script."
-                echo ""
-                exit 0
-                else
-                echoWithHeader "Exiting script."
-                echo ""
-                exit 1
-            fi
-        fi
-    else
-    	mkdir temp
-fi
+#error handling
+userError() {
+  self=`basename "$0"`
+  echo "Invalid usage: $1" 1>&2
+  echo ""
+  echo "Run 'bash $self -h' for help"
+}
 
-if [ -d "output" ]
-	then
-	  echoWithHeader "Clearing the folder 'output'..."
-		rm -rf output/*
-		else
-		mkdir output
-fi
-echoWithHeader "Running fSSU taxonomy pipeline (max threads: $MAX_THREADS)..."
+#check if a folder is present and empty
+checkFolder() {
+  if [ -d $1 ]
+      then
+          echoWithHeader "A directory named '$1' already exists and is needed for this script to run. Do you want to clear the contents and continue (y/n)?"
+          read ANSWER
+          if [ $ANSWER = "y" ]
+              then 
+              echoWithHeader "Clearing the folder '$1'..."
+              rm -rf $1/*
+              else 
+              if [ $ANSWER = "n" ]
+                  then
+                  echoWithHeader "Exiting script."
+                  echo ""
+                  exit 0
+                  else
+                  echoWithHeader "Exiting script."
+                  echo ""
+                  exit 1
+              fi
+          fi
+      else
+      	mkdir $1
+  fi
+}
 
-################################## functions ##################################
-#They probably only work here in this script!
-sina_align () {
+#generate ESVs
+generateESVs() {
+  ##############
+  # note: must set threads to 1 in the below usearch commands or the ordering of sequences
+  # will be scrambled and inconsistent between individual runs. It doesn't use more than one 
+  # thread anyways, so no speedup will be gained.
+  echoWithHeader "  - Finding unique sequences occuring at least 2 times..."
+  $usearch -fastx_uniques $1 -quiet -fastaout temp/preESV_wsize.fa -sizeout -minuniquesize 2 -strand both -relabel preESV -threads 1
+  
+  # Orient to the same strand
+  echoWithHeader "  - Orienting sequences..."
+  $usearch -quiet -orient temp/preESV_wsize.fa -db $silva_udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
+  
+  echoWithHeader "  - Clustering sequences and finding representative sequences (cluster centroids)..."
+  $usearch -quiet -cluster_fast temp/preESV_wsize_oriented.fa -sizein -sizeout -sort length -id 1 -maxrejects 0 -centroids temp/ESVs_wsize.fa -uc temp/preESVs_redundancy.uc -threads 1
+  
+  #The output centroids will be ordered by size (coverage), but sequences with identical size
+  #will be ordered randomly between runs. The below R script first orders by size (descending) 
+  #and then by ESV ID (ascending) when sizes are identical. 
+  #Rename with new ID's to "ESV(ID).(length)" fx: "ESV1.1413"
+  $R --slave << 'sortESVsBySizeAndID'
+    #load R packages
+    suppressPackageStartupMessages({
+      require("Biostrings")
+    })
+    
+    #read sequences
+    ESVs <- Biostrings::readBStringSet("temp/ESVs_wsize.fa")
+    #extract names
+    headernames <- names(ESVs)
+    #make a data frame with the FASTA header split in ID and size
+    names <- data.frame(name = headernames,
+                        ID = as.numeric(gsub("[^0-9*$]", "", gsub(";size=.*$", "", headernames))),
+                        size = as.numeric(gsub(".*;size=", "", gsub(";$", "", headernames))),
+                        length = lengths(ESVs),
+                        check.names = FALSE,
+                        stringsAsFactors = FALSE)
+    #reorder the data frame first by size (descending), then by ID (ascending)
+    names_ordered <- names[with(names, order(-size, ID)), ]
+    #reorder the sequences
+    ESVs <- ESVs[names_ordered[["name"]]]
+    #rename the sequences and write out
+    names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", names_ordered[["length"]])
+    Biostrings::writeXStringSet(ESVs, file = "temp/ESVs.fa")
+sortESVsBySizeAndID
+}
+
+#align and trim sequences with SINA
+sinaAlign() {
   # Preparation
   local DATA=$1
   local OUTPUTID=$2
   local DB=$3
-  local PT_SERVERS=${4:-1}
-  local SINA_THREADS=${5:-$MAX_THREADS}
+  local SINA_THREADS=${4:-$MAX_THREADS}
   
-  $sina140 -i ${DATA} -o temp/${OUTPUTID}_aligned.fa -r $DB \
-  --num-pts $PT_SERVERS --threads $SINA_THREADS \
-  --log-file temp/${OUTPUTID}_log.txt
+  $sina -i ${DATA} -o temp/${OUTPUTID}_aligned.fa -r $DB \
+  --threads $SINA_THREADS --log-file temp/${OUTPUTID}_log.txt
 
-  echoWithHeader "Trimming, formatting, and sorting data..."
+  echoWithHeader "  - Trimming, formatting, and sorting data..."
   #trim sequences and strip alignment gaps
   awk '!/^>/ {$0=substr($0, 1048, 41788)}1' temp/${OUTPUTID}_aligned.fa > temp/${OUTPUTID}_trimmed.fa
-  $usearch10 -quiet -fasta_stripgaps temp/${OUTPUTID}_trimmed.fa -fastaout temp/tmp.fa \
+  $usearch -quiet -fasta_stripgaps temp/${OUTPUTID}_trimmed.fa -fastaout temp/tmp.fa \
     && mv temp/tmp.fa temp/${OUTPUTID}_trimmed.fa
   
   #sort sequences and stats files by ESV ID using R
   #careful with the order of arguments passed on to R
-  R --slave --args temp/${OUTPUTID}_trimmed.fa << 'sortSINAoutput'
+  $R --slave --args temp/${OUTPUTID}_trimmed.fa << 'sortSINAoutput'
 	#extract passed args from shell script
 	args <- commandArgs(trailingOnly = TRUE)
 
@@ -130,7 +172,14 @@ sina_align () {
 sortSINAoutput
 }
 
-########################################################################################
+#search/assign tax DB
+searchTaxDB() {
+  IN=$1
+  DB=$2
+  OUT=$3
+  $usearch -quiet -usearch_global $IN -db $DB -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
+}
+
 echoWithHeader "Checking for required R packages and installing if missing..."
 #Run R and check for installed packages, install if needed
 R --slave << 'checkRpkgs'
