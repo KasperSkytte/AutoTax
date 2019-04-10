@@ -320,34 +320,37 @@ sortESVsBySizeAndID
 #Align ESVs using SINA with SILVA and SILVA typestrains databases, then trim and sort
 ##############
 #typestrains
-echoWithHeader "Aligning with typestrains database using SINA..."
-sina_align temp/ESVs.fa ESVs_typestrains $typestrains_db $((MAX_THREADS / 10)) $MAX_THREADS
+echoWithHeader "Aligning ESVs with typestrains database using SINA..."
+sinaAlign temp/ESVs.fa ESVs_typestrains $typestrains_db $MAX_THREADS
 
 #SILVA
-echoWithHeader "Aligning with SILVA database using SINA..."
-sina_align temp/ESVs.fa ESVs_SILVA $silva_db $((MAX_THREADS / 2)) $MAX_THREADS
+echoWithHeader "Aligning ESVs with SILVA database using SINA..."
+sinaAlign temp/ESVs.fa ESVs_SILVA $silva_db $MAX_THREADS
 
 #########################################################################################
-#Assign LCA taxonomy 
+#Assign taxonomy of best hit
 ##############
 #typestrains
-$usearch10 -quiet -usearch_global temp/ESVs_typestrains_trimmed_sorted.fa -db $typestrains_udb -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out temp/tax_typestrains.txt -threads $MAX_THREADS
+echoWithHeader "Finding taxonomy of best hit in typestrains database..."
+searchTaxDB temp/ESVs_typestrains_trimmed_sorted.fa $typestrains_udb temp/tax_typestrains.txt
+
 #SILVA
-$usearch10 -quiet -usearch_global temp/ESVs_SILVA_trimmed_sorted.fa -db $silva_udb -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out temp/tax_SILVA.txt -threads $MAX_THREADS
+echoWithHeader "Finding taxonomy of best hit in SILVA database..."
+searchTaxDB temp/ESVs_SILVA_trimmed_sorted.fa $silva_udb temp/tax_SILVA.txt
 
 #########################################################################################
-#Denovo taxonomy 
+#De novo taxonomy 
 ##############
 #assign with identity thresholds based on Yarza et al, 2014
 #using cluster_smallmem (no multithread support) and not cluster_fast to preserve order
 #of input sequences, cluster_fast runs on 1 thread anyways even if set to more than 1
-echoWithHeader "Clustering..."
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -uc temp/SILVA_G-F.txt -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -uc temp/SILVA_F-O.txt -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -uc temp/SILVA_O-C.txt -sortedby other
-$usearch10 -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -uc temp/SILVA_C-P.txt -sortedby other
+echoWithHeader "Generating de novo taxonomy..."
+$usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -sortedby other
+$usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -sortedby other
+$usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -uc temp/SILVA_G-F.txt -sortedby other
+$usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -uc temp/SILVA_F-O.txt -sortedby other
+$usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -uc temp/SILVA_O-C.txt -sortedby other
+$usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -uc temp/SILVA_C-P.txt -sortedby other
 
 #########################################################################################
 echoWithHeader "Merging and reformatting taxonomy..."
