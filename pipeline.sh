@@ -241,9 +241,17 @@ $R --slave << 'checkRpkgs'
       BiocManager::install("Biostrings", update = FALSE, ask = FALSE)
     }
 
+    #doParallel
+    if(!require("doParallel"))
+      install.packages("doParallel")
+    
     #stringr
     if(!require("stringr"))
       install.packages("stringr")
+      
+    #stringi
+    if(!require("stringi"))
+      install.packages("stringi")
 
     #data.table
     if(!require("data.table"))
@@ -271,38 +279,85 @@ generateESVs $DATA
 ##############
 if [ -n "${ESVDB:-}" ]; then
   echoWithHeader "Finding new unique ESVs and adding them to the existing database..."
-  $usearch -usearch_global temp/ESVs.fa -db "$ESVDB" -id 1 \
-    -maxaccepts 0 -maxrejects 0 -strand both -notmatched temp/newESVs.fa \
-    -userout temp/ESVsearch.txt -userfields query+ql+id+target+tl+tseq\
-    -threads $MAX_THREADS -quiet
-  mv temp/ESVs.fa temp/ESVs_old.fa
-  
-  ###### replace shorter ESVs with longer sequences ######
-  #x
-  #y
-  #z
-  
-  #extract ID of the last sequence in the ESV database
-  lastID=$(grep "^>[^\.]*" -o "$ESVDB" | tail -n 1 | grep "[0-9]*$" -o)
-  
-  #rename the new ESVs to continue ID from that of the last sequence in the ESV database
-  $R --slave --args $lastID << 'renameNewESVs'
+  cp temp/ESVs.fa output/newESVs.fa
+  $R --slave --args $ESVDB $MAX_THREADS << 'addnewESVs'
     #extract passed args from shell script
-  	args <- commandArgs(trailingOnly = TRUE)
-  	lastID <- as.integer(args[[1]])
-  	
-  	#load R packages
+    args <- commandArgs(trailingOnly = TRUE)
+    ESVDB <- args[[1]]
+    nProc <- as.integer(args[[2]])
+    
+    #load R packages
     suppressPackageStartupMessages({
       require("Biostrings")
+      require("doParallel")
+      require("stringi")
+      require("data.table")
     })
     
-    newESVs <- Biostrings::readBStringSet("temp/newESVs.fa")
-    names(newESVs) <- paste0("ESV", 1:length(newESVs)+lastID, ".", gsub("^.*\\.", "", names(newESVs)))
-    Biostrings::writeXStringSet(newESVs, "temp/newESVs.fa")
-renameNewESVs
+    doParallel::registerDoParallel(cores = nProc)
+    querySeqs <- Biostrings::readBStringSet(ESVDB)
+    targetSeqs <- Biostrings::readBStringSet("temp/ESVs.fa")
+    tlengths <- Biostrings::width(targetSeqs)
     
-  #append the new ESVs to the end of the ESV database
-  cat "$ESVDB" temp/newESVs.fa > temp/ESVs.fa
+    #Match existing ESVs to the new ESVs to find sequences of equal or shorter length
+    res <- foreach::foreach(
+      query = as.character(querySeqs),
+      name = names(querySeqs),
+      .inorder = TRUE,
+      .combine = "rbind") %dopar% {
+        qlength <- Biostrings::width(query)
+        targetSeqs <- targetSeqs[which(tlengths >= qlength)]
+        hitIDs <- stringi::stri_detect_fixed(pattern = query, str = targetSeqs)
+        nHits <- sum(hitIDs)
+        if(nHits == 0) {
+          return(NULL)
+        } else {
+          targetHits <- targetSeqs[hitIDs]
+          data.table::data.table(queryName = rep(name, times = nHits),
+                                 queryLength = rep(qlength, times = nHits),
+                                 querySeq = rep(as.character(query), times = nHits),
+                                 targetName = names(targetHits),
+                                 targetLength = Biostrings::width(targetHits),
+                                 targetSeq = as.character(targetHits))
+        }
+      }
+    doParallel::stopImplicitCluster()
+    
+    #replace shorter sequences in existing ESV database with new longer ones
+    replaceSeqs <- res[targetLength > queryLength, ]
+    nReplacements <- nrow(replaceSeqs)
+    if(nReplacements > 0) {
+      replaceSeqs[,diff := gsub(querySeq, "...", targetSeq), by = queryName]
+      replaceIDs <- which(names(querySeqs) %in% replaceSeqs[["queryName"]])
+      querySeqs[replaceIDs] <- replaceSeqs[["targetSeq"]]
+      #adjust length annotation in the names of the new ESVs
+      names(querySeqs)[replaceIDs] <- paste0(gsub("\\..*$", ".", names(querySeqs)[replaceIDs]), 
+                                             Biostrings::width(querySeqs[replaceIDs]))
+      
+      #write information about the replacements to a log file
+      replacementLog <- paste0(replaceSeqs[,queryName], 
+                               " has been replaced with ",
+                               replaceSeqs[,targetName], 
+                               ", difference: ",
+                               replaceSeqs[,diff])
+      warning(paste0(nReplacements, 
+                     if(nReplacements > 1) 
+                       " ESVs have" 
+                     else 
+                       " ESV has",
+                     " been replaced by a longer ESV, see the logfile \"./output/replacedESVs.log\" for details"))
+      writeLines(replacementLog,
+                 "./output/replacedESVs.log")
+    }
+    
+    #find new unique sequences that are not in the existing database
+    #and add to the database with new names continuing ID numbering
+    newESVs <- targetSeqs[-which(names(targetSeqs) %in% res[["targetName"]])]
+    lastID <- as.integer(gsub("[^0-9+$]|\\..*$", "", names(querySeqs[length(querySeqs)])))
+    names(newESVs) <- paste0("ESV", 1:length(newESVs)+lastID, ".", gsub("^.*\\.", "", names(newESVs)))
+    ESVs <- c(querySeqs, newESVs)
+    Biostrings::writeXStringSet(ESVs, "temp/ESVs.fa")
+addnewESVs
 fi
 
 #########################################################################################
