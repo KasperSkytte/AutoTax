@@ -587,7 +587,7 @@ if(nTaxa > 0) {
                  " more than one parent, see the logfile \"./output/polyphyletics.log\" for details"), 
           call. = FALSE)
   writeLines(polyTaxaLog,
-             "./output/polyphyletics.log",)
+             "./output/polyphyletics.log")
 }
 
 #fix them
