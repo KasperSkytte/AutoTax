@@ -192,7 +192,7 @@ while getopts ":hi:d:t:" opt; do
       echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
       echo "  -d    FASTA file with previously processed ESV sequences."
       echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
-      echo "  -t    Number of threads to use. Default is all available cores except 2."
+      echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
       exit 1
       ;;
     i )
