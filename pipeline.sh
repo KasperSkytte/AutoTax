@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.2"
+VERSION="1.2.2"
 ##### requirements (tested with) #####
 # SILVA database files (SSURef+typestrains) in arb format (use latest)
 # awk+grep+cat (included in most linux distributions)
