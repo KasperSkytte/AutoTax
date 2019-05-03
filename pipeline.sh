@@ -22,10 +22,10 @@ export Rscript=$(which Rscript)
 # Paths to SILVA nr99 database, and typestrains database extracted from there. 
 # .udb files have to be created first from fasta files using for example:
 # $usearch -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output $silva_udb
-silva_db="../refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
-silva_udb="../refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
-typestrains_db="../refdatabases/SILVA132-typestrains.arb"
-typestrains_udb="../refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
+silva_db="refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
+silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
+typestrains_db="refdatabases/SILVA132-typestrains.arb"
+typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
 #de novo taxonomy prefix. Results in fx "prefix_g_123" for a de novo Genus based on ESV 123
 denovo_prefix="midas"
