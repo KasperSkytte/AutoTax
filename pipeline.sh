@@ -99,21 +99,39 @@ generateESVs() {
   echoWithHeader "  - Orienting sequences..."
   $usearch -quiet -orient temp/preESV_wsize.fa -db $silva_udb -fastaout temp/preESV_wsize_oriented.fa -tabbedout temp/preESV_wsize_oriented.txt -threads 1
   
-  echoWithHeader "  - Clustering sequences and finding representative sequences (cluster centroids)..."
-  $usearch -quiet -cluster_fast temp/preESV_wsize_oriented.fa -sizein -sizeout -sort length -id 1 -maxrejects 0 -centroids temp/ESVs_wsize.fa -uc temp/preESVs_redundancy.uc -threads 1
-  
+  echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
   #The output centroids will be ordered by size (coverage), but sequences with identical size
   #will be ordered randomly between runs. The below R script first orders by size (descending) 
   #and then by ESV ID (ascending) when sizes are identical. 
   #Rename with new ID's to "ESV(ID).(length)" fx: "ESV1.1413"
-  $R --slave << 'sortESVsBySizeAndID'
+  $R --slave --args "$MAX_THREADS" << 'findLongestSortESVsBySizeAndID'
+    #extract passed args from shell script
+    args <- commandArgs(trailingOnly = TRUE)
+    nProc <- as.integer(args[[1]])
+    
     #load R packages
     suppressPackageStartupMessages({
       require("Biostrings")
+      require("doParallel")
     })
     
     #read sequences
-    ESVs <- Biostrings::readBStringSet("temp/ESVs_wsize.fa")
+    ESVs <- Biostrings::readBStringSet("temp/preESV_wsize_oriented.fa")
+    seqs_chr <- as.character(ESVs)
+    
+    #Find the longest of representative ESVs and remove shorter, but otherwise identical ESVs
+    registerDoParallel(cores = nProc)
+    removeIDs <- foreach(
+      i = seq_along(seqs_chr),
+      .combine = c
+    ) %dopar% {
+      if(any(stringi::stri_detect_fixed(str = seqs_chr[-i], pattern = seqs_chr[i])))
+        return(i)
+    }
+    stopImplicitCluster()
+    if(!is.null(removeIDs))
+      ESVs <- ESVs[-removeIDs]
+    
     #extract names
     headernames <- names(ESVs)
     #make a data frame with the FASTA header split in ID and size
@@ -130,7 +148,7 @@ generateESVs() {
     #rename the sequences and write out
     names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", names_ordered[["length"]])
     Biostrings::writeXStringSet(ESVs, file = "temp/ESVs.fa")
-sortESVsBySizeAndID
+findLongestSortESVsBySizeAndID
 }
 
 #align and trim sequences with SINA
