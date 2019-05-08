@@ -594,20 +594,20 @@ write_tax(denovo_tax,
           file = "./output/tax_denovo.csv")
 
 #merge SILVA+typestrains+denovo taxonomy
-#make data.tables
-ESV_slv_typestr_tax <- data.table(ESV_slv_typestr_tax, key = "ESV")
-denovo_tax <- data.table(denovo_tax, key = "ESV")
-
 #merge by ESV
-merged_tax <- ESV_slv_typestr_tax[denovo_tax]
+merged_tax <- left_join(x = ESV_slv_typestr_tax,
+                        y = denovo_tax,
+                        by = "ESV",
+                        suffix = c("", ".denovo"))
 
 #fill out empty entries in typestrains+SILVA with denovo taxonomy
-merged_tax[which(Species %in% c(NA, "")), Species:=i.Species]
-merged_tax[which(Genus %in% c(NA, "")), Genus:=i.Genus]
-merged_tax[which(Family %in% c(NA, "")), Family:=i.Family]
-merged_tax[which(Order %in% c(NA, "")), Order:=i.Order]
-merged_tax[which(Class %in% c(NA, "")), Class:=i.Class]
-merged_tax[which(Phylum %in% c(NA, "")), Phylum:=i.Phylum]
+merged_tax <- data.table(merged_tax)
+merged_tax[which(Species %in% c(NA, "")), Species:=Species.denovo]
+merged_tax[which(Genus %in% c(NA, "")), Genus:=Genus.denovo]
+merged_tax[which(Family %in% c(NA, "")), Family:=Family.denovo]
+merged_tax[which(Order %in% c(NA, "")), Order:=Order.denovo]
+merged_tax[which(Class %in% c(NA, "")), Class:=Class.denovo]
+merged_tax[which(Phylum %in% c(NA, "")), Phylum:=Phylum.denovo]
 
 #order by ESV ID
 merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]", "", ESV))), 1:8]
