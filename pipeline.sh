@@ -1,11 +1,12 @@
 #!/bin/bash
-VERSION="1.2.4"
+VERSION="1.2.5"
 ##### requirements (tested with) #####
-# SILVA database files (SSURef+typestrains) in arb format (use latest)
+# SILVA database files (both SSURef and typestrains) in arb format (use latest)
 # awk+grep+cat (included in most linux distributions)
-# usearch (version10)
+# GNU parallel (version 20161222)
+# usearch (version 11)
 # SINA (version 1.6.0)
-# R version (version 3.5.x)
+# R (version 3.6)
 #   Note: The required R packages will install automatically, but Bioconductor can cause trouble
 #   if it desides to update base R packages like MASS, mgcv, lattice and others.
 #   If so run R as root and run: install.packages("BiocManager"); BiocManager::install()
@@ -15,7 +16,7 @@ VERSION="1.2.4"
 #################################
 #paths to executables
 export sina=$(which sina)
-export usearch=$(which usearch10)
+export usearch=$(which usearch11)
 export R=$(which R)
 export Rscript=$(which Rscript)
 
@@ -27,7 +28,7 @@ silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
 typestrains_db="refdatabases/SILVA132-typestrains.arb"
 typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
-#de novo taxonomy prefix. Results in fx "prefix_g_123" for a de novo Genus based on ESV 123
+#de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on ESV number 123
 denovo_prefix="midas"
 
 ##################################
