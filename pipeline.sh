@@ -411,12 +411,18 @@ searchTaxDB temp/ESVs_SILVA_trimmed_sorted.fa $silva_udb temp/tax_SILVA.txt
 #using cluster_smallmem (no multithread support) and not cluster_fast to preserve order
 #of input sequences, cluster_fast runs on 1 thread anyways even if set to more than 1
 echoWithHeader "Generating de novo taxonomy..."
+#write commands to a file
+cat << 'denovoClusteringCmds' > temp/denovoClusteringCmds.txt
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -uc temp/SILVA_G-F.txt -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -uc temp/SILVA_F-O.txt -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -uc temp/SILVA_O-C.txt -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -uc temp/SILVA_C-P.txt -sortedby other
+denovoClusteringCmds
+#run each line as 1 job per CPU simultaneously
+parallel --jobs $MAX_THREADS < temp/denovoClusteringCmds.txt > /dev/null 2>&1
+rm temp/denovoClusteringCmds.txt
 
 #########################################################################################
 echoWithHeader "Merging and reformatting taxonomy..."
