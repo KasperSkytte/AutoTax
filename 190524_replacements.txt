@@ -1,0 +1,119 @@
+old	new	Support	PMID
+midas_g_117	midas2_90	Genus support (>94.5% id) for 41/51 MiDAS2 seqs in MiDAS3 and 24/24 MiDAS3 seq in MiDAS2	28365734
+midas_g_137	midas2_030B12	Genus support (>94.5% id) for 19/19 MiDAS2 seqs in MiDAS3 and 20/23 MiDAS3 seq in MiDAS2	28365734
+midas_g_5221	midas2_1-2B-06	Genus support (>94.5% id) for 3/4 MiDAS2 seqs in MiDAS3 and 4/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_33	midas2_188up	Genus support (>94.5% id) for 70/71 MiDAS2 seqs in MiDAS3 and 46/55 MiDAS3 seq in MiDAS2	28365734
+midas_g_100	midas2_35-7A	Genus support (>94.5% id) for 107/108 MiDAS2 seqs in MiDAS3 and 31/31 MiDAS3 seq in MiDAS2	28365734
+midas_g_1356	midas2_A21b	Genus support (>94.5% id) for 20/27 MiDAS2 seqs in MiDAS3 and 7/12 MiDAS3 seq in MiDAS2	28365734
+midas_g_467	midas2_B1-K2-141	Genus support (>94.5% id) for 9/13 MiDAS2 seqs in MiDAS3 and 16/16 MiDAS3 seq in MiDAS2	28365734
+midas_g_1181	midas2_Btb7_22	Genus support (>94.5% id) for 12/12 MiDAS2 seqs in MiDAS3 and 22/22 MiDAS3 seq in MiDAS2	28365734
+midas_g_406	midas2_C1711WL	Genus support (>94.5% id) for 20/24 MiDAS2 seqs in MiDAS3 and 6/6 MiDAS3 seq in MiDAS2	28365734
+midas_g_1	Ca_Amarolinea	Genus support (>94.5% id) for 1/2 MiDAS2 seqs in MiDAS3 and 646/646 MiDAS3 seq in MiDAS2	28365734
+midas_g_2721	Ca_Amarolinea	Genus support (>94.5% id) for 1/2 MiDAS2 seqs in MiDAS3 and 1/1 MiDAS3 seq in MiDAS2	28365734
+midas_g_108	Ca_Defluviifilum	Genus support (>94.5% id) for 6/41 MiDAS2 seqs in MiDAS3 and 22/22 MiDAS3 seq in MiDAS2	28365734
+midas_g_1179	Ca_Defluviifilum	Genus support (>94.5% id) for 1/41 MiDAS2 seqs in MiDAS3 and 12/12 MiDAS3 seq in MiDAS2	28365734
+midas_g_174	Ca_Defluviifilum	Genus support (>94.5% id) for 3/41 MiDAS2 seqs in MiDAS3 and 46/46 MiDAS3 seq in MiDAS2	28365734
+midas_g_7763	Ca_Defluviifilum	Genus support (>94.5% id) for 11/41 MiDAS2 seqs in MiDAS3 and 4/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_16	Ca_Epiflobacter	Genus support (>94.5% id) for 70/82 MiDAS2 seqs in MiDAS3 and 184/184 MiDAS3 seq in MiDAS2	28365734
+midas_g_1485	Ca_Obscuribacter	Genus support (>94.5% id) for 10/11 MiDAS2 seqs in MiDAS3 and 3/3 MiDAS3 seq in MiDAS2	28365734
+midas_g_429	Ca_Sarcinithrix	Genus support (>94.5% id) for 11/13 MiDAS2 seqs in MiDAS3 and 27/27 MiDAS3 seq in MiDAS2	28365734
+midas_g_488	Ca_Villigracilis	Genus support (>94.5% id) for 223/260 MiDAS2 seqs in MiDAS3 and 18/18 MiDAS3 seq in MiDAS2	28365734
+midas_g_277	midas2_CCM19a	Genus support (>94.5% id) for 17/20 MiDAS2 seqs in MiDAS3 and 12/12 MiDAS3 seq in MiDAS2	28365734
+midas_g_124	midas2_CD04	Genus support (>94.5% id) for 2/2 MiDAS2 seqs in MiDAS3 and 16/16 MiDAS3 seq in MiDAS2	28365734
+midas_g_156	midas2_CD04	Genus support (>94.5% id) for 6/6 MiDAS2 seqs in MiDAS3 and 24/24 MiDAS3 seq in MiDAS2	28365734
+midas_g_1525	midas2_CYCU-0281	Genus support (>94.5% id) for 3/74 MiDAS2 seqs in MiDAS3 and 9/9 MiDAS3 seq in MiDAS2	28365734
+midas_g_17434	midas2_CYCU-0281	Genus support (>94.5% id) for 11/74 MiDAS2 seqs in MiDAS3 and 1/1 MiDAS3 seq in MiDAS2	28365734
+midas_g_23	midas2_CYCU-0281	Genus support (>94.5% id) for 42/74 MiDAS2 seqs in MiDAS3 and 264/264 MiDAS3 seq in MiDAS2	28365734
+midas_g_360	midas2_CYCU-0281	Genus support (>94.5% id) for 5/74 MiDAS2 seqs in MiDAS3 and 16/16 MiDAS3 seq in MiDAS2	28365734
+midas_g_4198	midas2_Dolo_07	Genus support (>94.5% id) for 6/10 MiDAS2 seqs in MiDAS3 and 4/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_15	midas2_G35_D8	Genus support (>94.5% id) for 2/11 MiDAS2 seqs in MiDAS3 and 163/163 MiDAS3 seq in MiDAS2	28365734
+midas_g_545	midas2_G35_D8	Genus support (>94.5% id) for 6/11 MiDAS2 seqs in MiDAS3 and 29/29 MiDAS3 seq in MiDAS2	28365734
+midas_g_1069	midas2_H106	Genus support (>94.5% id) for 15/17 MiDAS2 seqs in MiDAS3 and 6/6 MiDAS3 seq in MiDAS2	28365734
+midas_g_8326	midas2_H1-814	Genus support (>94.5% id) for 6/6 MiDAS2 seqs in MiDAS3 and 6/6 MiDAS3 seq in MiDAS2	28365734
+midas_g_55	midas2_HS9-30	Genus support (>94.5% id) for 5/10 MiDAS2 seqs in MiDAS3 and 35/35 MiDAS3 seq in MiDAS2	28365734
+midas_g_78	midas2_JG35-K1-AG5	Genus support (>94.5% id) for 21/25 MiDAS2 seqs in MiDAS3 and 27/27 MiDAS3 seq in MiDAS2	28365734
+midas_g_2016	midas2_K2-30-37	Genus support (>94.5% id) for 2/19 MiDAS2 seqs in MiDAS3 and 3/3 MiDAS3 seq in MiDAS2	28365734
+midas_g_31	midas2_K2-30-37	Genus support (>94.5% id) for 15/19 MiDAS2 seqs in MiDAS3 and 130/130 MiDAS3 seq in MiDAS2	28365734
+midas_g_53	midas2_K2-78	Genus support (>94.5% id) for 18/20 MiDAS2 seqs in MiDAS3 and 42/42 MiDAS3 seq in MiDAS2	28365734
+midas_g_12	midas2_KD1-22	Genus support (>94.5% id) for 12/12 MiDAS2 seqs in MiDAS3 and 172/172 MiDAS3 seq in MiDAS2	28365734
+midas_g_490	midas2_LF_BF07	Genus support (>94.5% id) for 26/36 MiDAS2 seqs in MiDAS3 and 9/9 MiDAS3 seq in MiDAS2	28365734
+midas_g_782	midas2_M05-Pitesti	Genus support (>94.5% id) for 10/10 MiDAS2 seqs in MiDAS3 and 9/9 MiDAS3 seq in MiDAS2	28365734
+midas_g_2693	midas2_Meganema	Genus support (>94.5% id) for 9/47 MiDAS2 seqs in MiDAS3 and 13/13 MiDAS3 seq in MiDAS2	28365734
+midas_g_1091	midas2_ML817J-10	Genus support (>94.5% id) for 10/19 MiDAS2 seqs in MiDAS3 and 2/2 MiDAS3 seq in MiDAS2	28365734
+midas_g_280	midas2_ML817J-10	Genus support (>94.5% id) for 2/3 MiDAS2 seqs in MiDAS3 and 5/5 MiDAS3 seq in MiDAS2	28365734
+midas_g_4788	midas2_ML817J-10	Genus support (>94.5% id) for 1/1 MiDAS2 seqs in MiDAS3 and 3/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_1065	midas2_mle1-27	Genus support (>94.5% id) for 1/11 MiDAS2 seqs in MiDAS3 and 7/7 MiDAS3 seq in MiDAS2	28365734
+midas_g_1937	midas2_mle1-27	Genus support (>94.5% id) for 2/11 MiDAS2 seqs in MiDAS3 and 3/3 MiDAS3 seq in MiDAS2	28365734
+midas_g_3612	midas2_mle1-27	Genus support (>94.5% id) for 1/11 MiDAS2 seqs in MiDAS3 and 6/6 MiDAS3 seq in MiDAS2	28365734
+midas_g_762	midas2_mle1-48	Genus support (>94.5% id) for 15/17 MiDAS2 seqs in MiDAS3 and 13/13 MiDAS3 seq in MiDAS2	28365734
+midas_g_1814	midas2_MRE50b23	Genus support (>94.5% id) for 4/14 MiDAS2 seqs in MiDAS3 and 11/11 MiDAS3 seq in MiDAS2	28365734
+midas_g_2320	midas2_MRE50b23	Genus support (>94.5% id) for 5/14 MiDAS2 seqs in MiDAS3 and 2/2 MiDAS3 seq in MiDAS2	28365734
+midas_g_579	midas2_MRE50b23	Genus support (>94.5% id) for 5/5 MiDAS2 seqs in MiDAS3 and 32/32 MiDAS3 seq in MiDAS2	28365734
+midas_g_188	midas2_oca15	Genus support (>94.5% id) for 33/34 MiDAS2 seqs in MiDAS3 and 51/51 MiDAS3 seq in MiDAS2	28365734
+midas_g_127	midas2_P58	Genus support (>94.5% id) for 22/29 MiDAS2 seqs in MiDAS3 and 42/42 MiDAS3 seq in MiDAS2	28365734
+midas_g_238	midas2_PHOS-HE28	Genus support (>94.5% id) for 20/56 MiDAS2 seqs in MiDAS3 and 38/38 MiDAS3 seq in MiDAS2	28365734
+midas_g_3363	midas2_PHOS-HE28	Genus support (>94.5% id) for 3/56 MiDAS2 seqs in MiDAS3 and 2/2 MiDAS3 seq in MiDAS2	28365734
+midas_g_394	midas2_PHOS-HE28	Genus support (>94.5% id) for 9/56 MiDAS2 seqs in MiDAS3 and 29/29 MiDAS3 seq in MiDAS2	28365734
+midas_g_444	midas2_PHOS-HE28	Genus support (>94.5% id) for 9/56 MiDAS2 seqs in MiDAS3 and 4/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_896	midas2_PHOS-HE28	Genus support (>94.5% id) for 10/56 MiDAS2 seqs in MiDAS3 and 28/28 MiDAS3 seq in MiDAS2	28365734
+midas_g_20	midas2_QEDR3BF09	Genus support (>94.5% id) for 4/33 MiDAS2 seqs in MiDAS3 and 138/138 MiDAS3 seq in MiDAS2	28365734
+midas_g_335	midas2_QEDR3BF09	Genus support (>94.5% id) for 1/33 MiDAS2 seqs in MiDAS3 and 13/13 MiDAS3 seq in MiDAS2	28365734
+midas_g_3717	midas2_QEDR3BF09	Genus support (>94.5% id) for 3/33 MiDAS2 seqs in MiDAS3 and 11/11 MiDAS3 seq in MiDAS2	28365734
+midas_g_57	midas2_QEDR3BF09	Genus support (>94.5% id) for 3/33 MiDAS2 seqs in MiDAS3 and 26/26 MiDAS3 seq in MiDAS2	28365734
+midas_g_66	midas2_QEDR3BF09	Genus support (>94.5% id) for 8/33 MiDAS2 seqs in MiDAS3 and 62/62 MiDAS3 seq in MiDAS2	28365734
+midas_g_835	midas2_QEDR3BF09	Genus support (>94.5% id) for 4/33 MiDAS2 seqs in MiDAS3 and 6/6 MiDAS3 seq in MiDAS2	28365734
+midas_g_72	midas2_QEEB1BB10	Genus support (>94.5% id) for 14/16 MiDAS2 seqs in MiDAS3 and 119/119 MiDAS3 seq in MiDAS2	28365734
+midas_g_1001	midas2_rJ14	Genus support (>94.5% id) for 38/39 MiDAS2 seqs in MiDAS3 and 13/13 MiDAS3 seq in MiDAS2	28365734
+midas_g_102	midas2_rJ14	Genus support (>94.5% id) for 1/39 MiDAS2 seqs in MiDAS3 and 3/3 MiDAS3 seq in MiDAS2	28365734
+midas_g_450	midas2_SBRFL126	Genus support (>94.5% id) for 24/25 MiDAS2 seqs in MiDAS3 and 10/11 MiDAS3 seq in MiDAS2	28365734
+midas_g_19	midas2_SHA-94	Genus support (>94.5% id) for 52/56 MiDAS2 seqs in MiDAS3 and 169/171 MiDAS3 seq in MiDAS2	28365734
+midas_g_819	midas2_Skagen138	Genus support (>94.5% id) for 10/11 MiDAS2 seqs in MiDAS3 and 7/7 MiDAS3 seq in MiDAS2	28365734
+midas_g_81	midas2_spb280	Genus support (>94.5% id) for 72/80 MiDAS2 seqs in MiDAS3 and 46/46 MiDAS3 seq in MiDAS2	28365734
+midas_g_521	midas2_T1-5	Genus support (>94.5% id) for 7/7 MiDAS2 seqs in MiDAS3 and 16/16 MiDAS3 seq in MiDAS2	28365734
+midas_g_13557	midas2_T78	Genus support (>94.5% id) for 2/661 MiDAS2 seqs in MiDAS3 and 1/1 MiDAS3 seq in MiDAS2	28365734
+midas_g_162	midas2_T78	Genus support (>94.5% id) for 314/661 MiDAS2 seqs in MiDAS3 and 59/59 MiDAS3 seq in MiDAS2	28365734
+midas_g_3147	midas2_T78	Genus support (>94.5% id) for 10/661 MiDAS2 seqs in MiDAS3 and 4/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_495	midas2_T78	Genus support (>94.5% id) for 248/661 MiDAS2 seqs in MiDAS3 and 51/51 MiDAS3 seq in MiDAS2	28365734
+midas_g_837	midas2_T78	Genus support (>94.5% id) for 26/661 MiDAS2 seqs in MiDAS3 and 5/5 MiDAS3 seq in MiDAS2	28365734
+midas_g_423	midas2_TSI14	Genus support (>94.5% id) for 9/20 MiDAS2 seqs in MiDAS3 and 22/23 MiDAS3 seq in MiDAS2	28365734
+midas_g_4288	midas2_WCHB1-50	Genus support (>94.5% id) for 13/28 MiDAS2 seqs in MiDAS3 and 5/5 MiDAS3 seq in MiDAS2	28365734
+midas_g_4377	midas2_WCHB1-50	Genus support (>94.5% id) for 1/1 MiDAS2 seqs in MiDAS3 and 4/4 MiDAS3 seq in MiDAS2	28365734
+midas_g_74	midas2_WCHB1-50	Genus support (>94.5% id) for 1/1 MiDAS2 seqs in MiDAS3 and 35/35 MiDAS3 seq in MiDAS2	28365734
+midas_g_51	midas2_sbr-gs28	Genus support (>94.5% id) for 3/3 MiDAS2 seqs in MiDAS3 and 6/10 MiDAS3 seq in MiDAS2	28365734
+midas_g_5	Tetrasphaera	Manual curation	
+midas_s_2407	Ca_Amarolinea_aalborgensis	Genome avaliable	30146409
+Acetothermia	Ca_Bipolaricaulota	Genome avaliable	29884828
+Acetothermiia	Ca_Bipolaricaulia	Genome avaliable	29884828
+midas_o_21057	Ca_Bipolaricaulales	Genome avaliable	29884828
+midas_f_21057	Ca_Bipolaricaulaceae	Genome avaliable	29884828
+midas_g_21057	Ca_Bipolaricaulis	Genome avaliable	29884828
+midas_s_21057	Ca_Bipolaricaulis anaerobius	Genome avaliable	29884828
+ADurb.Bin120	Ca_Brevefilum	Genome avaliable	28690595
+midas_s_246	Ca_Brevefilum_fermentans	Genome avaliable	28690595
+midas_s_2277	Ca_Propionivibrio_aalborgensis	Genome avaliable	27458436
+midas_s_1990	Ca_Accummulibacter_aalborgensis	Genome avaliable	27458436
+midas_s_759	Ca_Saccharimonas_aalborgensis	Genome avaliable	23707974
+Aegiribacteria	Ca_Fermentibacterota	First published genome	27058503
+midas_c_18	Ca_Fermentibacteria	Genome avaliable	27058503
+midas_o_18	Ca_Fermentibacterales	Genome avaliable	27058503
+midas_f_18	Ca_Fermentibacteraceae	Genome avaliable	27058503
+midas_g_18	Ca_Fermentibacter	Genome avaliable	27058503
+midas_s_18	Ca_Fermentibacter_daniensis	Genome avaliable	27058503
+midas_f_181	Ca_Promineofilaceae	Genome avaliable	26905629
+midas_g_181	Ca_Promineofilum	Genome avaliable	26905629
+midas_s_682	Ca_Promineofilum_breve	Genome avaliable	26905629
+midas_s_21062	Nitrospira_inopinata	Genome avaliable	26610024
+midas_s_223	Nitrospira_nitrosa	Genome avaliable	26610025
+midas_o_24	Rhodobacterales	The genus was renamed	26203335
+midas_f_58	Rhodobacteraceae	The genus was renamed	26203335
+Meganema	Neomegalonema	The genus was renamed	26203335
+Meganema_perideroedes	Neomegalonema_perideroedes	The genus was renamed	26203335
+midas_s_110	Ca_Competibacter_denitrificans	Genome avaliable	24173461
+midas_s_825	Ca_Contendobacter_odensis	Genome avaliable	24173461
+midas_s_2	Ca_Microthrix_parvicella	Genome avaliable	23446830
+midas_s_1038	Ca_Defluviicoccus_seviourii	Genome avaliable	30476038
+midas_s_21043	Ca_Brocadia_caroliniensis	Genome avaliable	28088723
+midas_s_21042	Ca_Brocadia_sapporoensis	Genome avaliable	27932661
+midas_s_21047	Ca_Brocadia_sinica	Genome avaliable	25883286
+midas_s_49	Nitrospira_defluvii	Genome avaliable	20624973
+Ca_Nitrotoga	Nitrotoga	Has been isolated	29991589

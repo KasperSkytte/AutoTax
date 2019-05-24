@@ -667,15 +667,10 @@ polyTaxaLog <- unlist(sapply(polyTaxa, function(x) {
 }), use.names = FALSE)
 nTaxa <- length(polyTaxaLog)
 
-#issue a warning if one or more taxa have more than one parent, write out logfile
+#issue a warning if one or more taxa had more than one parent, write out logfile
 if(nTaxa > 0) {
   warning(paste0(nTaxa, 
-                 " taxa ",
-                 if(nTaxa > 1)
-                   "have" 
-                 else 
-                   "has",
-                 " more than one parent, see the logfile \"./output/polyphyletics.log\" for details"), 
+                 " taxa had more than one parent, see the logfile \"./output/polyphyletics.log\" for details"), 
           call. = FALSE)
   writeLines(polyTaxaLog,
              "./output/polyphyletics.log")
