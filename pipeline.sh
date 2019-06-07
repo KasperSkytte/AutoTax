@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.2.5"
+VERSION="1.2.6"
 ##### requirements (tested with) #####
 # SILVA database files (both SSURef and typestrains) in arb format (use latest)
 # awk+grep+cat (included in most linux distributions)
@@ -479,7 +479,8 @@ read_clean_tax <- function(input) {
   tax[,-c(1,2)] <- lapply(tax[,-c(1,2)], function(x) {
     x[grepl("uncultured|unknown|unidentified|incertae sedis|metagenome|\\bbacterium\\b|\\bpossible\\b", tolower(x))] <- ""
     x <- stringr::str_replace_all(x,
-                                  c("candidatus" = "Candidatus",
+                                  c("candidatus" = "Ca",
+                                    "Candidatus" = "Ca",
                                     " " = "_",
                                     #keep only letters, numbers and ".", "-", and "_"
                                     "[^[:alnum:]_\\.\\-]" = ""
