@@ -29,7 +29,7 @@ typestrains_db="refdatabases/SILVA132-typestrains.arb"
 typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
 
 #de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on ESV number 123
-denovo_prefix="denovo"
+denovo_prefix="midas"
 
 ##################################
 ########## end of setup ##########
@@ -94,7 +94,7 @@ generateESVs() {
   # will be scrambled and inconsistent between individual runs. It doesn't use more than one 
   # thread anyways, so no speedup will be gained.
   echoWithHeader "  - Finding unique sequences occuring at least 2 times..."
-  $usearch -fastx_uniques $1 -quiet -fastaout temp/preESV_wsize.fa -sizeout -minuniquesize 1 -strand both -relabel preESV -threads 1
+  $usearch -fastx_uniques $1 -quiet -fastaout temp/preESV_wsize.fa -sizeout -minuniquesize 2 -strand both -relabel preESV -threads 1
   
   # Orient to the same strand
   echoWithHeader "  - Orienting sequences..."
