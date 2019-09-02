@@ -188,7 +188,7 @@ searchTaxDB() {
   IN=$1
   DB=$2
   OUT=$3
-  $usearch -quiet -usearch_global $IN -db $DB -maxaccepts 1 -maxrejects 0 -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
+  $usearch -usearch_global $IN -db $DB -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
 }
 
 ################################## end of functions ##################################
