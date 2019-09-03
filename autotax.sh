@@ -130,7 +130,8 @@ generateESVs() {
     registerDoParallel(cores = nProc)
     removeIDs <- foreach(
       i = seq_along(seqs_chr),
-      .combine = c
+      .combine = c,
+      .inorder = TRUE,
     ) %dopar% {
       if(any(stringi::stri_detect_fixed(str = seqs_chr[-i], pattern = seqs_chr[i])))
         return(i)
