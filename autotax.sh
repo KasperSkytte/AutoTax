@@ -133,7 +133,7 @@ generateESVs() {
       .combine = c,
       .inorder = TRUE
     ) %dopar% {
-      if(any(stringi::stri_detect_fixed(str = seqs_chr[-i], pattern = seqs_chr[i])))
+      if(any(stringi::stri_detect_fixed(str = seqs_chr[-c(1:i)], pattern = seqs_chr[i])))
         return(i)
     }
     stopImplicitCluster()
