@@ -717,7 +717,7 @@ $Rscript --vanilla temp/Rscript.R $denovo_prefix
 #########################################################################################
 #Done, clean up
 ##############
-mv temp/ESVs.fa output/ESVs.fa
+cp temp/ESVs.fa output/ESVs.fa
 
 #uncomment the below to remove temporary files
 #echoWithHeader "Removing temporary files and cleaning up..."
