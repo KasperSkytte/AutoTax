@@ -512,7 +512,7 @@ read_sort_mappings <- function(path, colnames) {
   #if * in V10, replace with V9
   x <- x[,V10 := ifelse(V10 == "*", V9, V10)]
   #order by ESV ID
-  x <- x[order(as.integer(gsub("[^0-9+$]", "", V9))),]
+  x <- x[order(as.integer(gsub("[^0-9+$]|\\..*$", "", V9))),]
   colnames(x) <- colnames
   invisible(x)
 }
@@ -604,7 +604,7 @@ merged_tax[which(Class %in% c(NA, "")), Class:=Class.denovo]
 merged_tax[which(Phylum %in% c(NA, "")), Phylum:=Phylum.denovo]
 
 #order by ESV ID
-merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]", "", ESV))), 1:8]
+merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]|\\..*$", "", ESV))), 1:8]
 
 ##### search and replace according to a replacement file #####
 replacement_file <- list.files(".",
