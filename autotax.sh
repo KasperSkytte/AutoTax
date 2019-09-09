@@ -344,7 +344,7 @@ if [ -n "${ESVDB:-}" ]; then
     if(nrow(replaceSeqs) > 0) {
       #there may be more than one match of shorter sequences to longer ones, 
       #if so use the first of the longer ESV (lowest number, thus higher coverage)
-      replaceSeqs <- replaceSeqs[, .SD[1,], by = queryName]
+      replaceSeqs <- replaceSeqs[, .SD[1], by = queryName]
       #make a column with the exact differences between the identical sequences
       replaceSeqs[,diff := stringi::stri_replace_all_fixed(str = targetSeq, 
                                                            pattern = querySeq, 
@@ -373,13 +373,12 @@ if [ -n "${ESVDB:-}" ]; then
               call. = FALSE)
       writeLines(replacementLog,
                  "./output/replacedESVs.log")
-    }
+    } else if(nrow(replaceSeqs) == 0)
+      warning("No sequences have been replaced", call. = FALSE)
   }
-
-	#add the new sequences to the database with new names continuing ID numbering
-	lastID <- as.integer(gsub("[^0-9+$]|\\..*$", "", names(querySeqs[length(querySeqs)])))
-	names(newESVs) <- paste0("ESV", 1:length(newESVs)+lastID, ".", gsub("^.*\\.", "", names(newESVs)))
+  #add the new sequences to the database with new names continuing ID numbering
 	ESVs <- c(querySeqs, newESVs)
+	names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", lengths(ESVs))
 	Biostrings::writeXStringSet(ESVs, "temp/ESVs.fa")
 addnewESVs
 fi
