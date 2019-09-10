@@ -1,0 +1,70 @@
+---
+title: "Comparision of MiDAS2 and MiDAS3 genera"
+author: "MD"
+date: "1900905"
+---
+
+## R-packages
+```{r, eval=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+library(plyr)
+library(tidyverse)
+library(broom)
+library(scales)
+```
+## Set working directory
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+setwd("midas-taxonomy/replacements/midas2")
+```
+
+## Import data
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+# Load taxonomy data for MiDAS2 sequences
+MiDAS2_metadata <- read.delim("MiDAS2_subset_metadata.nds",
+                      sep = "\t",
+                      header = FALSE,
+                      quote = "\"",
+                      fill = TRUE,
+                      check.names = FALSE,
+                      stringsAsFactors = FALSE) %>%
+  select(1,3) %>%
+  rename(MiDAS2 =V1, MiDAS2_tax = V3) %>%
+  separate(MiDAS2_tax, sep=";", into = c("MiDAS2_Domain", "MiDAS2_Phylum", "MiDAS2_Class","MiDAS2_Order", "MiDAS2_Family", "MiDAS2_genus","MiDAS2_species")) %>%
+  mutate(MiDAS2_genus=str_replace_all(MiDAS2_genus,pattern = c("Candidatus " = "Ca_",
+                                                                   "Sarcinathrix" = "Sarcinithrix"))) %>%
+  mutate(MiDAS2_genus=str_c("midas2_",MiDAS2_genus))
+
+#Load Usearch_local mapping of MiDAS3_beta vs MiDAS2 and merge with MiDAS2 taxonomy
+MiDAS3_vs_MiDAS2 <- read.delim("3v2_ESV.b6",
+                      sep = "\t",
+                      header = FALSE,
+                      quote = "\"",
+                      fill = TRUE,
+                      check.names = FALSE,
+                      stringsAsFactors = FALSE) %>%
+      rename(MiDAS3 = V1, MiDAS2 = V2, PercentID = V3, Align_len = V4, Mismatch = V5, Gap_open = V6, MiDAS3_start = V7, MiDAS3_end = V8, MiDAS2_start = V9, MiDAS2_end = V10, Eval =V11, BitScore = V12) %>%
+  mutate(MiDAS2=gsub(" [A-z,0-9]*", "", MiDAS2)) %>%
+  separate(MiDAS3, sep=";", into=c("MiDAS3","MiDAS3_tax")) %>%
+  separate(MiDAS3_tax, sep=",", into = c("MiDAS3_Domain", "MiDAS3_Phylum", "MiDAS3_Class","MiDAS3_Order", "MiDAS3_Family", "MiDAS3_genus","MiDAS3_species")) %>%
+  mutate(MiDAS3_genus=str_replace(MiDAS3_genus,"g:","")) %>%
+  left_join(MiDAS2_metadata, "MiDAS2")
+
+MiDAS3_vs_MiDAS2_sum1 <- MiDAS3_vs_MiDAS2 %>%
+  group_by(MiDAS3_genus, MiDAS2_genus) %>%
+  summarize("MiDAS3_genus_support"=(sum(PercentID>=94.5)))
+
+MiDAS3_vs_MiDAS2_sum2 <- MiDAS3_vs_MiDAS2 %>%
+  group_by(MiDAS3_genus) %>%
+  summarize("MiDAS3_genus_counts"=n())
+
+MiDAS3_vs_MiDAS2_summary <- MiDAS3_vs_MiDAS2_sum1 %>%
+  left_join(MiDAS3_vs_MiDAS2_sum2, "MiDAS3_genus") %>%
+  mutate("Percent_with_genus_support"=MiDAS3_genus_support/MiDAS3_genus_counts*100) %>%
+  filter(!is.na(MiDAS2_genus), Percent_with_genus_support>50)
+
+Export <- MiDAS3_vs_MiDAS2_summary %>%
+  group_by(MiDAS3_genus, MiDAS2_genus) %>%
+  summarize(support=str_c("Genus support (>94.5% id) for ",
+                          MiDAS3_genus_support,"/",MiDAS3_genus_counts," (",round(Percent_with_genus_support,2),"%) MiDAS2 seqs in MiDAS3"), reference="PMID=28365734") %>%
+  filter(., grepl("^midas_g.*", MiDAS3_genus))
+data.table::fwrite(Export, file = "replacements_midas2.txt", sep = "\t")
+```
