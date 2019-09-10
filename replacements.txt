@@ -1,3 +1,0 @@
-old	new
-denovo_g_117	a_new_genus_name
-denovo_s_137	a_new_species_name
