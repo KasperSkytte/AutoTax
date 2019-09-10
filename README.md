@@ -1,5 +1,5 @@
 # AutoTax
-*AutoTax* is a linux BASH script that automatically generates de novo taxonomy from full length 16S rRNA exact sequence variants (ESVs). This allows generation of eco-system specific de novo taxonomic databases based on any environmental sample(s). It does so by combining several different software tools, listed below, into a single BASH script that otherwise only requires a single FASTA file as input. For a more detailed description of *AutoTax*, please refer to the paper [Dueholm et al, 2019]( https://doi.org/10.1101/672873). *AutoTax* has only been tested on Ubuntu 18.04 LTS, but will probably run just fine on other Linux distributions as long as the required software listed below is installed.
+*AutoTax* is a linux BASH script that automatically generates de novo taxonomy from full length 16S rRNA exact sequence variants (ESVs). This allows generation of eco-system specific de novo taxonomic databases based on any environmental sample(s). It does so by combining several different software tools, listed below, into a single BASH script that otherwise only requires a single FASTA file as input. For a more detailed description of *AutoTax*, please refer to the paper [Dueholm et al, 2019](https://doi.org/10.1101/672873). *AutoTax* has only been tested on Ubuntu 18.04 LTS, but will probably run just fine on other Linux distributions as long as the required software listed below is installed.
 
 ## Usage
 Adjust the variables in the SETUP chunk at the start of the `autotax.sh` script to match the paths to the database files and executables.
@@ -12,8 +12,9 @@ In brief, the script performs the following steps:
  
  **Generate/identify ESVs**
  
- - Dereplicate the input sequences (both strands), and determine the coverage of each unique sequence (usearch)
  - Orient the sequences based on the SILVA taxonomic database (usearch)
+ - Dereplicate the input sequences (both strands), and determine the coverage of each unique sequence (usearch)
+ - Denoise the dereplicated sequences using UNOISE3, with `minsize = 2` (usearch)
  - Remove all sequences that match exactly (100% identity) with other, but longer sequences (R)
  - Sort the sequences based on coverage, and rename the sequences in order of occurence, in the format `ESVx.length`, e.g. `ESV123.1410` (R)
  - If desired, update an existing ESV database (FASTA file) by matching the generated ESVs to the database, replacing identical ESVs with longer sequences if any, and adding the new ones to the end of the FASTA file, renamed to continue numbering from the database (R)
