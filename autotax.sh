@@ -528,6 +528,10 @@ ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <-
          function(x) {
            paste0(x[1:2], collapse = "_")
          })
+ESV_typestrain_tax %>%
+  mutate(typestrain_genus=sub("\\_.*", "", Species)) %>%
+  mutate(match=str_detect(Genus, typestrain_genus)) %>%
+  filter(match==TRUE)
 
 #write out
 write_tax(tax = ESV_typestrain_tax,
