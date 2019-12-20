@@ -34,18 +34,21 @@ In brief, the script performs the following steps:
  - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each ESV (R)
 
 
-## Requirements
- - Linux OS including the standard tools `awk`, `grep`, and `cat`, which are included in most Linux distribution, and BASH.
+## Installation and software requirements
+As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux) when running AutoTax. The tools can be installed manually by refering to the documentation of the individual tools, or alternatively a docker image based on Ubuntu 18.04 LTS can be built using docker with the [Dockerfile]().
+
  - GNU parallel (version 20161222)
  - usearch (version 10 or later)
  - SINA (version 1.6 or later)
- - R (version 3.5 or later) with the following packages installed (the script will try to install if missing):
+ - R (version 3.5 or later) with the following packages installed (the script will attempt to install if missing):
    - Biostrings (from Bioconductor, be ready for trouble if you dont have administrative rights, try manually if it fails)
    - doParallel
    - stringr (and stringi)
    - data.table
    - tidyr
    - dplyr
+
+Please refer to the installation instructions of the individual tools on installation. 
 
 Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568). You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
 
