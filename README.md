@@ -35,7 +35,7 @@ In brief, the script performs the following steps:
 
 
 ## Installation and software requirements
-As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux) when running AutoTax. The tools can be installed manually by refering to the documentation of the individual tools, or alternatively a docker image based on Ubuntu 18.04 LTS can be built using docker with the [Dockerfile]().
+As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux) when running AutoTax. The tools can be installed manually by refering to the documentation of the individual tools, or alternatively a docker image based on Ubuntu 18.04 LTS can be built using docker with the [Dockerfile](https://github.com/KasperSkytte/AutoTax/blob/master/docker/Dockerfile).
 
  - GNU parallel (version 20161222)
  - usearch (version 10 or later)
