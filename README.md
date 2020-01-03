@@ -56,7 +56,11 @@ git clone https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
 ```
 
+<<<<<<< Updated upstream
 Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux). The tools can be installed manually by refering to the documentation of the individual tools. It is recommended to run AutoTax through the docker container image based on Ubuntu linux 18.04, however, with everything pre-installed and tested (except database files), see [this section](#running-autotax-from-a-docker-container-recommended).
+=======
+Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux). The tools can be installed manually by refering to the documentation of the individual tools. It is recommended to run AutoTax through the docker container image based on Ubuntu linux 18.04, however, with everything pre-installed and tested (except database files), see the [docker section](#running-autotax-from-a-docker-container-recommended).
+>>>>>>> Stashed changes
 
 ## Software
  - GNU parallel (version 20161222)
