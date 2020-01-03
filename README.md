@@ -92,19 +92,19 @@ Options:
 # Running AutoTax from a docker container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 can then be retrieved from [Docker Hub](https://hub.docker.com/) with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended):
 ```
-sudo docker pull kasperskytte/autotax:1.0
+sudo docker pull kasperskytte/autotax:latest
 ```
 
 Alternatively build the image manually by downloading the [Dockerfile](https://github.com/KasperSkytte/AutoTax/blob/master/docker/Dockerfile) directly from the github repository (may take 10-20 minutes):
 ```
 git clone https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
-sudo docker build -t autotax:1.0 docker/
+sudo docker build -t autotax:latest docker/
 ```
 
 Then make a suitable working folder and copy the [`autotax.sh`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.sh) there together with your data and reference databases. As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it (the free 32-bit version is limited to 4GB memory and is doubtfully going to be sufficient) and place it in the same working folder. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html). Make sure the name of the file matches exactly that defined in the [`autotax.sh`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.sh) script (default is just "usearch11") or change the line `export usearch=$(which usearch11)` in the script accordingly. Now run AutoTax with the current working directory mounted inside the container as `/home/user/`:
 ```
-sudo docker run -it --name autotax_run1 -v ${PWD}:/home/user/ autotax:1.0 bash autotax.sh -h
+sudo docker run -it --name autotax_run1 -v ${PWD}:/home/user/ autotax:latest bash autotax.sh -h
 ```
 
 When running through the docker container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. Furthermore, the output folders `temp` and `output` will be owned by root, so it's a good idea to change ownership afterwards with fx:
