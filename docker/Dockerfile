@@ -7,7 +7,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get -y install --no-install-recommends --no-install-suggests \
         ca-certificates software-properties-common gnupg2 gnupg1 \
-        parallel libcurl4-openssl-dev libssl-dev libxml2-dev wget
+        parallel=20161222-1 libcurl4-openssl-dev libssl-dev libxml2-dev wget
 
 #add R CRAN mirror to apt sources to install R using APT
 #specific version of R to be installed
