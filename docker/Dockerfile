@@ -31,5 +31,5 @@ RUN tar -zxf sina-1.6.0-linux.tar.gz
 RUN rm sina-1.6.0-linux.tar.gz
 
 #make sure everything is in PATH
-ENV PATH="/opt/sina-1.6.0-linux/bin:${PATH}"
 WORKDIR /home/user/
+ENV PATH="/home/user:/opt/sina-1.6.0-linux/bin:${PATH}"
