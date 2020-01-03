@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.3.1"
+VERSION="1.3.2"
 ##### requirements (tested with) #####
 # SILVA database files (both SSURef and typestrains) in arb format (use latest)
 # awk+grep+cat (included in most linux distributions)
@@ -23,13 +23,13 @@ export Rscript=$(which Rscript)
 # Paths to SILVA nr99 database, and typestrains database extracted from there. 
 # .udb files have to be created first from fasta files using for example:
 # $usearch -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output $silva_udb
-silva_db="refdatabases/SILVA_132_SSURef_NR99_13_12_17_opt.arb"
-silva_udb="refdatabases/SILVA_132_SSURef_Nr99_tax_silva.udb"
-typestrains_db="refdatabases/SILVA132-typestrains.arb"
-typestrains_udb="refdatabases/SILVA_132_SSURef_Nr99_typestrains.udb"
+silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
+silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
+typestrains_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt_typestrains.arb"
+typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains.udb"
 
 #de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on ESV number 123
-denovo_prefix="midas"
+denovo_prefix="denovo"
 
 ##################################
 ########## end of setup ##########
@@ -105,7 +105,8 @@ generateESVs() {
   # Denoise with UNOISE3
   echoWithHeader "  - Denoising sequences using UNOISE3"
   $usearch -unoise3 temp/uniques_wsize.fa -zotus temp/preESVs.fa -minsize 2
-  
+  #cp temp/uniques_wsize.fa temp/preESVs.fa
+
   echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
   #The output centroids will be ordered by size (coverage), but sequences with identical size
   #will be ordered randomly between runs. The below R script first orders by size (descending) 
