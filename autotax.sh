@@ -86,14 +86,14 @@ checkFolder() {
   fi
 }
 
-#generate ESVs
+# Define function to generate ESVs
 generateESVs() {
   ##############
   # note: must set threads to 1 in the below usearch commands or the ordering of sequences
   # will be scrambled and inconsistent between individual runs. It doesn't use more than one 
   # thread anyways, so no speedup will be gained.
   
-  # Orient to the same strand
+  # Orient all fSSU correctly based on the SILVA database
   echoWithHeader "  - Orienting sequences..."
   $usearch -orient $1 -db $silva_udb -fastaout temp/fSSUs_oriented.fa -threads 1 -quiet
   
@@ -101,7 +101,7 @@ generateESVs() {
   echoWithHeader "  - Dereplicating sequences..."
   $usearch -fastx_uniques temp/fSSUs_oriented.fa -fastaout temp/uniques_wsize.fa -sizeout -minuniquesize 1 -strand plus -relabel preESV -threads 1 -quiet
   
-  # Denoise with UNOISE3
+  # Denoise with UNOISE3 accepting sequences seen only twice (see article supplementary for why this is acceptable)
   echoWithHeader "  - Denoising sequences using UNOISE3"
   $usearch -unoise3 temp/uniques_wsize.fa -zotus temp/preESVs.fa -minsize 2
   #cp temp/uniques_wsize.fa temp/preESVs.fa
@@ -146,7 +146,7 @@ generateESVs() {
 findLongestSortESVsBySizeAndID
 }
 
-#align and trim sequences with SINA
+#Define function to align and trim sequences based on the global SILVA alignment using SINA
 sinaAlign() {
   # Preparation
   local DATA=$1
@@ -164,7 +164,6 @@ sinaAlign() {
     && mv temp/tmp.fa temp/${OUTPUTID}_trimmed.fa
   
   #sort sequences and stats files by ESV ID using R
-  #careful with the order of arguments passed on to R
   $R --slave --args temp/${OUTPUTID}_trimmed.fa << 'sortSINAoutput'
 	#extract passed args from shell script
 	args <- commandArgs(trailingOnly = TRUE)
@@ -447,9 +446,11 @@ read_clean_tax <- function(input) {
                     fill = TRUE,
                     check.names = FALSE,
                     stringsAsFactors = FALSE)
+  
   #order by ESV ID
   tax <- tax[,c(1,3,2)][order(as.integer(gsub("[^0-9+$]|\\..*$", "", tax[[1]]))),]
   colnames(tax) <- c("ESV", "idty", "tax")
+  
   #remove database ID's (keep everything after first " ", and remove ";" from the end if any)
   tax[["tax"]] <- gsub("^[^ ]* *|;$", "", tax[["tax"]])
   
