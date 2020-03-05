@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.3.2"
+VERSION="1.4.0"
 ##### requirements (tested with) #####
 # SILVA database files (both SSURef and typestrains) in arb format (use latest)
 # awk+grep+cat (included in most linux distributions)
@@ -20,9 +20,9 @@ export usearch=$(which usearch11)
 export R=$(which R)
 export Rscript=$(which Rscript)
 
-# Paths to SILVA nr99 database, and typestrains database extracted from there. 
-# .udb files have to be created first from fasta files using for example:
-# $usearch -makeudb_usearch refdatabases/SILVA_132_SSURef_Nr99_tax_silva.fasta -output $silva_udb
+# Set paths to the SILVA nr99 database and the typestrain database extracted from SILVA nr99 (see article supplementary for details). 
+# .udb files have to be created first from fasta files using the example below:
+# usearch11 -makeudb_usearch SILVA_132_SSURef_Nr99_tax_silva.fasta -output SILVA_132_SSURef_Nr99_tax_silva.udb
 silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
 silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
 typestrains_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt_typestrains.arb"
@@ -45,7 +45,6 @@ fi
 set -o errexit -o pipefail -o noclobber -o nounset
 
 ################################## functions ##################################
-#They probably only work here in this script!
 
 #adds a header to echo, for a better console output overview
 echoWithHeader() {
@@ -413,18 +412,17 @@ searchTaxDB temp/ESVs_SILVA_trimmed_sorted.fa $silva_udb temp/tax_SILVA.txt
 #using cluster_smallmem (no multithread support) and not cluster_fast to preserve order
 #of input sequences, cluster_fast runs on 1 thread anyways even if set to more than 1
 echoWithHeader "Generating de novo taxonomy..."
-#write commands to a file
-cat << 'denovoClusteringCmds' > temp/denovoClusteringCmds.txt
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -centroids temp/SILVA_ESV-S_centroids.fa -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -centroids temp/SILVA_S-G_centroids.fa -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -uc temp/SILVA_G-F.txt -centroids temp/SILVA_G-F_centroids.fa -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -uc temp/SILVA_F-O.txt -centroids temp/SILVA_F-O_centroids.fa -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -uc temp/SILVA_O-C.txt -centroids temp/SILVA_O-C_centroids.fa -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -uc temp/SILVA_C-P.txt -centroids temp/SILVA_C-P_centroids.fa -sortedby other
-denovoClusteringCmds
-#run each line as 1 job per CPU simultaneously
-parallel --jobs $MAX_THREADS < temp/denovoClusteringCmds.txt > /dev/null 2>&1
-rm temp/denovoClusteringCmds.txt
+
+
+#############################################################################
+########## Format, merge, and ultimately generate AutoTax taxonomy ##########
+#############################################################################
 
 #########################################################################################
 echoWithHeader "Merging and reformatting taxonomy..."
@@ -482,7 +480,7 @@ read_clean_tax <- function(input) {
     return(x)
   })
   
-  #remove entries below identity threshold per level
+  #remove entries below identity threshold for each taxonomic rank
   tax[which(tax$idty < 98.7), "Species"] <- ""
   tax[which(tax$idty < 94.5), "Genus"] <- ""
   tax[which(tax$idty < 86.5), "Family"] <- ""
@@ -521,7 +519,7 @@ read_sort_mappings <- function(path, colnames) {
 ##### Fix taxonomy #####
 ##### typestrains
 #read typestrains tax, only Genus and Species
-ESV_typestrain_tax <- select(read_clean_tax("temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
+ESV_typestrain_tax <- select(read_clean_tax("./temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
 
 #remove strain information from Species names (keep only first two words)
 ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <- 
@@ -531,16 +529,14 @@ ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <-
          })
 
 #write out
-write_tax(tax = ESV_typestrain_tax,
-          file = "./output/tax_typestrains.csv")
+write_tax(tax = ESV_typestrain_tax, file = "./output/tax_typestrains.csv")
 
 ##### SILVA
 #read SILVA tax, without Species
 ESV_SILVA_tax <- select(read_clean_tax(input = "./temp/tax_SILVA.txt"), -Species)
 
 #write out
-write_tax(tax = ESV_SILVA_tax,
-          file = "./output/tax_SILVA.csv")
+write_tax(tax = ESV_SILVA_tax, file = "./output/tax_SILVA.csv")
 
 ##### merge typestrains+SILVA taxonomy by ESV and Genus #####
 ESV_slv_typestr_tax <- left_join(ESV_SILVA_tax[,-2], ESV_typestrain_tax[,-2], by = c("ESV", "Genus"))
