@@ -1,0 +1,255 @@
+ESV16.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.6	1387	18	2	1	1385	1	1466	*	*
+ESV13.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.6	1387	18	2	1	1385	1	1466	*	*
+ESV38.1425	AB109439.1.1424 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Levilinea;Levilinea saccharolytica	90.6	1384	127	3	1	1384	1	1424	*	*
+ESV26.1446	EU864468.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Rikenellaceae;uncultured;uncultured bacterium	92.9	1409	100	0	1	1409	1	1488	*	*
+ESV29.1485	AF126282.1.1371 Bacteria;Desulfobacterota;Syntrophia;Syntrophales;Smithellaceae;Smithella;Smithella propionica	95.8	1356	56	1	1	1441	1	1371	*	*
+ESV10.1449	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	93.6	1413	87	3	1	1413	1	1488	*	*
+ESV9.1439	AB362263.1.1442 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Prolixibacteraceae;Sunxiuqinia;Sunxiuqinia faeciviva	88.1	1406	163	2	1	1402	1	1442	*	*
+ESV43.1454	CP003198.1792650.1794057 Bacteria;Synergistota;Synergistia;Synergistales;Synergistaceae;Acetomicrobium;Acetomicrobium mobile DSM 13181	97.6	1398	33	1	1	1412	1	1408	*	*
+ESV41.1446	EU864469.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Rikenellaceae;uncultured;uncultured bacterium	93.0	1409	99	0	1	1409	1	1488	*	*
+ESV33.1445	LC049960.1.1446 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;Lentimicrobiaceae;Lentimicrobium;Lentimicrobium saccharophilum	88.1	1409	166	1	1	1408	1	1446	*	*
+ESV42.1387	DQ342322.1.1389 Bacteria;Proteobacteria;Alphaproteobacteria;Rhodobacterales;Rhodobacteraceae;Rhodobacter;Rhodobacter blasticus	95.8	1347	55	1	1	1345	1	1389	*	*
+ESV30.1458	AB232785.1.1455 Bacteria;Firmicutes;Desulfotomaculia;Desulfotomaculales;Pelotomaculum;Pelotomaculum isophthalicicum	94.3	1417	79	2	1	1417	1	1455	*	*
+ESV19.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.8	1230	26	1	1	1402	1	1312	*	*
+ESV12.1440	AF285117.1.1447 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Pseudopropionibacterium;Pseudopropionibacterium propionicum	92.0	1407	101	4	1	1399	1	1447	*	*
+ESV7.1445	LC049960.1.1446 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;Lentimicrobiaceae;Lentimicrobium;Lentimicrobium saccharophilum	88.2	1409	165	1	1	1408	1	1446	*	*
+ESV50.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.4	1387	20	2	1	1385	1	1466	*	*
+ESV51.1460	EF158390.1.1454 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Rhodocyclaceae;Azonexus;Azonexus hydrophilus	96.5	1405	49	0	1	1420	1	1454	*	*
+ESV53.1425	FR733682.1.1494 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Terrisporobacter;Terrisporobacter mayombei	98.9	1385	15	0	1	1385	1	1494	*	*
+ESV23.1451	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	83.7	1414	226	4	1	1414	1	1488	*	*
+ESV28.1444	HM344078.1.1343 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Ilumatobacteraceae;CL500-29 marine group;uncultured bacterium	95.5	1341	61	0	1	1404	1	1343	*	*
+ESV46.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.2	1230	33	1	1	1402	1	1312	*	*
+ESV54.1441	DQ196625.1.1459 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Brooklawnia;Brooklawnia cerclae	95.5	1386	60	1	1	1401	1	1459	*	*
+ESV44.1434	ACEC01000059.3517.5032 Bacteria;Firmicutes;Clostridia;Oscillospirales;[Clostridium] methylpentosum group;[Clostridium] methylpentosum DSM 5476	92.3	1413	87	4	1	1394	1	1516	*	*
+ESV36.1447	LC049960.1.1446 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;Lentimicrobiaceae;Lentimicrobium;Lentimicrobium saccharophilum	87.5	1411	175	1	1	1411	1	1446	*	*
+ESV57.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.7	1230	27	1	1	1402	1	1312	*	*
+ESV61.1457	FJ755906.1.1499 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Comamonadaceae;Rhodoferax;Rhodoferax saidenbachensis ED16	96.6	1417	48	0	1	1417	1	1499	*	*
+ESV59.1446	EU864469.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Rikenellaceae;uncultured;uncultured bacterium	88.1	1411	166	2	1	1410	1	1488	*	*
+ESV60.1471	AY742226.1.1523 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Proteiniphilum;Proteiniphilum acetatigenes	89.8	1438	124	5	1	1435	1	1523	*	*
+ESV64.1433	AY445593.1.1505 Bacteria;Firmicutes;Clostridia;Oscillospirales;Ruminococcaceae;Ruminococcus;Ruminococcus flavefaciens	96.8	1395	42	2	1	1393	1	1505	*	*
+ESV35.1412	JX131369.1.1450 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Hyphomicrobiaceae;Hyphomicrobium;Hyphomicrobium nitrativorans NL23	91.8	1371	108	5	1	1371	1	1450	*	*
+ESV1.1445	AB517669.1.1483 Bacteria;Actinobacteriota;Acidimicrobiia;Acidimicrobiales;Acidimicrobiales Incertae Sedis;Aciditerrimonas;Aciditerrimonas ferrireducens	88.5	1408	157	5	1	1404	1	1483	*	*
+ESV15.1445	AB517669.1.1483 Bacteria;Actinobacteriota;Acidimicrobiia;Acidimicrobiales;Acidimicrobiales Incertae Sedis;Aciditerrimonas;Aciditerrimonas ferrireducens	88.4	1408	158	5	1	1404	1	1483	*	*
+ESV3.1445	JN033775.1.1439 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Iamiaceae;Iamia;Aquihabitans daechungensis	88.6	1407	148	5	1	1404	1	1439	*	*
+ESV18.1476	JX420244.1.1464 Bacteria;Acidobacteriota;Thermoanaerobaculia;Thermoanaerobaculales;Thermoanaerobaculaceae;Thermoanaerobaculum;Thermoanaerobaculum aquaticum	93.2	1438	96	1	1	1436	1	1464	*	*
+ESV68.1440	DQ196625.1.1459 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Brooklawnia;Brooklawnia cerclae	97.4	1384	36	0	1	1399	1	1459	*	*
+ESV8.1456	GQ900631.1.1480 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Mageibacillus;Mageeibacillus indolicus	86.0	1421	190	3	1	1416	1	1480	*	*
+ESV72.1437	AB109438.1.1426 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Leptolinea;Leptolinea tardivitalis	89.7	1401	125	9	1	1396	1	1426	*	*
+ESV6.1457	GQ900631.1.1480 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Mageibacillus;Mageeibacillus indolicus	85.9	1422	190	4	1	1417	1	1480	*	*
+ESV17.1442	AY574991.1.1453 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Catabacter;Catabacter hongkongensis	87.3	1421	159	4	1	1402	1	1453	*	*
+ESV73.1454	FJ796074.1.1441 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Ornithinibacter;Ornithinibacter aureus	99.2	1412	9	2	1	1413	1	1441	*	*
+ESV31.1417	AB067647.1.1427 Bacteria;Chloroflexi;Anaerolineae;Caldilineales;Caldilineaceae;Caldilinea;Caldilinea aerophila	86.0	1395	169	6	1	1377	1	1427	*	*
+ESV11.1455	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	94.3	1350	76	1	1	1415	1	1352	*	*
+ESV40.1450	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	87.8	1232	139	8	1	1409	1	1225	*	*
+ESV37.1442	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	86.6	1233	154	7	1	1401	1	1225	*	*
+ESV2.1445	EF422412.1.1441 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;Dethiobacter;Dethiobacter alkaliphilus AHT 1	86.1	1404	176	10	1	1405	1	1441	*	*
+ESV77.1453	CP003198.1792650.1794057 Bacteria;Synergistota;Synergistia;Synergistales;Synergistaceae;Acetomicrobium;Acetomicrobium mobile DSM 13181	96.7	1398	44	2	1	1411	1	1408	*	*
+ESV14.1455	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	94.3	1350	76	1	1	1414	1	1352	*	*
+ESV25.1452	AB100836.1.1454 Bacteria;Firmicutes;Desulfitobacteriia;Desulfitobacteriales;Heliobacteriaceae;Heliobacterium;Heliobacterium modesticaldum	85.3	1412	198	5	1	1412	1	1454	*	*
+ESV45.1462	LC049960.1.1446 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;Lentimicrobiaceae;Lentimicrobium;Lentimicrobium saccharophilum	84.0	1426	220	2	1	1426	1	1446	*	*
+ESV82.1458	CP001145.940059.941581 Bacteria;Coprothermobacterota;Coprothermobacteria;Coprothermobacterales;Coprothermobacteraceae;Coprothermobacter;Coprothermobacter proteolyticus DSM 5265	99.7	1422	4	0	1	1422	1	1523	*	*
+ESV32.1455	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	96.7	1350	44	1	1	1414	1	1352	*	*
+ESV80.1407	AJ011760.1.1467 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Rhizobiaceae;Aminobacter;Aminobacter aganoensis	94.8	1367	71	0	1	1367	1	1467	*	*
+ESV52.1454	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	94.3	1350	75	2	1	1413	1	1352	*	*
+ESV83.1445	AY650265.1.1520 Bacteria;Actinobacteriota;Actinobacteria;Corynebacteriales;Nocardiaceae;Gordonia;Gordonia defluvii	99.9	1404	2	0	1	1404	1	1520	*	*
+ESV85.1481	X87150.1.1554 Bacteria;Firmicutes;Bacilli;Lactobacillales;Carnobacteriaceae;Trichococcus;Trichococcus pasteurii	100.0	1441	0	0	1	1441	1	1554	*	*
+ESV62.1456	GQ900631.1.1480 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Mageibacillus;Mageeibacillus indolicus	86.1	1421	189	3	1	1416	1	1480	*	*
+ESV92.1483	AY651787.1.1554 Bacteria;Desulfobacterota;Syntrophobacteria;Syntrophobacterales;Syntrophobacteraceae;Syntrophobacter;Syntrophobacter sulfatireducens	93.1	1445	95	4	1	1442	1	1554	*	*
+ESV27.1438	HG726039.1.1478 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;Clostridium saudiense	99.9	1397	1	0	1	1397	1	1478	*	*
+ESV4.1489	AENY02000002.70977.72415 Bacteria;Firmicutes;Thermaerobacteria;Thermaerobacterales;Thermaerobacteraceae;Thermaerobacter;Thermaerobacter subterraneus DSM 13965	82.0	1447	233	10	1	1449	1	1439	*	*
+ESV84.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.7	1230	27	1	1	1402	1	1312	*	*
+ESV48.1464	AB062280.1.1506 Bacteria;Firmicutes;Thermoanaerobacteria;Thermoanaerobacterales;Thermoanaerobacteraceae;Thermanaeromonas;Thermanaeromonas toyohensis	84.5	1447	195	8	1	1424	1	1506	*	*
+ESV88.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	98.0	1230	23	1	1	1402	1	1312	*	*
+ESV22.1482	AB212873.1.1482 Bacteria;Desulfobacterota;Syntrophorhabdia;Syntrophorhabdales;Syntrophorhabdaceae;Syntrophorhabdus;Syntrophorhabdus aromaticivorans	97.2	1441	41	0	1	1441	1	1482	*	*
+ESV55.1446	EU845023.1.1458 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;uncultured bacterium	89.2	1427	132	3	1	1406	1	1458	*	*
+ESV39.1496	FN597064.1.1254 Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Ornithinibacillus;Ornithinibacillus contaminans	81.7	1235	207	7	1	1455	1	1254	*	*
+ESV96.1407	EU586035.1.1413 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Beijerinckiaceae;Methylorosula;Methylorosula polaris	96.8	1367	44	0	1	1367	1	1413	*	*
+ESV47.1438	HG726039.1.1478 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;Clostridium saudiense	100.0	1397	0	0	1	1397	1	1478	*	*
+ESV98.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.8	1387	14	2	1	1385	1	1466	*	*
+ESV21.1452	KX450231.1.1427 Bacteria;Firmicutes;Desulfotomaculia;Ammonifexales;Ammonificaceae;Thermodesulfitimonas;Thermodesulfitimonas autotrophica	80.3	1359	252	10	1	1412	1	1427	*	*
+ESV56.1442	AB529679.1.1438 Bacteria;Armatimonadota;Armatimonadia;Armatimonadales;Armatimonadaceae;Armatimonas;Armatimonas rosea	85.0	1406	198	9	1	1402	1	1438	*	*
+ESV66.1456	GQ900631.1.1480 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Mageibacillus;Mageeibacillus indolicus	85.9	1421	192	3	1	1416	1	1480	*	*
+ESV105.1455	GU201550.1.1484 Bacteria;Bacteroidota;Bacteroidia;Chitinophagales;Chitinophagaceae;Ferruginibacter;uncultured Chitinophaga sp.	94.7	1419	69	3	1	1419	1	1484	*	*
+ESV71.1455	AB640691.1.1483 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Finegoldia;Finegoldia magna	88.3	1415	160	2	1	1415	1	1483	*	*
+ESV102.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.4	1387	20	2	1	1385	1	1466	*	*
+ESV58.1456	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	90.8	1352	120	3	1	1416	1	1352	*	*
+ESV104.1413	KF114645.1.1335 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Xanthobacteraceae;Bradyrhizobium;Bradyrhizobium erythrophlei	98.7	1335	18	0	1	1372	1	1335	*	*
+ESV67.1473	JF423906.1.1544 Bacteria;Actinobacteriota;Thermoleophilia;Gaiellales;Gaiellaceae;Gaiella;Gaiella occulta	87.9	1433	168	3	1	1432	1	1544	*	*
+ESV24.1500	AF050560.1.1495 Bacteria;Verrucomicrobiota;Kiritimatiellae;WCHB1-41;uncultured eubacterium WCHB1-41	82.7	1472	224	9	1	1459	1	1495	*	*
+ESV111.1406	DQ342322.1.1389 Bacteria;Proteobacteria;Alphaproteobacteria;Rhodobacterales;Rhodobacteraceae;Rhodobacter;Rhodobacter blasticus	95.2	1363	50	2	1	1363	1	1389	*	*
+ESV70.1456	AY327251.1.1529 Bacteria;Firmicutes;Desulfotomaculia;Desulfotomaculales;Cryptanaerobacter;Cryptanaerobacter phenolicus	87.6	1418	174	2	1	1416	1	1529	*	*
+ESV113.1471	AY742226.1.1523 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Proteiniphilum;Proteiniphilum acetatigenes	89.9	1437	122	5	1	1434	1	1523	*	*
+ESV112.1448	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	91.3	1411	121	2	1	1411	1	1488	*	*
+ESV20.1524	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	83.1	1423	181	5	1	1483	1	1370	*	*
+ESV76.1455	AB640691.1.1483 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Finegoldia;Finegoldia magna	88.3	1415	160	2	1	1415	1	1483	*	*
+ESV49.1472	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	86.4	1377	167	5	1	1431	1	1370	*	*
+ESV5.1463	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	80.2	1427	266	7	1	1426	1	1488	*	*
+ESV101.1444	ARBS01000028.123.1425 Bacteria;Actinobacteriota;Actinobacteria;Micromonosporales;Micromonosporaceae;Longispora;Longispora albida DSM 44784	92.2	1229	91	4	1	1404	1	1303	*	*
+ESV119.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.6	1387	18	2	1	1385	1	1466	*	*
+ESV34.1502	AF050560.1.1495 Bacteria;Verrucomicrobiota;Kiritimatiellae;WCHB1-41;uncultured eubacterium WCHB1-41	82.1	1474	231	8	1	1461	1	1495	*	*
+ESV123.1487	CP000252.738017.739575 Bacteria;Desulfobacterota;Syntrophia;Syntrophales;Syntrophaceae;Syntrophus;Syntrophus aciditrophicus SB	94.5	1443	79	0	1	1443	1	1559	*	*
+ESV122.1481	AJ306611.1.1437 Bacteria;Firmicutes;Bacilli;Lactobacillales;Carnobacteriaceae;Trichococcus;Trichococcus flocculiformis	99.9	1422	1	0	1	1441	1	1437	*	*
+ESV127.1458	CP001145.940059.941581 Bacteria;Coprothermobacterota;Coprothermobacteria;Coprothermobacterales;Coprothermobacteraceae;Coprothermobacter;Coprothermobacter proteolyticus DSM 5265	99.7	1422	4	0	1	1422	1	1523	*	*
+ESV65.1471	AB572912.1.1529 Bacteria;Firmicutes;Moorellia;Moorellales;Moorellaceae;Moorella;Moorella thermoacetica	82.4	1455	225	8	1	1430	1	1529	*	*
+ESV125.1472	AY742226.1.1523 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Proteiniphilum;Proteiniphilum acetatigenes	88.2	1439	146	5	1	1436	1	1523	*	*
+ESV129.1481	AJ306611.1.1437 Bacteria;Firmicutes;Bacilli;Lactobacillales;Carnobacteriaceae;Trichococcus;Trichococcus flocculiformis	99.9	1422	1	0	1	1441	1	1437	*	*
+ESV63.1452	KX450231.1.1427 Bacteria;Firmicutes;Desulfotomaculia;Ammonifexales;Ammonificaceae;Thermodesulfitimonas;Thermodesulfitimonas autotrophica	80.3	1359	252	10	1	1412	1	1427	*	*
+ESV74.1434	EU488439.1.1472 Bacteria;Chloroflexi;Anaerolineae;uncultured;uncultured bacterium	85.3	1395	191	4	1	1394	1	1472	*	*
+ESV121.1464	KR364764.1.1431 Bacteria;Firmicutes;Clostridia;Eubacteriales;Garciellaceae;Irregularibacter;Irregularibacter muris	91.6	1427	97	5	1	1423	1	1431	*	*
+ESV133.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.5	1387	19	2	1	1385	1	1466	*	*
+ESV93.1476	JX420244.1.1464 Bacteria;Acidobacteriota;Thermoanaerobaculia;Thermoanaerobaculales;Thermoanaerobaculaceae;Thermoanaerobaculum;Thermoanaerobaculum aquaticum	93.1	1438	97	1	1	1436	1	1464	*	*
+ESV134.1387	KT163920.1.1464 Bacteria;Proteobacteria;Alphaproteobacteria;Rhodobacterales;Rhodobacteraceae;Pseudorhodobacter;Pseudorhodobacter psychrotolerans	97.4	1346	35	0	1	1346	1	1464	*	*
+ESV135.1448	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	94.4	1411	77	2	1	1411	1	1488	*	*
+ESV78.1455	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	94.7	1350	71	1	1	1415	1	1352	*	*
+ESV137.1408	DQ364433.1.1450 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Beijerinckiaceae;Methylocystis;Methylocystis hirsuta	97.3	1368	37	0	1	1368	1	1450	*	*
+ESV138.1389	KF944301.1.1428 Bacteria;Proteobacteria;Alphaproteobacteria;Rhodobacterales;Rhodobacteraceae;Frigidibacter;Frigidibacter albus	95.9	1347	55	0	1	1347	1	1428	*	*
+ESV141.1425	M59107.1.1510 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia lituseburensis	98.3	1388	21	3	1	1385	1	1510	*	*
+ESV69.1479	ASVV01000008.1.1273 Bacteria;Firmicutes;Bacilli;Lactobacillales;Enterococcaceae;Enterococcus;Enterococcus caccae ATCC BAA-1240	81.6	1204	206	8	1	1437	1	1273	*	*
+ESV139.1448	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	91.5	1412	118	2	1	1412	1	1488	*	*
+ESV90.1457	GQ900631.1.1480 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Mageibacillus;Mageeibacillus indolicus	86.6	1419	178	4	1	1416	1	1480	*	*
+ESV86.1461	FN597064.1.1254 Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Ornithinibacillus;Ornithinibacillus contaminans	86.6	1219	145	2	1	1420	1	1254	*	*
+ESV142.1441	FJ468329.1.1439 Bacteria;Actinobacteriota;Actinobacteria;Corynebacteriales;Dietziaceae;Dietzia;Dietzia natronolimnaea	98.6	1400	18	1	1	1400	1	1439	*	*
+ESV140.1461	X82558.1.1533 Bacteria;Nitrospirota;Nitrospiria;Nitrospirales;Nitrospiraceae;Nitrospira;Nitrospira moscoviensis	94.1	1421	83	1	1	1421	1	1533	*	*
+ESV148.1424	AB109439.1.1424 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Levilinea;Levilinea saccharolytica	88.4	1383	159	2	1	1383	1	1424	*	*
+ESV79.1471	AB572912.1.1529 Bacteria;Firmicutes;Moorellia;Moorellales;Moorellaceae;Moorella;Moorella thermoacetica	82.4	1455	225	8	1	1430	1	1529	*	*
+ESV144.1439	DQ196625.1.1459 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Brooklawnia;Brooklawnia cerclae	97.6	1384	33	0	1	1399	1	1459	*	*
+ESV81.1418	EU488439.1.1472 Bacteria;Chloroflexi;Anaerolineae;uncultured;uncultured bacterium	86.5	1387	172	6	1	1377	1	1472	*	*
+ESV118.1445	JN033775.1.1439 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Iamiaceae;Iamia;Aquihabitans daechungensis	88.6	1407	149	5	1	1404	1	1439	*	*
+ESV103.1461	FN597064.1.1254 Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Ornithinibacillus;Ornithinibacillus contaminans	86.6	1219	145	2	1	1420	1	1254	*	*
+ESV154.1451	AY570690.1.1411 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Petrimonas;Petrimonas sulfuriphila	99.5	1398	7	0	1	1415	1	1411	*	*
+ESV87.1438	HG726039.1.1478 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;Clostridium saudiense	96.5	1397	49	0	1	1397	1	1478	*	*
+ESV99.1434	EU488439.1.1472 Bacteria;Chloroflexi;Anaerolineae;uncultured;uncultured bacterium	85.4	1395	189	5	1	1394	1	1472	*	*
+ESV149.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.2	1230	34	1	1	1402	1	1312	*	*
+ESV152.1439	AB362263.1.1442 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Prolixibacteraceae;Sunxiuqinia;Sunxiuqinia faeciviva	88.1	1405	164	2	1	1402	1	1442	*	*
+ESV107.1455	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	94.2	1350	77	1	1	1414	1	1352	*	*
+ESV108.1442	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	86.7	1227	157	6	1	1401	1	1225	*	*
+ESV157.1425	AB109439.1.1424 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Levilinea;Levilinea saccharolytica	90.7	1384	126	3	1	1384	1	1424	*	*
+ESV95.1455	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	96.7	1350	43	1	1	1414	1	1352	*	*
+ESV109.1429	EU488453.1.1361 Bacteria;Chloroflexi;Anaerolineae;SBR1031;uncultured bacterium	85.3	1332	191	4	1	1388	1	1361	*	*
+ESV97.1484	KY115679.1.1313 Bacteria;Desulfobacterota;Desulfobulbia;Desulfobulbales;uncultured;uncultured bacterium	85.1	1265	184	3	1	1443	1	1313	*	*
+ESV100.1514	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	86.8	1233	151	7	1	1473	1	1225	*	*
+ESV75.1469	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	86.6	1375	165	5	1	1428	1	1370	*	*
+ESV124.1427	EU488439.1.1472 Bacteria;Chloroflexi;Anaerolineae;uncultured;uncultured bacterium	84.6	1388	207	4	1	1386	1	1472	*	*
+ESV110.1455	CP001034.1876688.1878118 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natranaerobius;Natranaerobius thermophilus JW/NM-WN-LF	84.8	1349	194	6	1	1415	1	1431	*	*
+ESV146.1445	AY949857.1.1510 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Saccharofermentans;Saccharofermentans acetigenes	91.7	1408	113	3	1	1405	1	1510	*	*
+ESV106.1448	AB529679.1.1438 Bacteria;Armatimonadota;Armatimonadia;Armatimonadales;Armatimonadaceae;Armatimonas;Armatimonas rosea	84.8	1408	202	7	1	1407	1	1438	*	*
+ESV155.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.8	1230	26	1	1	1402	1	1312	*	*
+ESV150.1521	X77848.1.1423 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Tissierella;Tissierella praeacuta	88.0	1341	156	5	1	1481	1	1423	*	*
+ESV164.1421	AB109439.1.1424 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Levilinea;Levilinea saccharolytica	92.4	1381	104	1	1	1381	1	1424	*	*
+ESV114.1442	AB478415.1.1461 Bacteria;Bacteroidota;Ignavibacteria;Ignavibacteriales;Ignavibacteriaceae;Ignavibacterium;Ignavibacterium album	84.4	1411	210	6	1	1405	1	1461	*	*
+ESV156.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	98.0	1230	23	1	1	1402	1	1312	*	*
+ESV120.1455	KY115678.1.1211 Bacteria;Actinobacteriota;Coriobacteriia;OPB41;uncultured bacterium	85.0	1174	162	6	1	1414	1	1211	*	*
+ESV94.1478	ASVV01000008.1.1273 Bacteria;Firmicutes;Bacilli;Lactobacillales;Enterococcaceae;Enterococcus;Enterococcus caccae ATCC BAA-1240	81.6	1203	206	8	1	1436	1	1273	*	*
+ESV166.1458	AY277621.1.1511 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Rhodocyclaceae;Dechloromonas;Dechloromonas hortensis	96.5	1420	47	2	1	1418	1	1511	*	*
+ESV172.1425	FR733682.1.1494 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Terrisporobacter;Terrisporobacter mayombei	98.7	1385	18	0	1	1385	1	1494	*	*
+ESV89.1472	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	86.4	1377	167	5	1	1431	1	1370	*	*
+ESV126.1461	FN597064.1.1254 Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Ornithinibacillus;Ornithinibacillus contaminans	86.6	1219	145	2	1	1420	1	1254	*	*
+ESV174.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.8	1387	15	2	1	1385	1	1466	*	*
+ESV116.1444	AB529679.1.1438 Bacteria;Armatimonadota;Armatimonadia;Armatimonadales;Armatimonadaceae;Armatimonas;Armatimonas rosea	85.1	1406	198	8	1	1403	1	1438	*	*
+ESV117.1406	EU488439.1.1472 Bacteria;Chloroflexi;Anaerolineae;uncultured;uncultured bacterium	83.7	1383	207	7	1	1368	1	1472	*	*
+ESV136.1462	LC049960.1.1446 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;Lentimicrobiaceae;Lentimicrobium;Lentimicrobium saccharophilum	83.9	1426	221	2	1	1426	1	1446	*	*
+ESV130.1450	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	87.9	1232	138	8	1	1409	1	1225	*	*
+ESV179.1448	AJ231183.1.1477 Bacteria;Planctomycetota;Planctomycetes;Pirellulales;Pirellulaceae;Pirellula;Pirellula staleyi	91.8	1408	111	2	1	1408	1	1477	*	*
+ESV132.1446	EF422412.1.1441 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;Dethiobacter;Dethiobacter alkaliphilus AHT 1	86.2	1403	178	10	1	1406	1	1441	*	*
+ESV160.1402	AB041226.1.1398 Bacteria;Chloroflexi;Chloroflexia;Chloroflexales;Roseiflexaceae;Roseiflexus;Roseiflexus castenholzii	85.4	1363	191	6	1	1360	1	1398	*	*
+ESV128.1447	AB529679.1.1438 Bacteria;Armatimonadota;Armatimonadia;Armatimonadales;Armatimonadaceae;Armatimonas;Armatimonas rosea	85.6	1407	192	8	1	1406	1	1438	*	*
+ESV183.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.3	1387	22	2	1	1385	1	1466	*	*
+ESV147.1445	JN033775.1.1439 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Iamiaceae;Iamia;Aquihabitans daechungensis	88.6	1408	149	5	1	1405	1	1439	*	*
+ESV188.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.8	1387	15	2	1	1385	1	1466	*	*
+ESV171.1436	KP793091.1.1508 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Marinilutecoccus;Mariniluteicoccus endophyticus	92.6	1400	97	4	1	1396	1	1508	*	*
+ESV191.1425	FR733682.1.1494 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Terrisporobacter;Terrisporobacter mayombei	98.9	1385	15	0	1	1385	1	1494	*	*
+ESV193.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.7	1387	16	2	1	1385	1	1466	*	*
+ESV91.1470	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	74.3	1257	275	8	1	1431	1	1312	*	*
+ESV196.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.3	1387	22	2	1	1385	1	1466	*	*
+ESV163.1458	Y12373.1.1470 Bacteria;Proteobacteria;Gammaproteobacteria;Chromatiales;Chromatiaceae;Thiococcus;Thiococcus pfennigii	93.7	1419	88	2	1	1418	1	1470	*	*
+ESV168.1492	X85132.1.1560 Bacteria;Desulfobacterota;Syntrophia;Syntrophales;Syntrophaceae;Syntrophus;Syntrophus gentianae	92.2	1448	110	1	1	1448	1	1560	*	*
+ESV181.1407	AB681833.1.1410 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Rhizobiaceae;Mesorhizobium;Mesorhizobium amorphae	96.0	1367	54	0	1	1367	1	1410	*	*
+ESV198.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.4	1387	20	2	1	1385	1	1466	*	*
+ESV177.1444	GU111566.1.1460 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Tessaracoccus;Tessaracoccus oleiagri	94.6	1402	75	1	1	1402	1	1460	*	*
+ESV199.1451	DQ656489.1.1451 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Comamonadaceae;Aquincola;Aquincola tertiaricarbonis	97.3	1411	38	0	1	1411	1	1451	*	*
+ESV189.1471	AY742226.1.1523 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Proteiniphilum;Proteiniphilum acetatigenes	90.0	1438	121	6	1	1435	1	1523	*	*
+ESV206.1453	ABCE01000043.54659.57378 Bacteria;Planctomycetota;Planctomycetes;Planctomycetales;Gimesiaceae;Gimesia;Gimesia maris DSM 8797	82.7	1220	204	3	1	1413	1	2720	*	*
+ESV161.1446	AB186360.1.1438 Bacteria;Firmicutes;Clostridia;Gracilibacteraceae;Lutispora;Lutispora thermophila	98.7	1406	18	0	1	1406	1	1438	*	*
+ESV204.1446	EU864469.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Rikenellaceae;uncultured;uncultured bacterium	88.2	1411	165	2	1	1410	1	1488	*	*
+ESV143.1455	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	85.8	1232	156	10	1	1414	1	1225	*	*
+ESV115.1500	AF050560.1.1495 Bacteria;Verrucomicrobiota;Kiritimatiellae;WCHB1-41;uncultured eubacterium WCHB1-41	82.7	1472	224	9	1	1459	1	1495	*	*
+ESV209.1425	ABEZ02000012.1768.3258 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Intestinibacter;Intestinibacter bartlettii DSM 16795	100.0	1385	0	0	1	1385	1	1491	*	*
+ESV205.1449	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	93.6	1413	88	3	1	1413	1	1488	*	*
+ESV192.1441	GU111566.1.1460 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Tessaracoccus;Tessaracoccus oleiagri	94.4	1401	77	1	1	1400	1	1460	*	*
+ESV200.1408	HF970589.1.1407 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Xanthobacteraceae;Variibacter;Variibacter gotjawalensis	94.7	1368	71	2	1	1367	1	1407	*	*
+ESV202.1404	ARTG01000014.167482.168945 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Hyphomicrobiaceae;Hyphomicrobium;Hyphomicrobium zavarzinii ATCC 27496	95.3	1366	62	1	1	1364	1	1464	*	*
+ESV201.1442	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	97.2	1230	33	1	1	1402	1	1312	*	*
+ESV194.1443	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	98.1	1230	22	1	1	1402	1	1312	*	*
+ESV218.1449	FJ177530.1.1470 Bacteria;Bacteroidota;Bacteroidia;Chitinophagales;Chitinophagaceae;Ferruginibacter;Ferruginibacter alkalilentus	95.7	1415	59	2	1	1413	1	1470	*	*
+ESV208.1402	X53853.508.1973 Bacteria;Proteobacteria;Alphaproteobacteria;Rhodobacterales;Rhodobacteraceae;Rhodobacter;Rhodobacter sphaeroides	95.2	1361	51	1	1	1361	1	1466	*	*
+ESV220.1425	AY438672.1.1429 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Intestinibacter;Intestinibacter bartlettii DSM 16795	99.9	1385	1	0	1	1385	1	1429	*	*
+ESV187.1439	L11305.1.1457 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Sedimentibacteraceae;Sedimentibacter;Sedimentibacter hydroxybenzoicus	94.3	1398	73	1	1	1398	1	1457	*	*
+ESV221.1460	AB680846.1.1463 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Rhodocyclaceae;Zoogloea;Zoogloea ramigera	100.0	1420	0	0	1	1420	1	1463	*	*
+ESV223.1451	KP233808.1.1435 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Petrimonas;Petrimonas mucosa	99.9	1415	2	0	1	1415	1	1435	*	*
+ESV131.1496	FN597064.1.1254 Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Ornithinibacillus;Ornithinibacillus contaminans	81.7	1235	207	7	1	1455	1	1254	*	*
+ESV169.1445	AB186360.1.1438 Bacteria;Firmicutes;Clostridia;Gracilibacteraceae;Lutispora;Lutispora thermophila	93.9	1406	85	1	1	1405	1	1438	*	*
+ESV162.1445	AB186360.1.1438 Bacteria;Firmicutes;Clostridia;Gracilibacteraceae;Lutispora;Lutispora thermophila	94.7	1406	73	1	1	1405	1	1438	*	*
+ESV219.1408	AJ414656.1.1438 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Beijerinckiaceae;Methylocystis;Methylocystis rosea	97.3	1368	37	0	1	1368	1	1438	*	*
+ESV165.1408	JX131369.1.1450 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Hyphomicrobiaceae;Hyphomicrobium;Hyphomicrobium nitrativorans NL23	91.2	1369	116	4	1	1368	1	1450	*	*
+ESV176.1441	JQ809697.1.1447 Bacteria;Synergistota;Synergistia;Synergistales;Synergistaceae;Cloacibacillus;Cloacibacillus porcorum	91.4	1401	115	3	1	1400	1	1447	*	*
+ESV226.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.6	1387	18	2	1	1385	1	1466	*	*
+ESV227.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.6	1387	17	2	1	1385	1	1466	*	*
+ESV222.1407	JQ339788.1.1308 Bacteria;Proteobacteria;Alphaproteobacteria;Rhizobiales;Rhizobiaceae;Mesorhizobium;Mesorhizobium qingshengii	94.6	1308	70	0	1	1367	1	1308	*	*
+ESV233.1435	AY445593.1.1505 Bacteria;Firmicutes;Clostridia;Oscillospirales;Ruminococcaceae;Ruminococcus;Ruminococcus flavefaciens	97.4	1395	36	0	1	1395	1	1505	*	*
+ESV210.1442	DQ117465.1.1549 Bacteria;Firmicutes;Clostridia;Gracilibacteraceae;Gracilibacter;Gracilibacter thermotolerans	93.8	1409	80	3	1	1402	1	1549	*	*
+ESV211.1427	L11305.1.1457 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Sedimentibacteraceae;Sedimentibacter;Sedimentibacter hydroxybenzoicus	94.3	1392	74	3	1	1387	1	1457	*	*
+ESV225.1426	JF262039.1.1442 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Youngiibacter;Youngiibacter fragilis 232.1	93.1	1397	84	1	1	1385	1	1442	*	*
+ESV228.1443	HE574551.1.1372 Bacteria;Actinobacteriota;Actinobacteria;Corynebacteriales;Nocardiaceae;Gordonia;Gordonia phosphorivorans	98.2	1372	25	0	1	1403	1	1372	*	*
+ESV151.1446	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	87.5	1228	142	8	1	1404	1	1225	*	*
+ESV158.1450	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	87.9	1232	138	8	1	1409	1	1225	*	*
+ESV236.1439	FR733712.1.1504 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Propionicimonas;Propionicimonas paludicola	97.7	1400	30	2	1	1399	1	1504	*	*
+ESV159.1426	AB243672.1.1425 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Bellilinea;Bellilinea caldifistulae	84.8	1394	193	10	1	1385	1	1425	*	*
+ESV240.1433	AY445593.1.1505 Bacteria;Firmicutes;Clostridia;Oscillospirales;Ruminococcaceae;Ruminococcus;Ruminococcus flavefaciens	97.2	1395	37	2	1	1393	1	1505	*	*
+ESV184.1445	AB517669.1.1483 Bacteria;Actinobacteriota;Acidimicrobiia;Acidimicrobiales;Acidimicrobiales Incertae Sedis;Aciditerrimonas;Aciditerrimonas ferrireducens	88.5	1408	157	5	1	1404	1	1483	*	*
+ESV243.1448	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	91.1	1411	124	2	1	1411	1	1488	*	*
+ESV145.1472	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	86.3	1377	168	5	1	1431	1	1370	*	*
+ESV197.1453	FJ805840.1.1445 Bacteria;Firmicutes;Clostridia;Oscillospirales;Ruminococcaceae;Caproiciproducens;Caproiciproducens galactitolivorans	88.7	1416	146	5	1	1413	1	1445	*	*
+ESV247.1423	AB109438.1.1426 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Leptolinea;Leptolinea tardivitalis	92.5	1388	97	7	1	1383	1	1426	*	*
+ESV232.1439	AJ251215.1.1500 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Anaerovoracaceae;Anaerovorax;Anaerovorax odorimutans	91.2	1405	122	1	1	1404	1	1500	*	*
+ESV249.1426	ABEZ02000021.84162.85652 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Intestinibacter;Intestinibacter bartlettii DSM 16795	99.9	1385	1	0	1	1385	1	1491	*	*
+ESV170.1444	EU465792.1.1395 Bacteria;Firmicutes;Clostridia;Oscillospirales;UCG-010;uncultured bacterium	87.7	1372	145	7	1	1404	1	1395	*	*
+ESV246.1449	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	94.1	1413	80	3	1	1413	1	1488	*	*
+ESV248.1440	DQ196625.1.1459 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Brooklawnia;Brooklawnia cerclae	97.4	1384	36	0	1	1399	1	1459	*	*
+ESV253.1424	AB109439.1.1424 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;Levilinea;Levilinea saccharolytica	88.7	1383	154	2	1	1383	1	1424	*	*
+ESV250.1448	EU864483.1.1488 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	91.2	1411	122	2	1	1411	1	1488	*	*
+ESV254.1425	JN381505.1.1466 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;Romboutsia ilealis	98.4	1387	20	2	1	1385	1	1466	*	*
+ESV230.1467	KT581436.1.1494 Bacteria;Actinobacteriota;Thermoleophilia;Solirubrobacterales;Solirubrobacteraceae;Patulibacter;Patulibacter brassicae	90.9	1427	116	2	1	1427	1	1494	*	*
+ESV182.1442	AB478415.1.1461 Bacteria;Bacteroidota;Ignavibacteria;Ignavibacteriales;Ignavibacteriaceae;Ignavibacterium;Ignavibacterium album	84.5	1410	208	7	1	1404	1	1461	*	*
+ESV235.1455	AB640691.1.1483 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Finegoldia;Finegoldia magna	88.5	1416	156	3	1	1415	1	1483	*	*
+ESV173.1425	AB067647.1.1427 Bacteria;Chloroflexi;Anaerolineae;Caldilineales;Caldilineaceae;Caldilinea;Caldilinea aerophila	93.4	1387	90	2	1	1385	1	1427	*	*
+ESV195.1447	EU465792.1.1395 Bacteria;Firmicutes;Clostridia;Oscillospirales;UCG-010;uncultured bacterium	86.3	1374	163	8	1	1407	1	1395	*	*
+ESV153.1477	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	83.9	1380	201	5	1	1436	1	1370	*	*
+ESV185.1438	HG726039.1.1478 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;Clostridium saudiense	96.6	1397	48	0	1	1397	1	1478	*	*
+ESV237.1444	AB517669.1.1483 Bacteria;Actinobacteriota;Acidimicrobiia;Acidimicrobiales;Acidimicrobiales Incertae Sedis;Aciditerrimonas;Aciditerrimonas ferrireducens	89.6	1409	141	4	1	1404	1	1483	*	*
+ESV239.1444	AB517669.1.1483 Bacteria;Actinobacteriota;Acidimicrobiia;Acidimicrobiales;Acidimicrobiales Incertae Sedis;Aciditerrimonas;Aciditerrimonas ferrireducens	89.4	1409	143	4	1	1404	1	1483	*	*
+ESV244.1441	JQ809697.1.1447 Bacteria;Synergistota;Synergistia;Synergistales;Synergistaceae;Cloacibacillus;Cloacibacillus porcorum	90.8	1401	124	3	1	1400	1	1447	*	*
+ESV190.1446	EU845023.1.1458 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;uncultured bacterium	87.2	1427	160	4	1	1406	1	1458	*	*
+ESV217.1458	CU918389.1.1352 Bacteria;Firmicutes;D8A-2;uncultured bacterium	88.8	1353	147	3	1	1417	1	1352	*	*
+ESV175.1460	ACLA01000028.1.1216 Bacteria;Firmicutes;Negativicutes;Veillonellales-Selenomonadales;Selenomonadaceae;Selenomonas;Selenomonas flueggei ATCC 43531	80.9	1223	216	8	1	1420	1	1216	*	*
+ESV213.1482	AB212873.1.1482 Bacteria;Desulfobacterota;Syntrophorhabdia;Syntrophorhabdales;Syntrophorhabdaceae;Syntrophorhabdus;Syntrophorhabdus aromaticivorans	97.2	1441	41	0	1	1441	1	1482	*	*
+ESV167.1477	EU488424.1.1527 Bacteria;Calditrichota;Calditrichia;Calditrichales;Calditrichaceae;uncultured bacterium	86.1	1439	190	3	1	1437	1	1527	*	*
+ESV212.1441	AB478415.1.1461 Bacteria;Bacteroidota;Ignavibacteria;Ignavibacteriales;Ignavibacteriaceae;Ignavibacterium;Ignavibacterium album	84.8	1410	204	7	1	1403	1	1461	*	*
+ESV215.1446	EU845023.1.1458 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;uncultured bacterium	89.1	1427	134	3	1	1406	1	1458	*	*
+ESV186.1438	HG726039.1.1478 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;Clostridium saudiense	99.6	1397	6	0	1	1397	1	1478	*	*
+ESV180.1479	ASVV01000008.1.1273 Bacteria;Firmicutes;Bacilli;Lactobacillales;Enterococcaceae;Enterococcus;Enterococcus caccae ATCC BAA-1240	81.6	1204	206	8	1	1437	1	1273	*	*
+ESV214.1450	AB529679.1.1438 Bacteria;Armatimonadota;Armatimonadia;Armatimonadales;Armatimonadaceae;Armatimonas;Armatimonas rosea	85.2	1410	194	10	1	1409	1	1438	*	*
+ESV238.1434	EU488439.1.1472 Bacteria;Chloroflexi;Anaerolineae;uncultured;uncultured bacterium	85.2	1395	192	4	1	1394	1	1472	*	*
+ESV178.1468	JX529332.1.1400 Bacteria;Planctomycetota;Phycisphaerae;Phycisphaerales;Phycisphaeraceae;FS140-16B-02 marine group;uncultured bacterium	78.2	1421	255	14	1	1428	1	1400	*	*
+ESV241.1566	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	87.3	1232	146	8	1	1406	1	1225	*	*
+ESV203.1492	X70955.1.1551 Bacteria;Desulfobacterota;Desulfuromonadia;Syntrophotaleaceae;Syntrophotalea;Pelobacter acetylenicus	78.1	1454	300	13	1	1451	1	1551	*	*
+ESV207.1473	AB572912.1.1529 Bacteria;Firmicutes;Moorellia;Moorellales;Moorellaceae;Moorella;Moorella thermoacetica	79.8	1457	261	13	1	1433	1	1529	*	*
+ESV231.1444	AB529679.1.1438 Bacteria;Armatimonadota;Armatimonadia;Armatimonadales;Armatimonadaceae;Armatimonas;Armatimonas rosea	85.3	1406	194	8	1	1403	1	1438	*	*
+ESV245.1446	EU845023.1.1458 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;uncultured bacterium	87.3	1427	159	4	1	1406	1	1458	*	*
+ESV252.1442	AY574991.1.1453 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Catabacter;Catabacter hongkongensis	87.3	1421	158	4	1	1402	1	1453	*	*
+ESV224.1452	KX450231.1.1427 Bacteria;Firmicutes;Desulfotomaculia;Ammonifexales;Ammonificaceae;Thermodesulfitimonas;Thermodesulfitimonas autotrophica	80.2	1359	253	10	1	1412	1	1427	*	*
+ESV242.1463	EU338489.1.1225 Bacteria;Firmicutes;Natranaerobiia;Natranaerobiales;Natranaerobiaceae;Natronovirga;Natronovirga wadinatrunensis	84.9	1238	170	9	1	1422	1	1225	*	*
+ESV234.1496	FN597064.1.1254 Bacteria;Firmicutes;Bacilli;Bacillales;Bacillaceae;Ornithinibacillus;Ornithinibacillus contaminans	81.7	1235	207	7	1	1455	1	1254	*	*
+ESV216.1462	DQ677835.1.1228 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Porphyromonadaceae;Porphyromonas;Porphyromonas gingivicanis	80.7	1221	233	3	1	1425	1	1228	*	*
+ESV229.1450	ALWX01000108.1.1312 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Janibacter;Janibacter hoylei PVAS-1	69.5	1235	327	9	1	1338	1	1312	*	*
+ESV255.1468	GU139282.1.1370 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;PBS-18;uncultured bacterium	86.2	1367	185	3	1	1428	1	1370	*	*
+ESV251.1491	BAFX01000035.1.1307 Bacteria;Actinobacteriota;Actinobacteria;Corynebacteriales;Nocardiaceae;Nocardia;Nocardia concava NBRC 100430	73.9	1260	281	9	1	1432	1	1307	*	*

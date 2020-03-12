@@ -106,10 +106,9 @@ generateESVs() {
   $usearch -unoise3 temp/uniques_wsize.fa -zotus temp/preESVs.fa -minsize 2
   #cp temp/uniques_wsize.fa temp/preESVs.fa
 
+  # Remove shorter ESVs that also part of longer ESVs
+  #To ensure reproducibility, the output ESVs will be ordered first by decending size (times the unique ESV has been observed) and when sizes are identical by preESV ID (ascending). 
   echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
-  #The output centroids will be ordered by size (coverage), but sequences with identical size
-  #will be ordered randomly between runs. The below R script first orders by size (descending) 
-  #and then by ESV ID (ascending) when sizes are identical. 
   #Rename with new ID's to "ESV(ID).(length)" fx: "ESV1.1413"
   $R --slave --args "$MAX_THREADS" << 'findLongestSortESVsBySizeAndID'
     #extract passed args from shell script
@@ -147,6 +146,7 @@ findLongestSortESVsBySizeAndID
 }
 
 #Define function to align and trim sequences based on the global SILVA alignment using SINA
+
 sinaAlign() {
   # Preparation
   local DATA=$1
@@ -183,16 +183,6 @@ sinaAlign() {
 sortSINAoutput
 }
 
-#search/assign tax DB
-searchTaxDB() {
-  IN=$1
-  DB=$2
-  OUT=$3
-  $usearch -usearch_global $IN -db $DB -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
-}
-
-################################## end of functions ##################################
-################################## start of pipeline ##################################
 #fetch and check options provided by user
 while getopts ":hi:d:t:" opt; do
   case ${opt} in
@@ -279,9 +269,14 @@ $R --slave << 'checkRpkgs'
     })
 checkRpkgs
 
-#########################################################################################
-#Generate ESVs
-##############
+###################################
+########## Generate ESVs ##########
+###################################
+
+
+
+# Run the generateESV function
+
 echoWithHeader "Generating ESVs..."
 generateESVs $DATA
 
@@ -382,34 +377,49 @@ if [ -n "${ESVDB:-}" ]; then
 addnewESVs
 fi
 
-#########################################################################################
-#Align ESVs using SINA with SILVA and SILVA typestrains databases, then trim and sort
-##############
-#typestrains
-echoWithHeader "Aligning ESVs with typestrains database using SINA..."
-sinaAlign temp/ESVs.fa ESVs_typestrains $typestrains_db $MAX_THREADS
+#############################################################################
+########## Align and trim ESVs based on the global SILVA alignment ##########
+#############################################################################
 
-#SILVA
+
+
+#Run the sinaAlign function
 echoWithHeader "Aligning ESVs with SILVA database using SINA..."
 sinaAlign temp/ESVs.fa ESVs_SILVA $silva_db $MAX_THREADS
 
-#########################################################################################
-#Assign taxonomy of best hit
-##############
-#typestrains
-echoWithHeader "Finding taxonomy of best hit in typestrains database..."
-searchTaxDB temp/ESVs_typestrains_trimmed_sorted.fa $typestrains_udb temp/tax_typestrains.txt
+#########################################################################
+########## Map ESVs against the SILVA and typestrain databases ##########
+#########################################################################
+
+# Define functions to map ESVs against the SILVA and type strain database. For SILVA we find the top hit, 
+# whereas for the type strain database we find all references with >=98.7% identity 
+searchTaxDB() {
+  IN=$1
+  DB=$2
+  OUT=$3
+  $usearch -usearch_global $IN -db $DB -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
+}
+
+searchTaxDB_typestrain() {
+  IN=$1
+  DB=$2
+  OUT=$3
+  $usearch -usearch_global $IN -db $DB -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $OUT -threads $MAX_THREADS
+}
 
 #SILVA
 echoWithHeader "Finding taxonomy of best hit in SILVA database..."
 searchTaxDB temp/ESVs_SILVA_trimmed_sorted.fa $silva_udb temp/tax_SILVA.txt
 
-#########################################################################################
-#De novo taxonomy 
-##############
-#assign with identity thresholds based on Yarza et al, 2014
-#using cluster_smallmem (no multithread support) and not cluster_fast to preserve order
-#of input sequences, cluster_fast runs on 1 thread anyways even if set to more than 1
+#Typestrains
+echoWithHeader "Finding the taxonomy of species within the 98.7% threshold in the typestrains database..."
+searchTaxDB_typestrain temp/ESVs_SILVA_trimmed_sorted.fa $typestrains_udb temp/tax_typestrains.txt
+
+#######################################################################################
+########## Perform clustering for the de novo taxonomy based on trimmed ESVs ##########
+#######################################################################################
+
+#assign with identity thresholds based on Yarza et al, 2014 using cluster_smallmem (no multithread support) to preserve order of input sequences.
 echoWithHeader "Generating de novo taxonomy..."
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -centroids temp/SILVA_ESV-S_centroids.fa -sortedby other
 $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -centroids temp/SILVA_S-G_centroids.fa -sortedby other
@@ -423,10 +433,12 @@ $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -ma
 ########## Format, merge, and ultimately generate AutoTax taxonomy ##########
 #############################################################################
 
-#########################################################################################
 echoWithHeader "Merging and reformatting taxonomy..."
-#run R script to format, merge, and ultimately generate de novo taxonomy
+
+# Export the taxonomy assignment Rscript, so that it can be rerun independently if needed.
 cat << 'generatedenovotax' > temp/Rscript.R
+
+# 
 #!/usr/bin/Rscript
 #load R packages
 suppressPackageStartupMessages({
@@ -436,8 +448,8 @@ suppressPackageStartupMessages({
   require("data.table")
 })
 
-##### FUNCTIONS #####
-## read/write taxonomy ##
+## Define function to read usearch mapping files in blast6out format, curate the taxonomy, and export it in a tab-delimited format ##
+
 read_clean_tax <- function(input) {
   tax <- read.delim(input,
                     sep = "\t",
@@ -500,7 +512,7 @@ write_tax <- function(tax, file) {
                      sep = ",")
 }
 
-## read and sort mappings ##
+# Define function to read and sort data from the denovo clustering in UCLUST-format  ##
 read_sort_mappings <- function(path, colnames) {
   x <- data.table::fread(path,
                          sep = "\t",
@@ -517,9 +529,9 @@ read_sort_mappings <- function(path, colnames) {
   invisible(x)
 }
 
-##### Fix taxonomy #####
-##### typestrains
-#read typestrains tax, only Genus and Species
+
+# Fix typestrain taxonomy
+## Read typestrains tax, only Genus and Species
 ESV_typestrain_tax <- select(read_clean_tax("./temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
 
 #remove strain information from Species names (keep only first two words)
@@ -528,6 +540,13 @@ ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <-
          function(x) {
            paste0(x[1:2], collapse = "_")
          })
+
+#remove ESVs that hit more than one Species using data.table
+  ESV_typestrain_tax <- as.data.table(ESV_typestrain_tax)
+
+  ESV_typestrain_tax <- ESV_typestrain_tax[,hits:=uniqueN(Species),by=ESV][hits==1,][,hits:=NULL][,idty:=NULL][Species!="",]
+
+  ESV_typestrain_tax <- unique(ESV_typestrain_tax)
 
 #write out
 write_tax(tax = ESV_typestrain_tax, file = "./output/tax_typestrains.csv")
@@ -540,7 +559,7 @@ ESV_SILVA_tax <- select(read_clean_tax(input = "./temp/tax_SILVA.txt"), -Species
 write_tax(tax = ESV_SILVA_tax, file = "./output/tax_SILVA.csv")
 
 ##### merge typestrains+SILVA taxonomy by ESV and Genus #####
-ESV_slv_typestr_tax <- left_join(ESV_SILVA_tax[,-2], ESV_typestrain_tax[,-2], by = c("ESV", "Genus"))
+ESV_slv_typestr_tax <- left_join(ESV_SILVA_tax[,-2], ESV_typestrain_tax, by = c("ESV", "Genus"))
 ESV_slv_typestr_tax[is.na(ESV_slv_typestr_tax)] <- ""
 
 #write out

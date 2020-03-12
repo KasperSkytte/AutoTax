@@ -6,7 +6,7 @@ WORKDIR /opt
 ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update
 RUN apt-get -y install --no-install-recommends --no-install-suggests \
-        ca-certificates software-properties-common gnupg2 gnupg1 \
+        ca-certificates software-properties-common gnupg2 gnupg1 git \
         parallel=20161222-1 libcurl4-openssl-dev libssl-dev libxml2-dev wget
 
 #add R CRAN mirror to apt sources to install R using APT
@@ -29,6 +29,12 @@ RUN R -e "BiocManager::install(c('Biostrings', 'doParallel', 'stringr', 'data.ta
 RUN wget -q https://github.com/epruesse/SINA/releases/download/v1.6.0/sina-1.6.0-linux.tar.gz
 RUN tar -zxf sina-1.6.0-linux.tar.gz
 RUN rm sina-1.6.0-linux.tar.gz
+
+#install BATS for unit testing
+RUN git clone https://github.com/bats-core/bats-core.git
+RUN /opt/bats-core/install.sh /usr/local
+#silence citation notice from GNU parallel (not used in a context where it makes sense to cite)
+RUN mkdir -p ~/.parallel && touch ~/.parallel/will-cite
 
 #make sure everything is in PATH
 WORKDIR /home/user/
