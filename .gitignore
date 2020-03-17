@@ -4,6 +4,4 @@
 .Ruserdata
 *.Rproj
 usearch11
-*.zip
-*.arb
-*.udb
+refdatabases/
