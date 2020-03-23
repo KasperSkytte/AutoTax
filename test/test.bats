@@ -59,12 +59,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 @test "Echo with timestamp" {
 	#expect error if no arguments passed to function
 	run echoWithHeader
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect no error
 	run echoWithHeader test
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#check if output pattern matches the format "[2020-03-16 10:08:30]: test"
@@ -75,38 +75,38 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 @test "Shell is BASH" {
 	#expect error if any arguments are passed to function
 	run checkBASH test
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect no error
 	run checkBASH
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
 
 @test "Error if temp/ folder exists" {
 	#expect error if no arguments passed to function
 	run checkFolder
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect error
 	mkdir -p temp
 	run checkFolder temp
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 }
 
 @test "Error if output/ folder exists" {
 	#expect error if no arguments passed to function
 	run checkFolder
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect error
 	mkdir -p output
 	run checkFolder output
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 }
 
@@ -127,17 +127,18 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 	#expect error if no arguments passed to function
 	run orient
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect no error
 	run orient -i $in -d $silva_udb -o $out
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	local diff=`diff -q $out ${verified_run_dir}$out`
-	[ ! ${diff} ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Dereplication" {
@@ -149,17 +150,18 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 	#expect error if no arguments passed to function
 	run derep
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect no error
 	run derep -i ${verified_run_dir}$in -o $out
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	local diff=`diff -q $out ${verified_run_dir}$out`
-	[ ! ${diff} ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Denoise" {
@@ -171,17 +173,18 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 	#expect error if no arguments passed to function
 	run denoise
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect no error
 	run denoise -i ${verified_run_dir}$in -o $out
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	local diff=`diff -q $out ${verified_run_dir}$out`
-	[ ! ${diff} ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Find longest and rename" {
@@ -193,17 +196,18 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 	#expect error if no arguments passed to function
 	run findLongest
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 
 	#expect no error
 	run findLongest -i ${verified_run_dir}$in -o $out -t $MAX_THREADS
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	local diff=`diff -q $out ${verified_run_dir}$out`
-	[ ! ${diff} ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step (optional): Add additional ESVs to DB" {
@@ -216,24 +220,79 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	#test database file name
 	local db=temp/ESVs.fa
 
+	#expect error if no arguments passed to function
+	run addESVs
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
 	#add identical, already generated ESVs, and expect no new unique/redundant ESVs
 	run addESVs -i $in -d ${verified_run_dir}$db -o $out -t $MAX_THREADS
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect no difference between input and output as $in+$db are the same file
-	local diff=`diff -q $out ${verified_run_dir}$out`
-	[ ! ${diff} ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 
 	#add new unique fSSUs
 	local in=/autotax/example_data/100_addonESVs.fa
 	local out=temp/addESVs.fa
 	run addESVs -i $in -d ${verified_run_dir}$db -o $out -t $MAX_THREADS
-	echo $output >&2 #if error redirect to stderr for debugging
+	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	local diff=`diff -q $out ${verified_run_dir}$out`
-	[ ! ${diff} ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
+@test "Step: Global alignment against SILVA" {
+	#test input file name
+	local in=temp/ESVs.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/ESVs_SILVA_aln.fa
+
+	#test database file name
+	local db=$silva_db
+
+	#test log file
+	local log=temp/sinaAlign_log.txt
+
+	#expect error if no arguments passed to function
+	run sinaAlign
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run sinaAlign -i $in -d $db -o $out -t $MAX_THREADS -l $log
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: " {
+	trimStripAlignment -i temp/ESVs_SILVA_aln.fa -o temp/ESVs_SILVA_aln_trimmed.fa
+}
+
+@test "Step: " {
+	sortESVs -i temp/ESVs_SILVA_aln_trimmed.fa -o temp/ESVs_SILVA_aln_trimmed_sorted.fa
+}
+
+@test "Step: Obtaining the taxonomy of the best hit in the SILVA database" {
+	searchTaxDB -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $MAX_THREADS
+}
+
+@test "Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database" {
+	searchTaxDB_typestrain -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
+}
+
+@test "Step: Cluster species" {
+	clusterSpecies -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_ESV-S.txt -c temp/SILVA_ESV-S_centroids.fa
+}
