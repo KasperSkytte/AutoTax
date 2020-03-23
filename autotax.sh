@@ -439,26 +439,94 @@ addnewESVs
 
 #Define function to align and trim sequences based on the global SILVA alignment using SINA
 sinaAlign() {
+  #check user arguments
+  local OPTIND
+  while getopts ":i:t:d:o:l:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      t )
+        local max_threads=$OPTARG
+        ;;
+      d )
+        local database=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      l )
+        local log=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
   echoWithHeader "Aligning ESVs with SILVA database using SINA..."
-  # Preparation
-  local DATA=$1
-  local OUTPUTID=$2
-  local DB=$3
-  local SINA_THREADS=${4:-$MAX_THREADS}
-  
-  $sina -i ${DATA} -o temp/${OUTPUTID}_aligned.fa -r $DB \
-  --threads $SINA_THREADS --log-file temp/${OUTPUTID}_log.txt
+  sina -i $input -o $output -r $database --threads $max_threads --log-file $log
+}
 
+trimStripAlignment() {
+  #check user arguments
+  local OPTIND
+  while getopts ":i:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
   echoWithHeader "  - Trimming, formatting, and sorting data..."
   #trim sequences and strip alignment gaps
-  awk '!/^>/ {$0=substr($0, 1048, 41788)}1' temp/${OUTPUTID}_aligned.fa > temp/${OUTPUTID}_trimmed.fa
-  $usearch -quiet -fasta_stripgaps temp/${OUTPUTID}_trimmed.fa -fastaout temp/tmp.fa \
-    && mv temp/tmp.fa temp/${OUTPUTID}_trimmed.fa
-  
+  awk '!/^>/ {$0=substr($0, 1048, 41788)}1' $input > $output
+  usearch11 -quiet -fasta_stripgaps $output -fastaout tmp.fa \
+    && mv tmp.fa $output
+}
+
+sortESVs() {
+  #check user arguments
+  local OPTIND
+  while getopts ":i:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
   #sort sequences and stats files by ESV ID using R
-  $R --slave --args temp/${OUTPUTID}_trimmed.fa << 'sortSINAoutput'
+  R --slave --args $input $output << 'sortSINAoutput'
   #extract passed args from shell script
   args <- commandArgs(trailingOnly = TRUE)
+  input <- args[[1]]
+  output <- args[[2]]
 
   #load R packages
   suppressPackageStartupMessages({
@@ -466,54 +534,237 @@ sinaAlign() {
   })
   
   #reorder FASTA
-  algn.fa <- Biostrings::readBStringSet(args[[1]])
+  algn.fa <- Biostrings::readBStringSet(input)
   algn.fa <- algn.fa[order(as.integer(gsub("[^0-9+$]|\\..*$", "", names(algn.fa))))]
   Biostrings::writeXStringSet(x = algn.fa, 
-                              filepath = paste0(tools::file_path_sans_ext(args[[1]]),
-                                                "_sorted.", 
-                                                tools::file_ext(args[[1]])))
+                              filepath = output)
 sortSINAoutput
 }
+
 
 # Define functions to map ESVs against the SILVA and type strain database. For SILVA we find the top hit, 
 # whereas for the type strain database we find all references with >=98.7% identity 
 searchTaxDB() {
-  IN=$1
-  DB=$2
-  OUT=$3
-  $usearch -usearch_global $IN -db $DB -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $OUT -threads $MAX_THREADS
+  #check user arguments
+  local OPTIND
+  while getopts ":i:t:d:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      t )
+        local max_threads=$OPTARG
+        ;;
+      d )
+        local database=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $output -threads $max_threads
 }
 
 searchTaxDB_typestrain() {
-  IN=$1
-  DB=$2
-  OUT=$3
-  $usearch -usearch_global $IN -db $DB -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $OUT -threads $MAX_THREADS
+  #check user arguments
+  local OPTIND
+  while getopts ":i:t:d:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      t )
+        local max_threads=$OPTARG
+        ;;
+      d )
+        local database=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $output -threads $max_threads
 }
 
 #assign with identity thresholds based on Yarza et al, 2014 using cluster_smallmem (no multithread support) to preserve order of input sequences.
 clusterSpecies() {
-  $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.987 -maxrejects 0 -uc temp/SILVA_ESV-S.txt -centroids temp/SILVA_ESV-S_centroids.fa -sortedby other
+  #check user arguments
+  local OPTIND
+  while getopts ":i:c:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      c )
+        local centroids=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -quiet -cluster_smallmem $input -id 0.987 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterGenus() {
-  $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.945 -maxrejects 0 -uc temp/SILVA_S-G.txt -centroids temp/SILVA_S-G_centroids.fa -sortedby other
+  #check user arguments
+  local OPTIND
+  while getopts ":i:c:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      c )
+        local centroids=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -quiet -cluster_smallmem $input -id 0.945 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterFamily() {
-  $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.865 -maxrejects 0 -uc temp/SILVA_G-F.txt -centroids temp/SILVA_G-F_centroids.fa -sortedby other
+  #check user arguments
+  local OPTIND
+  while getopts ":i:c:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      c )
+        local centroids=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -quiet -cluster_smallmem $input -id 0.865 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterOrder() {
-  $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.82 -maxrejects 0 -uc temp/SILVA_F-O.txt -centroids temp/SILVA_F-O_centroids.fa -sortedby other
+  #check user arguments
+  local OPTIND
+  while getopts ":i:c:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      c )
+        local centroids=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -quiet -cluster_smallmem $input -id 0.82 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterClass() {
-  $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.785 -maxrejects 0 -uc temp/SILVA_O-C.txt -centroids temp/SILVA_O-C_centroids.fa -sortedby other
+  #check user arguments
+  local OPTIND
+  while getopts ":i:c:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      c )
+        local centroids=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -quiet -cluster_smallmem $input -id 0.785 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterPhylum() {
-  $usearch -quiet -cluster_smallmem temp/ESVs_SILVA_trimmed_sorted.fa -id 0.75 -maxrejects 0 -uc temp/SILVA_C-P.txt -centroids temp/SILVA_C-P_centroids.fa -sortedby other
+  #check user arguments
+  local OPTIND
+  while getopts ":i:c:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      c )
+        local centroids=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  usearch11 -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 Rstuff() {
