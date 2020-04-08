@@ -110,10 +110,6 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 }
 
-@test "Check user options" {
-	skip "WIP"
-}
-
 @test "Check input data" {
 	skip "WIP"
 }
@@ -277,22 +273,262 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	#[ "$status" -eq 0 ]
 }
 
-@test "Step: " {
-	trimStripAlignment -i temp/ESVs_SILVA_aln.fa -o temp/ESVs_SILVA_aln_trimmed.fa
+@test "Step: Trim and strip alignment" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/ESVs_SILVA_aln_trimmed.fa
+	
+	#expect error if no arguments passed to function
+	run trimStripAlignment
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run trimStripAlignment -i $in -o $out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
 }
 
-@test "Step: " {
-	sortESVs -i temp/ESVs_SILVA_aln_trimmed.fa -o temp/ESVs_SILVA_aln_trimmed_sorted.fa
+@test "Step: Sort ESVs by ID (i.e. highest coverage)" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	
+	#expect error if no arguments passed to function
+	run sortESVs
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run sortESVs -i $in -o $out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
 }
 
 @test "Step: Obtaining the taxonomy of the best hit in the SILVA database" {
-	searchTaxDB -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $MAX_THREADS
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/tax_SILVA.txt
+
+	#test database file name
+	local db=$silva_udb
+
+	#expect error if no arguments passed to function
+	run searchTaxDB
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run searchTaxDB -i $in -d $db -o $out -t $MAX_THREADS
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
 }
 
 @test "Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database" {
-	searchTaxDB_typestrain -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/tax_typestrains.txt
+
+	#test database file name
+	local db=$typestrains_udb
+
+	#expect error if no arguments passed to function
+	run searchTaxDB_typestrain
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run searchTaxDB_typestrain -i $in -d $db -o $out -t $MAX_THREADS
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
 }
 
-@test "Step: Cluster species" {
-	clusterSpecies -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_ESV-S.txt -c temp/SILVA_ESV-S_centroids.fa
+@test "Step: Cluster at species level" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/SILVA_ESV-S.txt
+
+	#test centroids file name
+	local centroids=temp/SILVA_ESV-S_centroids.fa
+
+	#expect error if no arguments passed to function
+	run clusterSpecies
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run clusterSpecies -i $in -o $out -c $centroids
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: Cluster at genus level" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/SILVA_S-G.txt
+
+	#test centroids file name
+	local centroids=temp/SILVA_S-G_centroids.fa
+
+	#expect error if no arguments passed to function
+	run clusterGenus
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run clusterGenus -i $in -o $out -c $centroids
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: Cluster at family level" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/SILVA_G-F.txt
+
+	#test centroids file name
+	local centroids=temp/SILVA_G-F_centroids.fa
+
+	#expect error if no arguments passed to function
+	run clusterFamily
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run clusterFamily -i $in -o $out -c $centroids
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: Cluster at order level" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/SILVA_F-O.txt
+
+	#test centroids file name
+	local centroids=temp/SILVA_F-O_centroids.fa
+
+	#expect error if no arguments passed to function
+	run clusterOrder
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run clusterOrder -i $in -o $out -c $centroids
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: Cluster at class level" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/SILVA_O-C.txt
+
+	#test centroids file name
+	local centroids=temp/SILVA_O-C_centroids.fa
+
+	#expect error if no arguments passed to function
+	run clusterClass
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run clusterClass -i $in -o $out -c $centroids
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: Cluster at phylum level" {
+  #test input file name
+	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+
+	#test output file name, dont use "output" as it is reserved by BATS
+	local out=temp/SILVA_C-P.txt
+
+	#test centroids file name
+	local centroids=temp/SILVA_C-P_centroids.fa
+
+	#expect error if no arguments passed to function
+	run clusterPhylum
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run clusterPhylum -i $in -o $out -c $centroids
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q $out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
+}
+
+@test "Step: Rstuff" {
+  run Rstuff
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
