@@ -38,7 +38,7 @@ userError() {
 checkRPkgs() {
   echoWithHeader "Checking for required R packages and installing if missing..."
   #Run R and check for installed packages, install if needed
-  $R --slave << 'checkRpkgs'
+  R --slave << 'checkRpkgs'
     suppressPackageStartupMessages({
       #Biostrings (and BiocManager which is used to install Biostrings)
       if(!require("Biostrings")) {
