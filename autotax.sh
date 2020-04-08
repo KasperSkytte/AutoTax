@@ -1,5 +1,5 @@
 #!/bin/bash
-VERSION="1.4.0"
+export VERSION="1.4.0"
 
 #set appropriate error handling
 set -o errexit -o pipefail -o nounset #-o noclobber
@@ -10,16 +10,16 @@ set -o errexit -o pipefail -o nounset #-o noclobber
 # Set paths to the SILVA nr99 database and the typestrain database extracted from SILVA nr99 (see article supplementary for details). 
 # .udb files have to be created first from fasta files using the example below:
 # usearch11 -makeudb_usearch SILVA_132_SSURef_Nr99_tax_silva.fasta -output SILVA_132_SSURef_Nr99_tax_silva.udb
-silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
-silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
-typestrains_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt_typestrains.arb"
-typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains.udb"
+export silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
+export silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
+export typestrains_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt_typestrains.arb"
+export typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains.udb"
 
 #de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on ESV number 123
-denovo_prefix="denovo"
+export denovo_prefix="denovo"
 
 #set threads to a default value if not provided by the user
-MAX_THREADS=${MAX_THREADS:-$((`nproc`-2))}
+export MAX_THREADS=${MAX_THREADS:-$((`nproc`-2))}
 
 ##################################
 ########## end of setup ##########
