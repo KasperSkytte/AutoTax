@@ -119,43 +119,6 @@ checkFolder() {
   fi
 }
 
-checkUserOptions() {
-  #fetch and check options provided by user
-  while getopts ":hi:d:t:" opt; do
-    case ${opt} in
-      h )
-        echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
-        echo "Version: $VERSION"
-        echo "Options:"
-        echo "  -h    Display this help text."
-        echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
-        echo "  -d    FASTA file with previously processed ESV sequences."
-        echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
-        echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
-        exit 1
-        ;;
-      i )
-        DATA=$OPTARG
-        ;;
-      d )
-        ESVDB=$OPTARG
-        ;;
-      t )
-        MAX_THREADS=$OPTARG
-        ;;
-      \? )
-        userError "Invalid Option: -$OPTARG"
-        exit 1
-        ;;
-      : )
-        userError "Option -$OPTARG requires an argument"
-        exit 1
-        ;;
-    esac
-  done
-  shift $((OPTIND -1))
-}
-
 checkInputData() {
   #exit if no data provided
   if [ -z "${DATA:-}" ]; then
@@ -255,7 +218,7 @@ findLongest() {
         local input=$OPTARG
         ;;
       t )
-        local max_threads=$OPTARG
+        local MAX_THREADS=$OPTARG
         ;;
       o )
         local output=$OPTARG
@@ -274,7 +237,7 @@ findLongest() {
   #To ensure reproducibility, the output ESVs will be ordered first by decending size (times the unique ESV has been observed) and when sizes are identical by preESV ID (ascending). 
   echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
   #Rename with new ID's to "ESV(ID).(length)" fx: "ESV1.1413"
-  R --slave --args "$input" "$output" "$max_threads" << 'findLongestSortESVsBySizeAndID'
+  R --slave --args "$input" "$output" "$MAX_THREADS" << 'findLongestSortESVsBySizeAndID'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
     input <- as.character(args[[1]])
@@ -320,7 +283,7 @@ addESVs() {
         local input=$OPTARG
         ;;
       t )
-        local max_threads=$OPTARG
+        local MAX_THREADS=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -338,125 +301,120 @@ addESVs() {
         ;;
     esac
   done
-  #if -d is provided, identify redundant ESVs compared to the ESV database
-  #and merge the two before continuing
-  ##############
-  #if [ -n "${ESVDB:-}" ]; then
-    echoWithHeader "Finding new unique ESVs and adding them to the existing database..."
-    cp $input output/allNewESVs.fa
-    R --slave --args "$input" "$database" "$output" "$max_threads" << 'addnewESVs'
-      #extract passed args from shell script
-      args <- commandArgs(trailingOnly = TRUE)
-      input <- args[[1]]
-      ESVDB <- args[[2]]
-      output <- args[[3]]
-      nProc <- as.integer(args[[4]])
-      
-      #load R packages
-      suppressPackageStartupMessages({
-        require("Biostrings")
-        require("doParallel")
-        require("stringi")
-        require("data.table")
-      })
-      
-      doParallel::registerDoParallel(cores = nProc)
-      querySeqs <- Biostrings::readBStringSet(ESVDB)
-      targetSeqs <- Biostrings::readBStringSet(input)
-      tlengths <- Biostrings::width(targetSeqs)
-      
-    #Match existing ESVs to the new ESVs to find sequences of equal or shorter length
-    res <- foreach::foreach(
-      query = as.character(querySeqs),
-      name = names(querySeqs),
-      .inorder = TRUE,
-      .combine = "rbind") %dopar% {
-        qlength <- Biostrings::width(query)
-        targetSeqs <- targetSeqs[which(tlengths >= qlength)]
-        hitIDs <- stringi::stri_detect_fixed(pattern = query, str = targetSeqs)
-        nHits <- sum(hitIDs)
-        if(nHits == 0) {
-          return(NULL)
-        } else {
-          targetHits <- targetSeqs[hitIDs]
-          data.table::data.table(queryName = rep(name, times = nHits),
-                                 queryLength = rep(qlength, times = nHits),
-                                 querySeq = rep(as.character(query), times = nHits),
-                                 targetName = names(targetHits),
-                                 targetLength = Biostrings::width(targetHits),
-                                 targetSeq = as.character(targetHits))
-        }
+  echoWithHeader "Finding new unique ESVs and adding them to the existing database..."
+  cp $input output/allNewESVs.fa
+  R --slave --args "$input" "$database" "$output" "$MAX_THREADS" << 'addnewESVs'
+    #extract passed args from shell script
+    args <- commandArgs(trailingOnly = TRUE)
+    input <- args[[1]]
+    ESVDB <- args[[2]]
+    output <- args[[3]]
+    nProc <- as.integer(args[[4]])
+    
+    #load R packages
+    suppressPackageStartupMessages({
+      require("Biostrings")
+      require("doParallel")
+      require("stringi")
+      require("data.table")
+    })
+    
+    doParallel::registerDoParallel(cores = nProc)
+    querySeqs <- Biostrings::readBStringSet(ESVDB)
+    targetSeqs <- Biostrings::readBStringSet(input)
+    tlengths <- Biostrings::width(targetSeqs)
+    
+  #Match existing ESVs to the new ESVs to find sequences of equal or shorter length
+  res <- foreach::foreach(
+    query = as.character(querySeqs),
+    name = names(querySeqs),
+    .inorder = TRUE,
+    .combine = "rbind") %dopar% {
+      qlength <- Biostrings::width(query)
+      targetSeqs <- targetSeqs[which(tlengths >= qlength)]
+      hitIDs <- stringi::stri_detect_fixed(pattern = query, str = targetSeqs)
+      nHits <- sum(hitIDs)
+      if(nHits == 0) {
+        return(NULL)
+      } else {
+        targetHits <- targetSeqs[hitIDs]
+        data.table::data.table(queryName = rep(name, times = nHits),
+                               queryLength = rep(qlength, times = nHits),
+                               querySeq = rep(as.character(query), times = nHits),
+                               targetName = names(targetHits),
+                               targetLength = Biostrings::width(targetHits),
+                               targetSeq = as.character(targetHits))
       }
-    doParallel::stopImplicitCluster()
-
-    newESVs <- targetSeqs
-    if(length(res) != 0) {
-      newESVs <- newESVs[-which(names(targetSeqs) %in% res[["targetName"]])]
-      #replace shorter sequences in existing ESV database with new longer ones
-      replaceSeqs <- res[targetLength > queryLength, ]
-      if(nrow(replaceSeqs) > 0) {
-        #there may be more than one match of shorter sequences to longer ones, 
-        #if so use the first of the longer ESV (lowest number, thus higher coverage)
-        replaceSeqs <- replaceSeqs[, .SD[1], by = queryName]
-        #make a column with the exact differences between the identical sequences
-        replaceSeqs[,diff := stringi::stri_replace_all_fixed(str = targetSeq, 
-                                                             pattern = querySeq, 
-                                                             replacement = "..."), by = queryName]
-        replaceIDs <- which(names(querySeqs) %in% replaceSeqs[["queryName"]])
-        
-        #replace shorter with longer
-        querySeqs[replaceIDs] <- replaceSeqs[["targetSeq"]]
-        #and adjust length annotation in the names of the new ESVs
-        names(querySeqs)[replaceIDs] <- paste0(gsub("\\..*$", ".", names(querySeqs)[replaceIDs]), 
-                                               Biostrings::width(querySeqs[replaceIDs]))
-        
-        #write information about the replacements to a log file
-        replacementLog <- paste0(replaceSeqs[,queryName], 
-                                 " has been replaced with ",
-                                 replaceSeqs[,targetName], 
-                                 ", difference: ",
-                                 replaceSeqs[,diff])
-        warning(paste0("  - ",
-                       length(replaceIDs), 
-                       if(length(replaceIDs) > 1) 
-                         " ESVs have" 
-                       else 
-                         " ESV has",
-                       " been replaced by a longer ESV, see the logfile \"./output/replacedESVs.log\" for details"),
-                call. = FALSE)
-        writeLines(replacementLog,
-                   "./output/replacedESVs.log")
-      } else if(nrow(replaceSeqs) == 0)
-        warning("No sequences have been replaced", call. = FALSE)
     }
-    #add the new sequences to the database with new names continuing ID numbering
-    ESVs <- c(querySeqs, newESVs)
-    names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", lengths(ESVs))
-    Biostrings::writeXStringSet(ESVs, output)
+  doParallel::stopImplicitCluster()
+
+  newESVs <- targetSeqs
+  if(length(res) != 0) {
+    newESVs <- newESVs[-which(names(targetSeqs) %in% res[["targetName"]])]
+    #replace shorter sequences in existing ESV database with new longer ones
+    replaceSeqs <- res[targetLength > queryLength, ]
+    if(nrow(replaceSeqs) > 0) {
+      #there may be more than one match of shorter sequences to longer ones, 
+      #if so use the first of the longer ESV (lowest number, thus higher coverage)
+      replaceSeqs <- replaceSeqs[, .SD[1], by = queryName]
+      #make a column with the exact differences between the identical sequences
+      replaceSeqs[,diff := stringi::stri_replace_all_fixed(str = targetSeq, 
+                                                           pattern = querySeq, 
+                                                           replacement = "..."), by = queryName]
+      replaceIDs <- which(names(querySeqs) %in% replaceSeqs[["queryName"]])
+      
+      #replace shorter with longer
+      querySeqs[replaceIDs] <- replaceSeqs[["targetSeq"]]
+      #and adjust length annotation in the names of the new ESVs
+      names(querySeqs)[replaceIDs] <- paste0(gsub("\\..*$", ".", names(querySeqs)[replaceIDs]), 
+                                             Biostrings::width(querySeqs[replaceIDs]))
+      
+      #write information about the replacements to a log file
+      replacementLog <- paste0(replaceSeqs[,queryName], 
+                               " has been replaced with ",
+                               replaceSeqs[,targetName], 
+                               ", difference: ",
+                               replaceSeqs[,diff])
+      warning(paste0("  - ",
+                     length(replaceIDs), 
+                     if(length(replaceIDs) > 1) 
+                       " ESVs have" 
+                     else 
+                       " ESV has",
+                     " been replaced by a longer ESV, see the logfile \"./output/replacedESVs.log\" for details"),
+              call. = FALSE)
+      writeLines(replacementLog,
+                 "./output/replacedESVs.log")
+    } else if(nrow(replaceSeqs) == 0)
+      warning("No sequences have been replaced", call. = FALSE)
+  }
+  #add the new sequences to the database with new names continuing ID numbering
+  ESVs <- c(querySeqs, newESVs)
+  names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", lengths(ESVs))
+  Biostrings::writeXStringSet(ESVs, output)
 addnewESVs
-  #fi
 }
 
 #Define function to align and trim sequences based on the global SILVA alignment using SINA
 sinaAlign() {
   #check user arguments
   local OPTIND
-  while getopts ":i:t:d:o:l:" opt; do
+  while getopts ":i:o:d:t:l:" opt; do
     case ${opt} in
       i )
         local input=$OPTARG
         ;;
-      t )
-        local max_threads=$OPTARG
+      o )
+        local output=$OPTARG
         ;;
       d )
         local database=$OPTARG
         ;;
-      o )
-        local output=$OPTARG
+      t )
+        local MAX_THREADS=$OPTARG
         ;;
       l )
-        local log=$OPTARG
+        local logfile=$OPTARG
         ;;
       \? )
         userError "Invalid Option: -$OPTARG"
@@ -469,7 +427,7 @@ sinaAlign() {
     esac
   done
   echoWithHeader "Aligning ESVs with SILVA database using SINA..."
-  sina -i $input -o $output -r $database --threads $max_threads --log-file $log
+  sina -i $input -o $output -r $database --threads $MAX_THREADS --log-file $logfile
 }
 
 trimStripAlignment() {
@@ -541,7 +499,6 @@ sortESVs() {
 sortSINAoutput
 }
 
-
 # Define functions to map ESVs against the SILVA and type strain database. For SILVA we find the top hit, 
 # whereas for the type strain database we find all references with >=98.7% identity 
 searchTaxDB() {
@@ -553,7 +510,7 @@ searchTaxDB() {
         local input=$OPTARG
         ;;
       t )
-        local max_threads=$OPTARG
+        local MAX_THREADS=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -571,7 +528,8 @@ searchTaxDB() {
         ;;
     esac
   done
-  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $output -threads $max_threads
+  echoWithHeader "Finding taxonomy of best hit in SILVA database..."
+  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $output -threads $MAX_THREADS
 }
 
 searchTaxDB_typestrain() {
@@ -583,7 +541,7 @@ searchTaxDB_typestrain() {
         local input=$OPTARG
         ;;
       t )
-        local max_threads=$OPTARG
+        local MAX_THREADS=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -601,7 +559,8 @@ searchTaxDB_typestrain() {
         ;;
     esac
   done
-  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $output -threads $max_threads
+  echoWithHeader "Finding the taxonomy of species within the 98.7% threshold in the typestrains database..."
+  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $output -threads $MAX_THREADS
 }
 
 #assign with identity thresholds based on Yarza et al, 2014 using cluster_smallmem (no multithread support) to preserve order of input sequences.
@@ -1058,8 +1017,8 @@ Rstuff() {
   qiime_tax[["Species"]] <- paste0("s__", qiime_tax[["Species"]])
   qiime_tax <- qiime_tax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
   writeLines(paste0(qiime_tax[["ESV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), "output/tax_complete_qiime.txt")
-echoWithHeader "Generating de novo taxonomy..."
 generatedenovotax
+  echoWithHeader "Generating de novo taxonomy..."
   Rscript --vanilla temp/Rscript.R $denovo_prefix
 cp temp/ESVs.fa output/ESVs.fa
 }
@@ -1073,35 +1032,69 @@ autotax() {
   checkBASH
   checkFolder temp
   checkFolder output
-  checkUserOptions
   checkInputData
   checkRPkgs
-  orient -i  -d $silva_udb -o temp/fSSUs_oriented.fa
+  orient -i $DATA -d $silva_udb -o temp/fSSUs_oriented.fa
   derep -i temp/fSSUs_oriented.fa -o temp/uniques_wsize.fa
   denoise -i temp/uniques_wsize.fa -o temp/preESVs.fa
-  findLongest
-  addESVs
-  sinaAlign temp/ESVs.fa ESVs_SILVA $silva_db $MAX_THREADS
-  #SILVA
-  echoWithHeader "Finding taxonomy of best hit in SILVA database..."
-  searchTaxDB temp/ESVs_SILVA_trimmed_sorted.fa $silva_udb temp/tax_SILVA.txt
-
-  #Typestrains
-  echoWithHeader "Finding the taxonomy of species within the 98.7% threshold in the typestrains database..."
-  searchTaxDB_typestrain temp/ESVs_SILVA_trimmed_sorted.fa $typestrains_udb temp/tax_typestrains.txt
-
-  clusterSpecies
-  clusterGenus
-  clusterFamily
-  clusterOrder
-  clusterClass
-  clusterPhylum
+  findLongest -i temp/preESVs.fa -o temp/ESVs.fa
+  #if -d is provided, identify redundant ESVs compared to the ESV database
+  #and merge the two before continuing
+  if [ -n "${ESVDB:-}" ]; then
+    addESVs
+  fi
+  sinaAlign -i temp/ESVs.fa -o temp/ESVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
+  trimStripAlignment -i temp/ESVs_SILVA_aln.fa -o temp/ESVs_SILVA_aln_trimmed.fa
+  sortESVs -i temp/ESVs_SILVA_aln_trimmed.fa -o temp/ESVs_SILVA_aln_trimmed_sorted.fa
+  searchTaxDB -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $MAX_THREADS
+  searchTaxDB_typestrain -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
+  clusterSpecies -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_ESV-S.txt -c temp/SILVA_ESV-S_centroids.fa
+  clusterGenus -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
+  clusterFamily -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
+  clusterOrder -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_F-O.txt -c temp/SILVA_F-O_centroids.fa
+  clusterClass -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_O-C.txt -c temp/SILVA_O-C_centroids.fa
+  clusterPhylum -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_C-P.txt -c temp/SILVA_C-P_centroids.fa
   Rstuff
   echoDuration
 }
 
+#only run autotax if script is not sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
 then
+  #fetch and check options provided by user
+  while getopts ":hi:d:t:" opt; do
+    case ${opt} in
+      h )
+        echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
+        echo "Version: $VERSION"
+        echo "Options:"
+        echo "  -h    Display this help text."
+        echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
+        echo "  -d    FASTA file with previously processed ESV sequences."
+        echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
+        echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
+        exit 1
+        ;;
+      i )
+        DATA=$OPTARG
+        ;;
+      d )
+        ESVDB=$OPTARG
+        ;;
+      t )
+        MAX_THREADS=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+  shift $((OPTIND -1))
   autotax
   if [ $? -gt 0 ]
   then
