@@ -4,18 +4,6 @@ mkdir -p /autotax/temp
 mkdir -p /autotax/output
 export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
-@test "Shell is BASH" {
-	#expect error if any arguments are passed to function
-	run checkBASH test
-	echo $output >&2 #redirect to stderr for debugging
-	[ "$status" -eq 1 ]
-
-	#expect no error
-	run checkBASH
-	echo $output >&2 #redirect to stderr for debugging
-	[ "$status" -eq 0 ]
-}
-
 @test "Variable set: VERSION" {
   [ ${VERSION} ]
 }
@@ -84,6 +72,18 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[[ ${lines[0]} =~ $pattern ]]
 }
 
+@test "Shell is BASH" {
+	#expect error if any arguments are passed to function
+	run checkBASH test
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	run checkBASH
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
+}
+
 @test "Error if temp/ folder exists" {
 	#expect error if no arguments passed to function
 	run checkFolder
@@ -108,6 +108,10 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	run checkFolder output
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
+}
+
+@test "Check user options" {
+	skip "WIP"
 }
 
 @test "Check input data" {
@@ -273,11 +277,11 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	#[ "$status" -eq 0 ]
 }
 
-@test "Step: trim" {
+@test "Step: " {
 	trimStripAlignment -i temp/ESVs_SILVA_aln.fa -o temp/ESVs_SILVA_aln_trimmed.fa
 }
 
-@test "Step: sort" {
+@test "Step: " {
 	sortESVs -i temp/ESVs_SILVA_aln_trimmed.fa -o temp/ESVs_SILVA_aln_trimmed_sorted.fa
 }
 
@@ -289,31 +293,6 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	searchTaxDB_typestrain -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
 }
 
-@test "Step: Cluster at species level (98.7%)" {
+@test "Step: Cluster species" {
 	clusterSpecies -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_ESV-S.txt -c temp/SILVA_ESV-S_centroids.fa
-}
-
-@test "Step: Cluster at genus level (94.5%)" {
-	clusterGenus -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
-}
-
-@test "Step: Cluster at family level (86.5%)" {
-	clusterFamily -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
-}
-
-@test "Step: Cluster at order level (82.0%)" {
-	clusterOrder -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_F-O.txt -c temp/SILVA_F-O_centroids.fa
-}
-
-@test "Step: Cluster at class level (78.5%)" {
-	clusterClass -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_O-C.txt -c temp/SILVA_O-C_centroids.fa
-}
-
-@test "Step: Cluster at phylum level (75.0%)" {
-	clusterPhylum -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_C-P.txt -c temp/SILVA_C-P_centroids.fa
-}
-
-@test "Rstuff" {
-  Rstuff
-  skip
 }
