@@ -171,7 +171,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 @test "Step: Dereplication" {
 	#test input file name
-	local in=temp/fSSUs_oriented.fa
+	local in=${verified_run_dir}temp/fSSUs_oriented.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/uniques_wsize.fa
@@ -182,7 +182,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run derep -i ${verified_run_dir}$in -o $out
+	run derep -i $in -o $out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -194,7 +194,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 @test "Step: Denoise" {
 	#test input file name
-	local in=temp/uniques_wsize.fa
+	local in=${verified_run_dir}temp/uniques_wsize.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/preESVs.fa
@@ -205,7 +205,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run denoise -i ${verified_run_dir}$in -o $out
+	run denoise -i $in -o $out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -217,7 +217,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 @test "Step: Find longest and rename" {
 	#test input file name
-	local in=temp/preESVs.fa
+	local in=${verified_run_dir}temp/preESVs.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/ESVs.fa
@@ -228,7 +228,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run findLongest -i ${verified_run_dir}$in -o $out -t $MAX_THREADS
+	run findLongest -i $in -o $out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -240,13 +240,13 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 @test "Step (optional): Add additional ESVs to DB" {
 	#test input file name
-	local in=temp/ESVs.fa
+	local in=${verified_run_dir}temp/ESVs.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/ESVs.fa
 
 	#test database file name
-	local db=temp/ESVs.fa
+	local db=${verified_run_dir}temp/ESVs.fa
 
 	#expect error if no arguments passed to function
 	run addESVs
@@ -254,7 +254,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#add identical, already generated ESVs, and expect no new unique/redundant ESVs
-	run addESVs -i $in -d ${verified_run_dir}$db -o $out -t $MAX_THREADS
+	run addESVs -i $in -d $db -o $out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -265,20 +265,20 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 	#add new unique fSSUs
 	local in=/autotax/example_data/100_addonESVs.fa
-	local out=temp/addESVs.fa
-	run addESVs -i $in -d ${verified_run_dir}$db -o $out -t $MAX_THREADS
+	local out=temp/ESVs_waddons.fa
+	run addESVs -i $in -d $db -o $out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q $out ${verified_run_dir}ESVs_waddons.fa
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
 
 @test "Step: Global alignment against SILVA" {
 	#test input file name
-	local in=temp/ESVs.fa
+	local in=${verified_run_dir}temp/ESVs.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/ESVs_SILVA_aln.fa
@@ -300,14 +300,15 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	#due to multithreading, the output can be sorted differently between runs
+	run diff -q <(sort -V $out) <(sort -V ${verified_run_dir}$out)
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Trim and strip alignment" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/ESVs_SILVA_aln_trimmed.fa
@@ -323,14 +324,15 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	#due to multithreading, the output is sorted differently between runs
+	run diff -q <(sort -V ${out}) <(sort -V ${verified_run_dir}${out})
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Sort ESVs by ID (i.e. highest coverage)" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/ESVs_SILVA_aln_trimmed_sorted.fa
@@ -346,14 +348,14 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Obtaining the taxonomy of the best hit in the SILVA database" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/tax_SILVA.txt
@@ -372,14 +374,15 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	#due to multithreading, the output can be sorted differently between runs
+	run diff -q <(sort -V $out) <(sort -V ${verified_run_dir}$out)
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/tax_typestrains.txt
@@ -398,14 +401,15 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	#due to multithreading, the output can be sorted differently between runs
+	run diff -q <(sort -V $out) <(sort -V ${verified_run_dir}$out)
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Cluster at species level" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/SILVA_ESV-S.txt
@@ -424,14 +428,14 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Cluster at genus level" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/SILVA_S-G.txt
@@ -450,14 +454,14 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Cluster at family level" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/SILVA_G-F.txt
@@ -476,14 +480,14 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Cluster at order level" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/SILVA_F-O.txt
@@ -502,14 +506,14 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Cluster at class level" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/SILVA_O-C.txt
@@ -528,14 +532,14 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Cluster at phylum level" {
   #test input file name
-	local in=temp/ESVs_SILVA_aln_trimmed_sorted.fa
+	local in=${verified_run_dir}temp/ESVs_SILVA_aln_trimmed_sorted.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/SILVA_C-P.txt
@@ -554,9 +558,9 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	#run diff -q $out ${verified_run_dir}$out
-	#echo $output >&2 #redirect to stderr for debugging
-	#[ "$status" -eq 0 ]
+	run diff -q $out ${verified_run_dir}$out
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Rstuff" {
