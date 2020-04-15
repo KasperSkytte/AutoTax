@@ -1,9 +1,6 @@
 #!/bin/bash
 export VERSION="1.4.0"
 
-#set appropriate error handling
-set -o errexit -o pipefail -o nounset #-o noclobber
-
 #################################
 ############# setup #############
 #################################
@@ -1029,6 +1026,8 @@ echoDuration() {
 }
 
 autotax() {
+  #set appropriate error handling
+  set -o errexit -o pipefail -o nounset #-o noclobber
   checkBASH
   checkFolder temp
   checkFolder output
