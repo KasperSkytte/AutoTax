@@ -73,7 +73,9 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 }
 
 @test "Check installed R packages" {
-	skip "WIP"
+	run checkRPkgs
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Echo with timestamp" {
@@ -131,7 +133,17 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 }
 
 @test "Check input data" {
-	skip "WIP"
+	#expect error
+	unset $DATA
+	run checkInputData
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 1 ]
+
+	#expect no error
+	local DATA="non-empty string"
+	run checkInputData
+	echo $output >&2 #redirect to stderr for debugging
+	[ "$status" -eq 0 ]
 }
 
 @test "Step: Orient" {
