@@ -5,51 +5,71 @@ mkdir -p /autotax/output
 export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 @test "Variable set: VERSION" {
-  [ ${VERSION} ]
+  [ -n ${VERSION} ]
 }
 
-@test "Variable set: silva_db" {
-  [ ${silva_db} ]
+@test "silva_db database file" {
+  #expect variable is set
+  [ -n ${silva_db} ]
+
+  #expect non-empty and readable file
+  [ -s ${silva_db} ]
+  [ -r ${silva_db} ]
 }
 
-@test "Variable set: silva_udb" {
-  [ ${silva_udb} ]
+@test "silva_udb database file" {
+  #expect variable is set
+  [ -n ${silva_udb} ]
+
+  #expect non-empty and readable file
+  [ -s ${silva_udb} ]
+  [ -r ${silva_udb} ]
 }
 
-@test "Variable set: typestrains_db" {
-  [ ${typestrains_db} ]
+@test "typestrains_db database file" {
+  #expect variable is set
+  [ -n ${typestrains_db} ]
+
+  #expect non-empty and readable file
+  [ -s ${typestrains_db} ]
+  [ -r ${typestrains_db} ]
 }
 
-@test "Variable set: typestrains_udb" {
-  [ ${typestrains_udb} ]
+@test "typestrains_udb database file" {
+  #expect variable is set
+  [ -n ${typestrains_udb} ]
+
+  #expect non-empty and readable file
+  [ -s ${typestrains_udb} ]
+  [ -r ${typestrains_udb} ]
 }
 
 @test "Variable set: denovo_prefix" {
-  [ ${denovo_prefix} ]
+  [ -n ${denovo_prefix} ]
 }
 
 @test "Variable set: MAX_THREADS" {
-  [ ${MAX_THREADS} ]
+  [ -n ${MAX_THREADS} ]
 }
 
 @test "usearch11 in \$PATH" {
 	usearch11=$(which usearch11)
-	[ ${usearch11} ]
+	[ -n ${usearch11} ]
 }
 
 @test "sina in \$PATH" {
 	sina=$(which sina)
-	[ ${sina} ]
+	[ -n ${sina} ]
 }
 
 @test "R in \$PATH" {
 	R=$(which R)
-	[ ${R} ]
+	[ -n ${R} ]
 }
 
 @test "Rscript in \$PATH" {
 	Rscript=$(which Rscript)
-	[ ${Rscript} ]
+	[ -n ${Rscript} ]
 }
 
 @test "Check installed R packages" {
