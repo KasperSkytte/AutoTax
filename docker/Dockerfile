@@ -8,7 +8,7 @@ RUN apt-get update && \
   apt-get -y install --no-install-recommends --no-install-suggests \
     ca-certificates software-properties-common gnupg2 gnupg1 git \
     libcurl4-openssl-dev libssl-dev libxml2-dev wget parallel=20161222-1 && \
-  mkdir -p ~/.parallel/ && touch ~/.parallel/will-cite #citing is out of context here
+  mkdir -p ~/.parallel/will-cite #citing is out of context here, messes up TAP output
 
 #add R CRAN mirror to apt sources to install R using APT and install R packages in parallel
 #specific version of R to be installed
