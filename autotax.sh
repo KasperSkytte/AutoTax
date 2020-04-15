@@ -26,7 +26,7 @@ export MAX_THREADS=${MAX_THREADS:-$((`nproc`-2))}
 
 #error handling
 userError() {
-  self=`basename "$0"`
+  local self=`basename "$0"`
   echo "Invalid usage: $1" 1>&2
   echo ""
   echo "Run 'bash $self -h' for help"
@@ -1029,9 +1029,9 @@ autotax() {
   #set appropriate error handling
   set -o errexit -o pipefail -o nounset #-o noclobber
   checkBASH
+  checkInputData
   checkFolder temp
   checkFolder output
-  checkInputData
   checkRPkgs
   orient -i $DATA -d $silva_udb -o temp/fSSUs_oriented.fa
   derep -i temp/fSSUs_oriented.fa -o temp/uniques_wsize.fa
@@ -1040,7 +1040,7 @@ autotax() {
   #if -d is provided, identify redundant ESVs compared to the ESV database
   #and merge the two before continuing
   if [ -n "${ESVDB:-}" ]; then
-    addESVs
+    addESVs -i temp/ESVs.fa -d $ESVDB -o temp/ESVs.fa -t $MAX_THREADS
   fi
   sinaAlign -i temp/ESVs.fa -o temp/ESVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
   trimStripAlignment -i temp/ESVs_SILVA_aln.fa -o temp/ESVs_SILVA_aln_trimmed.fa
