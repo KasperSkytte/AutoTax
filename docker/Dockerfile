@@ -36,9 +36,7 @@ RUN git clone https://github.com/bats-core/bats-core.git && \
   /opt/bats-core/install.sh /usr/local
 
 #clone AutoTax github repository 
-RUN git clone https://github.com/kasperskytte/autotax /opt/autotax && \
-  cd /opt/autotax && \
-  git checkout -b development
+RUN git clone https://github.com/kasperskytte/autotax /opt/autotax
 
 #make sure everything is in PATH
 WORKDIR /autotax
