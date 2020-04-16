@@ -20,6 +20,8 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
     r-base=${R_BASE_VERSION}* \
     r-base-dev=${R_BASE_VERSION}* \
     r-recommended=${R_BASE_VERSION}* && \
+  mkdir -p ~/.R && \
+  echo "MAKEFLAGS = -j100" > ~/.R/Makevars && \
   R -e "install.packages('BiocManager')" && \
   R -e "BiocManager::install(version = '3.9', ask = FALSE, Ncpus = 100)" && \
   R -e "BiocManager::install(c('Biostrings', 'doParallel', 'stringr', 'data.table', 'tidyr', 'dplyr'), Ncpus = 100, version = '3.9', ask = FALSE)"
