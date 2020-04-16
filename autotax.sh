@@ -830,7 +830,7 @@ Rstuff() {
   #remove ESVs that hit more than one Species using data.table
     ESV_typestrain_tax <- as.data.table(ESV_typestrain_tax)
 
-    ESV_typestrain_tax <- ESV_typestrain_tax[,hits:=uniqueN(Species),by=ESV][hits==1,][,hits:=NULL][,idty:=NULL][Species!="",]
+    ESV_typestrain_tax <- ESV_typestrain_tax[,hits:=uniqueN(Species),by=ESV][hits==1][,hits:=NULL][,idty:=NULL][Species!=""]
 
     ESV_typestrain_tax <- unique(ESV_typestrain_tax)
 
