@@ -1083,17 +1083,18 @@ autotax() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
 then
   #fetch and check options provided by user
-  while getopts ":hi:d:t:" opt; do
+  while getopts ":hi:d:t:v" opt; do
     case ${opt} in
       h )
         echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
         echo "Version: $VERSION"
         echo "Options:"
-        echo "  -h    Display this help text."
+        echo "  -h    Display this help text and exit."
         echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
         echo "  -d    FASTA file with previously processed ESV sequences."
         echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
         echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
+        echo "  -v    Print version and exit."
         exit 1
         ;;
       i )
@@ -1104,6 +1105,10 @@ then
         ;;
       t )
         MAX_THREADS=$OPTARG
+        ;;
+      v )
+        echo $VERSION
+        exit 0
         ;;
       \? )
         userError "Invalid Option: -$OPTARG"
