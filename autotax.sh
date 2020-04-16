@@ -116,6 +116,27 @@ checkFolder() {
   fi
 }
 
+checkFiles() {
+  #check user arguments
+  if [ $# -eq 0 ]
+  then
+    echo "Error: function must be passed one or more arguments" >&2
+    exit 1
+  fi
+  #check if each files exist and is non-zero
+  local files="$@"
+  local NEfiles=""
+  for file in $files; do
+    if [ ! -s $file -o -z $file ]; then
+      NEfiles="${NEfiles}\n$file"
+    fi
+  done
+  if [ -n "$NEfiles" ]; then
+    echo -e "Error: the following files or folders were not found:$NEfiles\nExiting"
+    exit 1
+  fi
+}
+
 checkInputData() {
   #exit if no data provided
   if [ -z "${DATA:-}" ]; then
@@ -1030,6 +1051,7 @@ autotax() {
   set -o errexit -o pipefail -o nounset #-o noclobber
   checkBASH
   checkInputData
+  checkFiles $silva_db $silva_udb $typestrains_db $typestrains_udb
   checkFolder temp
   checkFolder output
   checkRPkgs

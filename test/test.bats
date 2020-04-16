@@ -13,8 +13,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
   [ -n ${silva_db} ]
 
   #expect non-empty and readable file
-  [ -s ${silva_db} ]
-  [ -r ${silva_db} ]
+  checkFiles $silva_db
 }
 
 @test "silva_udb database file" {
@@ -22,8 +21,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
   [ -n ${silva_udb} ]
 
   #expect non-empty and readable file
-  [ -s ${silva_udb} ]
-  [ -r ${silva_udb} ]
+  checkFiles $silva_udb
 }
 
 @test "typestrains_db database file" {
@@ -31,8 +29,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
   [ -n ${typestrains_db} ]
 
   #expect non-empty and readable file
-  [ -s ${typestrains_db} ]
-  [ -r ${typestrains_db} ]
+  checkFiles $typestrains_db
 }
 
 @test "typestrains_udb database file" {
@@ -40,8 +37,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
   [ -n ${typestrains_udb} ]
 
   #expect non-empty and readable file
-  [ -s ${typestrains_udb} ]
-  [ -r ${typestrains_udb} ]
+  checkFiles $typestrains_udb
 }
 
 @test "Variable set: denovo_prefix" {
