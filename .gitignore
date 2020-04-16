@@ -3,3 +3,9 @@
 .RData
 .Ruserdata
 *.Rproj
+usearch11
+refdatabases/
+
+temp/
+
+output/
