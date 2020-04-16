@@ -36,9 +36,11 @@ RUN git clone https://github.com/bats-core/bats-core.git && \
   /opt/bats-core/install.sh /usr/local
 
 #clone AutoTax github repository 
-RUN git clone https://github.com/kasperskytte/autotax /opt/autotax
+RUN git clone https://github.com/kasperskytte/autotax /opt/autotax && \
+  chmod +x /opt/autotax/runtests.sh /opt/autotax/autotax.sh
 
 #make sure everything is in PATH
 WORKDIR /autotax
 ENV PATH="/autotax:/opt/sina-1.6.0-linux/bin:${PATH}"
 ENTRYPOINT ["bash", "/opt/autotax/autotax.sh"]
+CMD ["-h"]
