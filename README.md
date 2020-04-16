@@ -107,7 +107,7 @@ sudo docker build -t kasperskytte/autotax:latest docker/
 
 The image also contains the autotax github repository itself (most recent from master branch) in `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
 ```
-sudo docker run -it --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -h
+sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -h
 ```
 
 ## Important notes when running through docker container
@@ -124,7 +124,7 @@ sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so by:
 
 ```
-sudo docker run -it --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest runtests.sh
+sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest runtests.sh
 ```
 
 # Generating input full-length 16S sequences
