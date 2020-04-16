@@ -35,6 +35,12 @@ RUN wget -q https://github.com/epruesse/SINA/releases/download/v1.6.0/sina-1.6.0
 RUN git clone https://github.com/bats-core/bats-core.git && \
   /opt/bats-core/install.sh /usr/local
 
+#clone AutoTax github repository 
+RUN git clone https://github.com/kasperskytte/autotax /opt/autotax && \
+  cd /opt/autotax && \
+  git checkout -b development
+
 #make sure everything is in PATH
 WORKDIR /autotax
 ENV PATH="/autotax:/opt/sina-1.6.0-linux/bin:${PATH}"
+ENTRYPOINT ["bash", "/opt/autotax/autotax.sh"]
