@@ -48,9 +48,9 @@ In brief, the script performs the following steps:
  - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each ESV (R)
 
 # Installation and requirements
-As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Simply download the `autotax.sh` script by either:
+As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Simply download the `autotax.bash` script by either:
 ```
-wget https://raw.githubusercontent.com/KasperSkytte/AutoTax/master/autotax.sh
+wget https://raw.githubusercontent.com/KasperSkytte/AutoTax/master/autotax.bash
 ```
 
 or clone the github repository by (make sure git is installed):
@@ -74,14 +74,14 @@ Other than the standard linux tools `awk`, `grep`, and `cat` (which is included 
    - dplyr
 
 ## Database files
-Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568) (both SILVA release 132 and 138). **Make sure the paths to these files are set correctly in the [`autotax.sh`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.sh) script**. You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
+Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568) (both SILVA release 132 and 138). **Make sure the paths to these files are set correctly in the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script**. You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
 
 # Usage
-Adjust the variables in the SETUP chunk at the start of the [`autotax.sh`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.sh) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder.
-Then simply run the script with fx `bash autotax.sh -i myseqs.fa`. Make sure the script is executable with `chmod +x autotax.sh`.
-Type `bash autotax.sh -h` to show available options and version:
+Adjust the variables in the SETUP chunk at the start of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder.
+Then simply run the script with fx `bash autotax.bash -i myseqs.fa`. Make sure the script is executable with `chmod +x autotax.bash`.
+Type `bash autotax.bash -h` to show available options and version:
 ```
-$ bash autotax.sh -h
+$ bash autotax.bash -h
 Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
 Version: 1.3.1
 Options:
@@ -113,7 +113,7 @@ sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:
 ## Important notes when running through docker container
 As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version (limited to 4GB memory and is doubtfully going to be sufficient, but you are welcome to try) and place the executable in the same folder that is mounted inside the container and name it `usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
 
-By default the [`autotax.sh`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.sh) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.sh`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.sh) script into the current working folder, adjust the paths, and run that instead of that included in the image.
+By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script into the current working folder, adjust the paths, and run that instead of that included in the image.
 
 When running through the docker container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. Furthermore, the output folders `temp` and `output` will be owned by root, so it's a good idea to change ownership afterwards with fx:
 ```
