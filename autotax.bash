@@ -1,5 +1,5 @@
 #!/bin/bash
-export VERSION="1.5"
+export VERSION="1.5.1"
 
 #################################
 ############# setup #############
@@ -744,9 +744,33 @@ clusterPhylum() {
   usearch11 -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
-Rstuff() {
-  cat << 'generatedenovotax' > temp/Rscript.R 
-  #!/usr/bin/Rscript
+mergeTaxonomy() {
+  #check user arguments
+  local OPTIND
+  while getopts ":t:o:p:" opt; do
+    case ${opt} in
+      t )
+        local tempfolder=$OPTARG
+        ;;
+      o )
+        local outputfolder=$OPTARG
+        ;;
+      p )
+        local denovoprefix=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+
+  echoWithHeader "Merging and outputting taxonomy..."
+  R --slave --args "$tempfolder" "$outputfolder" "$denovoprefix" << 'generatedenovotax'
   #load R packages
   suppressPackageStartupMessages({
     require("stringr")
@@ -754,6 +778,12 @@ Rstuff() {
     require("dplyr")
     require("data.table")
   })
+
+  #extract passed args from shell script
+    args <- commandArgs(trailingOnly = TRUE)
+    tempfolder <- args[[1]]
+    outputfolder <- args[[2]]
+    prefix <- args[[3]]
 
   ## Define function to read usearch mapping files in blast6out format, curate the taxonomy, and export it in a tab-delimited format ##
 
@@ -839,7 +869,7 @@ Rstuff() {
 
   # Fix typestrain taxonomy
   ## Read typestrains tax, only Genus and Species
-  ESV_typestrain_tax <- select(read_clean_tax("./temp/tax_typestrains.txt"), ESV, idty, Genus, Species)
+  ESV_typestrain_tax <- select(read_clean_tax(paste0(tempfolder, "/tax_typestrains.txt")), ESV, idty, Genus, Species)
 
   #remove strain information from Species names (keep only first two words)
   ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <- 
@@ -848,7 +878,7 @@ Rstuff() {
              paste0(x[1:2], collapse = "_")
            })
 
-  #remove ESVs that hit more than one Species using data.table
+  #remove ESVs that hit more than one Species
     ESV_typestrain_tax <- as.data.table(ESV_typestrain_tax)
 
     ESV_typestrain_tax <- ESV_typestrain_tax[,hits:=uniqueN(Species),by=ESV][hits==1][,hits:=NULL][,idty:=NULL][Species!=""]
@@ -856,14 +886,14 @@ Rstuff() {
     ESV_typestrain_tax <- unique(ESV_typestrain_tax)
 
   #write out
-  write_tax(tax = ESV_typestrain_tax, file = "./output/tax_typestrains.csv")
+  write_tax(tax = ESV_typestrain_tax, file = paste0(outputfolder, "/tax_typestrains.csv"))
 
   ##### SILVA
   #read SILVA tax, without Species
-  ESV_SILVA_tax <- select(read_clean_tax(input = "./temp/tax_SILVA.txt"), -Species)
+  ESV_SILVA_tax <- select(read_clean_tax(input = paste0(tempfolder, "/tax_SILVA.txt")), -Species)
 
   #write out
-  write_tax(tax = ESV_SILVA_tax, file = "./output/tax_SILVA.csv")
+  write_tax(tax = ESV_SILVA_tax, file = paste0(outputfolder, "/tax_SILVA.csv"))
 
   ##### merge typestrains+SILVA taxonomy by ESV and Genus #####
   ESV_slv_typestr_tax <- left_join(ESV_SILVA_tax[,-2], ESV_typestrain_tax, by = c("ESV", "Genus"))
@@ -871,15 +901,15 @@ Rstuff() {
 
   #write out
   write_tax(ESV_slv_typestr_tax,
-            file = "./output/tax_slv_typestr.csv")
+            file = paste0(outputfolder, "/tax_slv_typestr.csv"))
 
   ##### denovo taxonomy #####
-  ESV_S <- read_sort_mappings("./temp/SILVA_ESV-S.txt", c("ESV", "Species"))
-  S_G <- read_sort_mappings("./temp/SILVA_S-G.txt", c("Species", "Genus"))
-  G_F <- read_sort_mappings("./temp/SILVA_G-F.txt", c("Genus", "Family"))
-  F_O <- read_sort_mappings("./temp/SILVA_F-O.txt", c("Family", "Order"))
-  O_C <- read_sort_mappings("./temp/SILVA_O-C.txt", c("Order", "Class"))
-  C_P <- read_sort_mappings("./temp/SILVA_C-P.txt", c("Class", "Phylum"))
+  ESV_S <- read_sort_mappings(paste0(tempfolder, "/SILVA_ESV-S.txt"), c("ESV", "Species"))
+  S_G <- read_sort_mappings(paste0(tempfolder, "/SILVA_S-G.txt"), c("Species", "Genus"))
+  G_F <- read_sort_mappings(paste0(tempfolder, "/SILVA_G-F.txt"), c("Genus", "Family"))
+  F_O <- read_sort_mappings(paste0(tempfolder, "/SILVA_F-O.txt"), c("Family", "Order"))
+  O_C <- read_sort_mappings(paste0(tempfolder, "/SILVA_O-C.txt"), c("Order", "Class"))
+  C_P <- read_sort_mappings(paste0(tempfolder, "/SILVA_C-P.txt"), c("Class", "Phylum"))
 
   #merge each taxonomic level according to the mapping results
   denovo_tax <- left_join(ESV_S, S_G, by = "Species")
@@ -893,13 +923,6 @@ Rstuff() {
   denovo_tax[,2:7] <- lapply(denovo_tax[,2:7], gsub, pattern = "\\..*$", replacement = "")
 
   #generate denovo names per taxonomic level based on ESV ID
-  #get denovo prefix string passed from shell script, use "denovo" if blank
-  cmdArgs <- commandArgs(trailingOnly = TRUE)
-  if(length(cmdArgs) > 0) {
-    prefix <- as.character(cmdArgs[[1]])
-  } else
-    prefix <- "denovo"
-
   denovo_tax[["Species"]] <- gsub("^[^0-9]+", paste0(prefix, "_s_"), denovo_tax[["Species"]])
   denovo_tax[["Genus"]] <- gsub("^[^0-9]+", paste0(prefix, "_g_"), denovo_tax[["Genus"]])
   denovo_tax[["Family"]] <- gsub("^[^0-9]+", paste0(prefix, "_f_"), denovo_tax[["Family"]])
@@ -909,7 +932,7 @@ Rstuff() {
 
   #write out
   write_tax(denovo_tax,
-            file = "./output/tax_denovo.csv")
+            file = paste0(outputfolder, "/tax_denovo.csv"))
 
   #merge SILVA+typestrains+denovo taxonomy
   #merge by ESV
@@ -991,7 +1014,7 @@ Rstuff() {
                    " taxa had more than one parent, see the logfile \"./output/polyphyletics.log\" for details"), 
             call. = FALSE)
     writeLines(polyTaxaLog,
-               "./output/polyphyletics.log")
+               paste0(outputfolder, "/polyphyletics.log"))
   }
 
   #fix them
@@ -1004,11 +1027,11 @@ Rstuff() {
 
   #write out
   write_tax(merged_tax,
-            file = "./output/tax_complete.csv")
+            file = paste0(outputfolder, "/tax_complete.csv"))
 
   ##### export as different formats #####
   ## export ESVs with SINTAX taxonomy in headers 
-  ESVs.fa <- Biostrings::readBStringSet("temp/ESVs.fa")
+  ESVs.fa <- Biostrings::readBStringSet(paste0(tempfolder, "/ESVs.fa"))
   sintax <- left_join(data.frame(ESV = names(ESVs.fa), stringsAsFactors = FALSE), 
                       merged_tax,
                       by = "ESV")
@@ -1022,7 +1045,7 @@ Rstuff() {
   sintax <- sintax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
   sintax_header <- paste0(sintax[["ESV"]], ";tax=", apply(sintax[,-1], 1, paste0, collapse = ","), ";")
   names(ESVs.fa) <- sintax_header
-  Biostrings::writeXStringSet(ESVs.fa, "output/ESVs_w_sintax.fa")
+  Biostrings::writeXStringSet(ESVs.fa, paste0(outputfolder, "/ESVs_w_sintax.fa"))
 
   ## export taxonomy in QIIME format
   qiime_tax <- merged_tax
@@ -1034,11 +1057,8 @@ Rstuff() {
   qiime_tax[["Genus"]] <- paste0("g__", qiime_tax[["Genus"]])
   qiime_tax[["Species"]] <- paste0("s__", qiime_tax[["Species"]])
   qiime_tax <- qiime_tax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  writeLines(paste0(qiime_tax[["ESV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), "output/tax_complete_qiime.txt")
+  writeLines(paste0(qiime_tax[["ESV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), paste0(outputfolder, "/tax_complete_qiime.txt"))
 generatedenovotax
-  echoWithHeader "Generating de novo taxonomy..."
-  Rscript --vanilla temp/Rscript.R $denovo_prefix
-cp temp/ESVs.fa output/ESVs.fa
 }
 
 echoDuration() {
@@ -1075,15 +1095,48 @@ autotax() {
   clusterOrder -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_F-O.txt -c temp/SILVA_F-O_centroids.fa
   clusterClass -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_O-C.txt -c temp/SILVA_O-C_centroids.fa
   clusterPhylum -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_C-P.txt -c temp/SILVA_C-P_centroids.fa
-  Rstuff
+  mergeTaxonomy -t temp -o output -p $denovo_prefix
+  cp temp/ESVs.fa output/ESVs.fa
   echoDuration
+}
+
+runTests() {
+  #check for git
+  git=$(which git)
+  if [ -z ${git} ]
+  then
+    echo "git not found, please install"
+    exit 1
+  fi
+
+  #check if current working directory is at the root of a cloned AutoTax git repo
+  if [ $(git rev-parse --is-inside-work-tree) ] && \
+    [ $(basename -s .git `git config --get remote.origin.url`) == "AutoTax" ] && \
+    [ $(git rev-parse --git-dir 2> /dev/null) == ".git" ]
+  then
+    #run in parallel if GNU parallel is installed
+    if [ -z $(which parallel) ]
+    then
+      (./bats/bin/bats -t tests.bats) |& tee test_result.log
+    else
+      (./bats/bin/bats -t -j $((`nproc`-2)) tests.bats) |& tee test_result.log
+    fi
+    exit 0
+  else
+    echo "Unit testing can only be performed at the root of a cloned AutoTax git repository as several additional files are needed for testing."
+    exit 1
+  fi
+  #if [ -f /.dockerenv ]; then
+  #  echo "running in docker"
+  #fi
+  #exit 0
 }
 
 #only run autotax if script is not sourced
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
 then
   #fetch and check options provided by user
-  while getopts ":hi:d:t:v" opt; do
+  while getopts ":hi:d:t:v:b" opt; do
     case ${opt} in
       h )
         echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
@@ -1094,6 +1147,7 @@ then
         echo "  -d    FASTA file with previously processed ESV sequences."
         echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
         echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
+        echo "  -b    Run all BATS unit tests to assure everything is working as intended (requires git)."
         echo "  -v    Print version and exit."
         exit 1
         ;;
@@ -1108,6 +1162,10 @@ then
         ;;
       v )
         echo $VERSION
+        exit 0
+        ;;
+      b )
+        runTests
         exit 0
         ;;
       \? )
