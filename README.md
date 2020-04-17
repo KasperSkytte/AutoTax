@@ -121,11 +121,13 @@ sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 ```
 
 # Unit tests (WIP)
-AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so by:
+AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. This requires you to run from the root of a clone of the AutoTax git repository as several additional test files are needed. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
-sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest runtests.sh
+sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -b
 ```
+
+The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax), the latest test log of the master branch can be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
 
 # Generating input full-length 16S sequences
 *AutoTax* is made to take input sequences obtained from the method described in [Karst et al, 2018](https://www.nature.com/articles/nbt.4045). The sequences need to be processed first using the Perl scripts in the `/fSSU-pipelines` subfolder. 
