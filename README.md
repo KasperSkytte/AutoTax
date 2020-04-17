@@ -83,13 +83,15 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.3.1
+Version: 1.5.1
 Options:
-  -h    Display this help text.
+  -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
   -d    FASTA file with previously processed ESV sequences.
           ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun.
   -t    Maximum number of threads to use. Default is all available cores except 2.
+  -b    Run all BATS unit tests to assure everything is working as intended (requires git).
+  -v    Print version and exit.
 ```
 
 # Running AutoTax from a docker container (recommended)
@@ -120,7 +122,7 @@ When running through the docker container all paths must relative to the working
 sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 ```
 
-# Unit tests (WIP)
+# Unit tests
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. This requires you to run from the root of a clone of the AutoTax git repository as several additional test files are needed. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
