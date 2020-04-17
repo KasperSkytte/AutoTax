@@ -1,11 +1,5 @@
 #!/usr/bin/env bats
 load autotax
-export test_dir=test/ #WITH / AT THE END!
-export verified_run_dir=${test_dir}verified_run/ #WITH / AT THE END!
-export test_run_dir=${test_dir}test_run/ #WITH / AT THE END!
-rm -rf $test_run_dir
-mkdir -p ${test_run_dir}temp
-mkdir -p ${test_run_dir}output
 
 @test "Variable set: VERSION" {
   [ -n ${VERSION} ]

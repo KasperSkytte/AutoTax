@@ -1114,6 +1114,13 @@ runTests() {
     [ $(basename -s .git `git config --get remote.origin.url`) == "AutoTax" ] && \
     [ $(git rev-parse --git-dir 2> /dev/null) == ".git" ]
   then
+    #setup
+    export test_dir=test/ #WITH / AT THE END!
+    export verified_run_dir=${test_dir}verified_run/ #WITH / AT THE END!
+    export test_run_dir=${test_dir}test_run/ #WITH / AT THE END!
+    rm -rf $test_run_dir
+    mkdir -p ${test_run_dir}temp
+    mkdir -p ${test_run_dir}output
     #run in parallel if GNU parallel is installed
     if [ -z $(which parallel) ]
     then
