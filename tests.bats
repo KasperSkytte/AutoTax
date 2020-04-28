@@ -21,14 +21,6 @@ load autotax
   checkFiles $silva_udb
 }
 
-@test "typestrains_db database file" {
-  #expect variable is set
-  [ -n ${typestrains_db} ]
-
-  #expect non-empty and readable file
-  checkFiles $typestrains_db
-}
-
 @test "typestrains_udb database file" {
   #expect variable is set
   [ -n ${typestrains_udb} ]

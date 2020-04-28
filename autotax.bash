@@ -1,5 +1,5 @@
 #!/bin/bash
-export VERSION="1.5.1"
+export VERSION="1.5.2"
 
 #################################
 ############# setup #############
@@ -9,7 +9,6 @@ export VERSION="1.5.1"
 # usearch11 -makeudb_usearch SILVA_132_SSURef_Nr99_tax_silva.fasta -output SILVA_132_SSURef_Nr99_tax_silva.udb
 export silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
 export silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
-export typestrains_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt_typestrains.arb"
 export typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains.udb"
 
 #de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on ESV number 123
@@ -1077,7 +1076,7 @@ autotax() {
   set -o errexit -o pipefail -o nounset #-o noclobber
   checkBASH
   checkInputData
-  checkFiles $silva_db $silva_udb $typestrains_db $typestrains_udb
+  checkFiles $silva_db $silva_udb $typestrains_udb
   checkFolder temp
   checkFolder output
   checkRPkgs
