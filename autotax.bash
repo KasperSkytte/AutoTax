@@ -1092,7 +1092,7 @@ autotax() {
 
 	## Identity chimera using uchime2_ref with the FL-ESVs as a reference database.
 	echoWithHeader "  - Identifying chimeras"
-	usearch11 -uchime2_ref temp/FL-OTUs.fa -db /output/ESVs.fa -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
+	usearch11 -uchime2_ref temp/FL-OTUs.fa -db temp/ESVs.fa -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
 
 	## Remove chimera.
 	echoWithHeader "  - Removing chimeras"
