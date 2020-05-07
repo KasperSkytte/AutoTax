@@ -1,8 +1,5 @@
 #!/usr/bin/env bats
-load /autotax/autotax.sh
-mkdir -p /autotax/temp
-mkdir -p /autotax/output
-export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
+load autotax
 
 @test "Variable set: VERSION" {
   [ -n ${VERSION} ]
@@ -22,14 +19,6 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
   #expect non-empty and readable file
   checkFiles $silva_udb
-}
-
-@test "typestrains_db database file" {
-  #expect variable is set
-  [ -n ${typestrains_db} ]
-
-  #expect non-empty and readable file
-  checkFiles $typestrains_db
 }
 
 @test "typestrains_udb database file" {
@@ -109,8 +98,8 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect error
-	mkdir -p temp
-	run checkFolder temp
+	mkdir -p ${test_run_dir}temp
+	run checkFolder ${test_run_dir}temp
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 }
@@ -122,8 +111,8 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect error
-	mkdir -p output
-	run checkFolder output
+	mkdir -p ${test_run_dir}output
+	run checkFolder ${test_run_dir}output
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 1 ]
 }
@@ -144,7 +133,7 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 
 @test "Step: Orient" {
 	#test input file name
-	local in=/autotax/example_data/10k_fSSUs.fa
+	local in=${test_dir}example_data/10k_fSSUs.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/fSSUs_oriented.fa
@@ -155,12 +144,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run orient -i $in -d $silva_udb -o $out
+	run orient -i $in -d $silva_udb -o ${test_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -178,12 +167,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run derep -i $in -o $out
+	run derep -i $in -o ${test_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -201,12 +190,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run denoise -i $in -o $out
+	run denoise -i $in -o ${test_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -224,12 +213,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run findLongest -i $in -o $out -t $MAX_THREADS
+	run findLongest -i $in -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -250,24 +239,24 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#add identical, already generated ESVs, and expect no new unique/redundant ESVs
-	run addESVs -i $in -d $db -o $out -t $MAX_THREADS
+	run addESVs -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect no difference between input and output as $in+$db are the same file
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#add new unique fSSUs
-	local in=/autotax/example_data/100_addonESVs.fa
+	local in=${test_dir}example_data/100_addonESVs.fa
 	local out=temp/ESVs_waddons.fa
-	run addESVs -i $in -d $db -o $out -t $MAX_THREADS
+	run addESVs -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}ESVs_waddons.fa
+	run diff -q ${test_run_dir}$out ${verified_run_dir}ESVs_waddons.fa
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -291,13 +280,13 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run sinaAlign -i $in -d $db -o $out -t $MAX_THREADS -l $log
+	run sinaAlign -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS -l ${test_run_dir}$log
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
 	#due to multithreading, the output can be sorted differently between runs
-	run diff -q <(sort -V $out) <(sort -V ${verified_run_dir}$out)
+	run diff -q <(sort -V ${test_run_dir}$out) <(sort -V ${verified_run_dir}$out)
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -315,13 +304,13 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run trimStripAlignment -i $in -o $out
+	run trimStripAlignment -i $in -o ${test_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
 	#due to multithreading, the output is sorted differently between runs
-	run diff -q <(sort -V ${out}) <(sort -V ${verified_run_dir}${out})
+	run diff -q <(sort -V ${test_run_dir}${out}) <(sort -V ${verified_run_dir}${out})
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -339,12 +328,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run sortESVs -i $in -o $out
+	run sortESVs -i $in -o ${test_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -365,13 +354,13 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run searchTaxDB -i $in -d $db -o $out -t $MAX_THREADS
+	run searchTaxDB -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
 	#due to multithreading, the output can be sorted differently between runs
-	run diff -q <(sort -V $out) <(sort -V ${verified_run_dir}$out)
+	run diff -q <(sort -V ${test_run_dir}$out) <(sort -V ${verified_run_dir}$out)
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -392,13 +381,13 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run searchTaxDB_typestrain -i $in -d $db -o $out -t $MAX_THREADS
+	run searchTaxDB_typestrain -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
 	#due to multithreading, the output can be sorted differently between runs
-	run diff -q <(sort -V $out) <(sort -V ${verified_run_dir}$out)
+	run diff -q <(sort -V ${test_run_dir}$out) <(sort -V ${verified_run_dir}$out)
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -419,12 +408,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run clusterSpecies -i $in -o $out -c $centroids
+	run clusterSpecies -i $in -o ${test_run_dir}$out -c ${test_run_dir}$centroids
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -445,12 +434,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run clusterGenus -i $in -o $out -c $centroids
+	run clusterGenus -i $in -o ${test_run_dir}$out -c ${test_run_dir}$centroids
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -471,12 +460,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run clusterFamily -i $in -o $out -c $centroids
+	run clusterFamily -i $in -o ${test_run_dir}$out -c ${test_run_dir}$centroids
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -497,12 +486,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run clusterOrder -i $in -o $out -c $centroids
+	run clusterOrder -i $in -o ${test_run_dir}$out -c ${test_run_dir}$centroids
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -523,12 +512,12 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run clusterClass -i $in -o $out -c $centroids
+	run clusterClass -i $in -o ${test_run_dir}$out -c ${test_run_dir}$centroids
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
@@ -549,18 +538,33 @@ export verified_run_dir=/autotax/test/verified_run/ #WITH / AT THE END!
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run clusterPhylum -i $in -o $out -c $centroids
+	run clusterPhylum -i $in -o ${test_run_dir}$out -c ${test_run_dir}$centroids
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
-	run diff -q $out ${verified_run_dir}$out
+	run diff -q ${test_run_dir}$out ${verified_run_dir}$out
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 }
 
-@test "Step: Rstuff" {
-  run Rstuff
+@test "Step: Merge and output taxonomy" {
+	local tempfolder=${verified_run_dir}temp
+	local outputfolder=${test_run_dir}output
+	local denovoprefix=$denovo_prefix
+
+	#expect error if no arguments passed to function
+	#run mergeTaxonomy
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 1 ]
+
+	#expect no error
+	run mergeTaxonomy -t $tempfolder -o $outputfolder -p $denovoprefix
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
+
+	#expect identical result compared to a previous, verified run
+	#run diff -q ${test_run_dir}$out ${verified_run_dir}$out
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 0 ]
 }

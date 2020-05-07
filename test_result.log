@@ -1,35 +1,34 @@
-1..34
+1..33
 ok 1 Variable set: VERSION
 ok 2 silva_db database file
 ok 3 silva_udb database file
-ok 4 typestrains_db database file
-ok 5 typestrains_udb database file
-ok 6 Variable set: denovo_prefix
-ok 7 Variable set: MAX_THREADS
-ok 8 usearch11 in $PATH
-ok 9 sina in $PATH
-ok 10 R in $PATH
-ok 11 Rscript in $PATH
-ok 12 Check installed R packages
-ok 13 Echo with timestamp
-ok 14 Shell is BASH
-ok 15 Error if temp/ folder exists
-ok 16 Error if output/ folder exists
-ok 17 Check input data
-ok 18 Step: Orient
-ok 19 Step: Dereplication
-ok 20 Step: Denoise
-ok 21 Step: Find longest and rename
-ok 22 Step (optional): Add additional ESVs to DB
-ok 23 Step: Global alignment against SILVA
-ok 24 Step: Trim and strip alignment
-ok 25 Step: Sort ESVs by ID (i.e. highest coverage)
-ok 26 Step: Obtaining the taxonomy of the best hit in the SILVA database
-ok 27 Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database
-ok 28 Step: Cluster at species level
-ok 29 Step: Cluster at genus level
-ok 30 Step: Cluster at family level
-ok 31 Step: Cluster at order level
-ok 32 Step: Cluster at class level
-ok 33 Step: Cluster at phylum level
-ok 34 Step: Rstuff
+ok 4 typestrains_udb database file
+ok 5 Variable set: denovo_prefix
+ok 6 Variable set: MAX_THREADS
+ok 7 usearch11 in $PATH
+ok 8 sina in $PATH
+ok 9 R in $PATH
+ok 10 Rscript in $PATH
+ok 11 Check installed R packages
+ok 12 Echo with timestamp
+ok 13 Shell is BASH
+ok 14 Error if temp/ folder exists
+ok 15 Error if output/ folder exists
+ok 16 Check input data
+ok 17 Step: Orient
+ok 18 Step: Dereplication
+ok 19 Step: Denoise
+ok 20 Step: Find longest and rename
+ok 21 Step (optional): Add additional ESVs to DB
+ok 22 Step: Global alignment against SILVA
+ok 23 Step: Trim and strip alignment
+ok 24 Step: Sort ESVs by ID (i.e. highest coverage)
+ok 25 Step: Obtaining the taxonomy of the best hit in the SILVA database
+ok 26 Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database
+ok 27 Step: Cluster at species level
+ok 28 Step: Cluster at genus level
+ok 29 Step: Cluster at family level
+ok 30 Step: Cluster at order level
+ok 31 Step: Cluster at class level
+ok 32 Step: Cluster at phylum level
+ok 33 Step: Merge and output taxonomy
