@@ -1131,7 +1131,8 @@ autotax() {
   denoise -i temp/uniques_wsize.fa -o temp/preESVs.fa
   findLongest -i temp/preESVs.fa -o temp/ESVs.fa
   #if -c is provided, add chimera filtered OTU clusters (99% identity) of the ESV's on top
-  if [ $CLUSTER ]
+  CLUSTER=${CLUSTER:-false}
+  if [ "$CLUSTER" = true ]
   then
     mv temp/ESVs.fa temp/ESVs_woclusters.fa
 	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/ESVs_woclusters.fa -t $MAX_THREADS -o temp/ESVs.fa
@@ -1236,8 +1237,8 @@ then
         exit 0
         ;;
       c )
-		CLUSTER=:
-		;;
+		    export CLUSTER=true
+		    ;;
       \? )
         userError "Invalid Option: -$OPTARG"
         exit 1
