@@ -291,6 +291,52 @@ findLongest() {
 findLongestSortESVsBySizeAndID
 }
 
+add99OTUclusters() {
+  #check user arguments
+  local OPTIND
+  while getopts ":i:t:d:o:" opt; do
+    case ${opt} in
+      i )
+        local input=$OPTARG
+        ;;
+      t )
+        local MAX_THREADS=$OPTARG
+        ;;
+      d )
+        local database=$OPTARG
+        ;;
+      o )
+        local output=$OPTARG
+        ;;
+      \? )
+        userError "Invalid Option: -$OPTARG"
+        exit 1
+        ;;
+      : )
+        userError "Option -$OPTARG requires an argument"
+        exit 1
+        ;;
+    esac
+  done
+
+  echoWithHeader "Expanding ESV's with 99% clusters on top"
+  ## Cluster sequences at 99% id using cluster_smallmem.
+  echoWithHeader "  - Clustering sequences (at 99% identity)"
+  usearch11 -cluster_smallmem $input -id 0.99 -maxrejects 0 -sortedby size -centroids temp/FL-OTUs.fa
+
+  ## Identity chimera using uchime2_ref with the FL-ESVs as a reference database.
+  echoWithHeader "  - Identifying chimeras in the clusters"
+  usearch11 -uchime2_ref temp/FL-OTUs.fa -db $database -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
+
+  ## Remove chimera.
+  echoWithHeader "  - Filtering chimeras"
+  usearch11 -search_exact temp/FL-OTUs-chimeras.fa -db temp/FL-OTUs.fa -strand plus -dbnotmatched temp/FL-OTUs-CF.fa -quiet
+
+  ## add to ESVs
+  echoWithHeader "  - Adding clustered sequences"
+  addESVs -i temp/FL-OTUs-CF.fa -d $database -o $output -t $MAX_THREADS
+}
+
 addESVs() {
   #check user arguments
   local OPTIND
@@ -1084,9 +1130,17 @@ autotax() {
   derep -i temp/fSSUs_oriented.fa -o temp/uniques_wsize.fa
   denoise -i temp/uniques_wsize.fa -o temp/preESVs.fa
   findLongest -i temp/preESVs.fa -o temp/ESVs.fa
+  #if -c is provided, add chimera filtered OTU clusters (99% identity) of the ESV's on top
+  CLUSTER=${CLUSTER:-false}
+  if [ "$CLUSTER" = true ]
+  then
+    mv temp/ESVs.fa temp/ESVs_woclusters.fa
+	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/ESVs_woclusters.fa -t $MAX_THREADS -o temp/ESVs.fa
+  fi
   #if -d is provided, identify redundant ESVs compared to the ESV database
-  #and merge the two before continuing
-  if [ -n "${ESVDB:-}" ]; then
+  #and merge the two before continuing. Used to merge multiple databases
+  if [ -n "${ESVDB:-}" ]
+  then
     addESVs -i temp/ESVs.fa -d $ESVDB -o temp/ESVs.fa -t $MAX_THREADS
   fi
   sinaAlign -i temp/ESVs.fa -o temp/ESVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
@@ -1148,7 +1202,7 @@ runTests() {
 if [[ "${BASH_SOURCE[0]}" == "${0}" ]]
 then
   #fetch and check options provided by user
-  while getopts ":hi:d:t:v:b" opt; do
+  while getopts ":hi:d:t:vbc" opt; do
     case ${opt} in
       h )
         echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
@@ -1156,6 +1210,8 @@ then
         echo "Options:"
         echo "  -h    Display this help text and exit."
         echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
+        echo "  -c    Cluster the resulting ESV's at 99% (before generating de novo taxonomy),"
+        echo "          do chimera filtering on the clusters, and then add them on top in the same way as when using -d."
         echo "  -d    FASTA file with previously processed ESV sequences."
         echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
         echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
@@ -1180,6 +1236,9 @@ then
         runTests
         exit 0
         ;;
+      c )
+		    export CLUSTER=true
+		    ;;
       \? )
         userError "Invalid Option: -$OPTARG"
         exit 1
