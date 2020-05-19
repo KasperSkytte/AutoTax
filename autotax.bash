@@ -679,7 +679,7 @@ clusterGenus() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Genus level (98.7% identity)"
+  echoWithHeader "Clustering ESVs at Genus level (94.5% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.945 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -707,7 +707,7 @@ clusterFamily() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Family level (98.7% identity)"
+  echoWithHeader "Clustering ESVs at Family level (86.5% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.865 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -735,7 +735,7 @@ clusterOrder() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Order level (98.7% identity)"
+  echoWithHeader "Clustering ESVs at Order level (82.0% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.82 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -763,7 +763,7 @@ clusterClass() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Class level (98.7% identity)"
+  echoWithHeader "Clustering ESVs at Class level (78.5% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.785 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -791,7 +791,7 @@ clusterPhylum() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Phylum level (98.7% identity)"
+  echoWithHeader "Clustering ESVs at Phylum level (75.0% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
