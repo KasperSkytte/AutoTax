@@ -11,7 +11,7 @@ export silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
 export silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
 export typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains.udb"
 
-#de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on ESV number 123
+#de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on FLASV number 123
 export denovo_prefix="denovo"
 
 #set threads to a default value if not provided by the user
@@ -196,7 +196,7 @@ derep() {
   done
   echoWithHeader "  - Dereplicating sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -fastx_uniques $input -fastaout $output -sizeout -minuniquesize 1 -strand plus -relabel preESV -threads 1 -quiet
+  usearch11 -fastx_uniques $input -fastaout $output -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
 }
 
 denoise() {
@@ -223,7 +223,7 @@ denoise() {
   # Denoise with UNOISE3 accepting sequences seen only twice (see article supplementary for why this is acceptable)
   echoWithHeader "  - Denoising sequences using UNOISE3"
   usearch11 -unoise3 $input -zotus $output -minsize 2
-  #cp temp/uniques_wsize.fa temp/preESVs.fa
+  #cp temp/uniques_wsize.fa temp/preFLASVs.fa
 }
 
 findLongest() {
@@ -250,11 +250,11 @@ findLongest() {
         ;;
     esac
   done
-  # Remove shorter ESVs that also part of longer ESVs
-  #To ensure reproducibility, the output ESVs will be ordered first by decending size (times the unique ESV has been observed) and when sizes are identical by preESV ID (ascending). 
+  # Remove shorter FLASV's that also part of longer FLASV's
+  #To ensure reproducibility, the output FLASV's will be ordered first by decending size (times the unique FLASV has been observed) and when sizes are identical by preFLASV ID (ascending). 
   echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
-  #Rename with new ID's to "ESV(ID).(length)" fx: "ESV1.1413"
-  R --slave --args "$input" "$output" "$MAX_THREADS" << 'findLongestSortESVsBySizeAndID'
+  #Rename with new ID's to "FLASV(ID).(length)" fx: "FLASV1.1413"
+  R --slave --args "$input" "$output" "$MAX_THREADS" << 'findLongestSortFLASVsBySizeAndID'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
     input <- as.character(args[[1]])
@@ -268,10 +268,10 @@ findLongest() {
     })
     
     #read sequences
-    ESVs <- Biostrings::readBStringSet(input)
-    seqs_chr <- as.character(ESVs)
+    FLASVs <- Biostrings::readBStringSet(input)
+    seqs_chr <- as.character(FLASVs)
     
-    #Find the longest of representative ESVs and remove shorter, but otherwise identical ESVs
+    #Find the longest of representative FLASV's and remove shorter, but otherwise identical FLASV's
     registerDoParallel(cores = nProc)
     removeIDs <- foreach(
       i = seq_along(seqs_chr),
@@ -283,12 +283,12 @@ findLongest() {
     }
     stopImplicitCluster()
     if(!is.null(removeIDs))
-      ESVs <- ESVs[-removeIDs]
+      FLASVs <- FLASVs[-removeIDs]
     
     #rename the sequences and write out
-    names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", lengths(ESVs))
-    Biostrings::writeXStringSet(ESVs, file = output)
-findLongestSortESVsBySizeAndID
+    names(FLASVs) <- paste0("FLASV", 1:length(FLASVs), ".", lengths(FLASVs))
+    Biostrings::writeXStringSet(FLASVs, file = output)
+findLongestSortFLASVsBySizeAndID
 }
 
 add99OTUclusters() {
@@ -319,12 +319,12 @@ add99OTUclusters() {
     esac
   done
 
-  echoWithHeader "Expanding ESV's with 99% clusters on top"
+  echoWithHeader "Expanding FLASV's with 99% clusters on top"
   ## Cluster sequences at 99% id using cluster_smallmem.
   echoWithHeader "  - Clustering sequences (at 99% identity)"
   usearch11 -cluster_smallmem $input -id 0.99 -maxrejects 0 -sortedby size -centroids temp/FL-OTUs.fa
 
-  ## Identity chimera using uchime2_ref with the FL-ESVs as a reference database.
+  ## Identity chimera using uchime2_ref with the FLASV's as a reference database.
   echoWithHeader "  - Identifying chimeras in the clusters"
   usearch11 -uchime2_ref temp/FL-OTUs.fa -db $database -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
 
@@ -332,12 +332,12 @@ add99OTUclusters() {
   echoWithHeader "  - Filtering chimeras"
   usearch11 -search_exact temp/FL-OTUs-chimeras.fa -db temp/FL-OTUs.fa -strand plus -dbnotmatched temp/FL-OTUs-CF.fa -quiet
 
-  ## add to ESVs
+  ## add to FLASV's
   echoWithHeader "  - Adding clustered sequences"
-  addESVs -i temp/FL-OTUs-CF.fa -d $database -o $output -t $MAX_THREADS
+  addFLASVs -i temp/FL-OTUs-CF.fa -d $database -o $output -t $MAX_THREADS
 }
 
-addESVs() {
+addFLASVs() {
   #check user arguments
   local OPTIND
   while getopts ":i:t:d:o:" opt; do
@@ -364,13 +364,13 @@ addESVs() {
         ;;
     esac
   done
-  echoWithHeader "Finding new unique ESVs and adding them to the existing database..."
-  cp $input output/allNewESVs.fa
-  R --slave --args "$input" "$database" "$output" "$MAX_THREADS" << 'addnewESVs'
+  echoWithHeader "Finding new unique FLASV's and adding them to the existing database..."
+  cp $input output/allNewFLASVs.fa
+  R --slave --args "$input" "$database" "$output" "$MAX_THREADS" << 'addnewFLASVs'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
     input <- args[[1]]
-    ESVDB <- args[[2]]
+    FLASVDB <- args[[2]]
     output <- args[[3]]
     nProc <- as.integer(args[[4]])
     
@@ -383,11 +383,11 @@ addESVs() {
     })
     
     doParallel::registerDoParallel(cores = nProc)
-    querySeqs <- Biostrings::readBStringSet(ESVDB)
+    querySeqs <- Biostrings::readBStringSet(FLASVDB)
     targetSeqs <- Biostrings::readBStringSet(input)
     tlengths <- Biostrings::width(targetSeqs)
     
-  #Match existing ESVs to the new ESVs to find sequences of equal or shorter length
+  #Match existing FLASV's to the new FLASV's to find sequences of equal or shorter length
   res <- foreach::foreach(
     query = as.character(querySeqs),
     name = names(querySeqs),
@@ -411,14 +411,14 @@ addESVs() {
     }
   doParallel::stopImplicitCluster()
 
-  newESVs <- targetSeqs
+  newFLASVs <- targetSeqs
   if(length(res) != 0) {
-    newESVs <- newESVs[-which(names(targetSeqs) %in% res[["targetName"]])]
-    #replace shorter sequences in existing ESV database with new longer ones
+    newFLASVs <- newFLASVs[-which(names(targetSeqs) %in% res[["targetName"]])]
+    #replace shorter sequences in existing FLASV database with new longer ones
     replaceSeqs <- res[targetLength > queryLength, ]
     if(nrow(replaceSeqs) > 0) {
       #there may be more than one match of shorter sequences to longer ones, 
-      #if so use the first of the longer ESV (lowest number, thus higher coverage)
+      #if so use the first of the longer FLASV (lowest number, thus higher coverage)
       replaceSeqs <- replaceSeqs[, .SD[1], by = queryName]
       #make a column with the exact differences between the identical sequences
       replaceSeqs[,diff := stringi::stri_replace_all_fixed(str = targetSeq, 
@@ -428,7 +428,7 @@ addESVs() {
       
       #replace shorter with longer
       querySeqs[replaceIDs] <- replaceSeqs[["targetSeq"]]
-      #and adjust length annotation in the names of the new ESVs
+      #and adjust length annotation in the names of the new FLASV's
       names(querySeqs)[replaceIDs] <- paste0(gsub("\\..*$", ".", names(querySeqs)[replaceIDs]), 
                                              Biostrings::width(querySeqs[replaceIDs]))
       
@@ -441,21 +441,21 @@ addESVs() {
       warning(paste0("  - ",
                      length(replaceIDs), 
                      if(length(replaceIDs) > 1) 
-                       " ESVs have" 
+                       " FLASVs have" 
                      else 
-                       " ESV has",
-                     " been replaced by a longer ESV, see the logfile \"./output/replacedESVs.log\" for details"),
+                       " FLASV has",
+                     " been replaced by a longer FLASV, see the logfile \"./output/replacedFLASVs.log\" for details"),
               call. = FALSE)
       writeLines(replacementLog,
-                 "./output/replacedESVs.log")
+                 "./output/replacedFLASVs.log")
     } else if(nrow(replaceSeqs) == 0)
       warning("No sequences have been replaced", call. = FALSE)
   }
   #add the new sequences to the database with new names continuing ID numbering
-  ESVs <- c(querySeqs, newESVs)
-  names(ESVs) <- paste0("ESV", 1:length(ESVs), ".", lengths(ESVs))
-  Biostrings::writeXStringSet(ESVs, output)
-addnewESVs
+  FLASVs <- c(querySeqs, newFLASVs)
+  names(FLASVs) <- paste0("FLASV", 1:length(FLASVs), ".", lengths(FLASVs))
+  Biostrings::writeXStringSet(FLASVs, output)
+addnewFLASVs
 }
 
 #Define function to align and trim sequences based on the global SILVA alignment using SINA
@@ -489,7 +489,7 @@ sinaAlign() {
         ;;
     esac
   done
-  echoWithHeader "Aligning ESVs with SILVA database using SINA..."
+  echoWithHeader "Aligning FLASV's with SILVA database using SINA..."
   sina -i $input -o $output -r $database --threads $MAX_THREADS --log-file $logfile
 }
 
@@ -521,7 +521,7 @@ trimStripAlignment() {
     && mv tmp.fa $output
 }
 
-sortESVs() {
+sortFLASVs() {
   #check user arguments
   local OPTIND
   while getopts ":i:o:" opt; do
@@ -542,7 +542,7 @@ sortESVs() {
         ;;
     esac
   done
-  #sort sequences and stats files by ESV ID using R
+  #sort sequences and stats files by FLASV ID using R
   R --slave --args $input $output << 'sortSINAoutput'
   #extract passed args from shell script
   args <- commandArgs(trailingOnly = TRUE)
@@ -562,7 +562,7 @@ sortESVs() {
 sortSINAoutput
 }
 
-# Define functions to map ESVs against the SILVA and type strain database. For SILVA we find the top hit, 
+# Define functions to map FLASV's against the SILVA and type strain database. For SILVA we find the top hit, 
 # whereas for the type strain database we find all references with >=98.7% identity 
 searchTaxDB() {
   #check user arguments
@@ -651,7 +651,7 @@ clusterSpecies() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Species level (98.7% identity)"
+  echoWithHeader "Clustering FLASV's at Species level (98.7% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.987 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -679,7 +679,7 @@ clusterGenus() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Genus level (94.5% identity)"
+  echoWithHeader "Clustering FLASV's at Genus level (94.5% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.945 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -707,7 +707,7 @@ clusterFamily() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Family level (86.5% identity)"
+  echoWithHeader "Clustering FLASV's at Family level (86.5% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.865 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -735,7 +735,7 @@ clusterOrder() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Order level (82.0% identity)"
+  echoWithHeader "Clustering FLASV's at Order level (82.0% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.82 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -763,7 +763,7 @@ clusterClass() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Class level (78.5% identity)"
+  echoWithHeader "Clustering FLASV's at Class level (78.5% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.785 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -791,7 +791,7 @@ clusterPhylum() {
         ;;
     esac
   done
-  echoWithHeader "Clustering ESVs at Phylum level (75.0% identity)"
+  echoWithHeader "Clustering FLASV's at Phylum level (75.0% identity)"
   usearch11 -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
@@ -847,9 +847,9 @@ mergeTaxonomy() {
                       check.names = FALSE,
                       stringsAsFactors = FALSE)
     
-    #order by ESV ID
+    #order by FLASV ID
     tax <- tax[,c(1,3,2)][order(as.integer(gsub("[^0-9+$]|\\..*$", "", tax[[1]]))),]
-    colnames(tax) <- c("ESV", "idty", "tax")
+    colnames(tax) <- c("FLASV", "idty", "tax")
     
     #remove database ID's (keep everything after first " ", and remove ";" from the end if any)
     tax[["tax"]] <- gsub("^[^ ]* *|;$", "", tax[["tax"]])
@@ -911,7 +911,7 @@ mergeTaxonomy() {
     x <- x[V1 %in% c("H", "S"),.(V9, V10)]
     #if * in V10, replace with V9
     x <- x[,V10 := ifelse(V10 == "*", V9, V10)]
-    #order by ESV ID
+    #order by FLASV ID
     x <- x[order(as.integer(gsub("[^0-9+$]|\\..*$", "", V9))),]
     colnames(x) <- colnames
     invisible(x)
@@ -920,42 +920,42 @@ mergeTaxonomy() {
 
   # Fix typestrain taxonomy
   ## Read typestrains tax, only Genus and Species
-  ESV_typestrain_tax <- select(read_clean_tax(paste0(tempfolder, "/tax_typestrains.txt")), ESV, idty, Genus, Species)
+  FLASV_typestrain_tax <- select(read_clean_tax(paste0(tempfolder, "/tax_typestrains.txt")), FLASV, idty, Genus, Species)
 
   #remove strain information from Species names (keep only first two words)
-  ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")] <- 
-    sapply(stringr::str_split(ESV_typestrain_tax$Species[which(ESV_typestrain_tax$Species != "")], "_"), 
+  FLASV_typestrain_tax$Species[which(FLASV_typestrain_tax$Species != "")] <- 
+    sapply(stringr::str_split(FLASV_typestrain_tax$Species[which(FLASV_typestrain_tax$Species != "")], "_"), 
            function(x) {
              paste0(x[1:2], collapse = "_")
            })
 
-  #remove ESVs that hit more than one Species
-    ESV_typestrain_tax <- as.data.table(ESV_typestrain_tax)
+  #remove FLASV's that hit more than one Species
+    FLASV_typestrain_tax <- as.data.table(FLASV_typestrain_tax)
 
-    ESV_typestrain_tax <- ESV_typestrain_tax[,hits:=uniqueN(Species),by=ESV][hits==1][,hits:=NULL][,idty:=NULL][Species!=""]
+    FLASV_typestrain_tax <- FLASV_typestrain_tax[,hits:=uniqueN(Species),by=FLASV][hits==1][,hits:=NULL][,idty:=NULL][Species!=""]
 
-    ESV_typestrain_tax <- unique(ESV_typestrain_tax)
+    FLASV_typestrain_tax <- unique(FLASV_typestrain_tax)
 
   #write out
-  write_tax(tax = ESV_typestrain_tax, file = paste0(outputfolder, "/tax_typestrains.csv"))
+  write_tax(tax = FLASV_typestrain_tax, file = paste0(outputfolder, "/tax_typestrains.csv"))
 
   ##### SILVA
   #read SILVA tax, without Species
-  ESV_SILVA_tax <- select(read_clean_tax(input = paste0(tempfolder, "/tax_SILVA.txt")), -Species)
+  FLASV_SILVA_tax <- select(read_clean_tax(input = paste0(tempfolder, "/tax_SILVA.txt")), -Species)
 
   #write out
-  write_tax(tax = ESV_SILVA_tax, file = paste0(outputfolder, "/tax_SILVA.csv"))
+  write_tax(tax = FLASV_SILVA_tax, file = paste0(outputfolder, "/tax_SILVA.csv"))
 
-  ##### merge typestrains+SILVA taxonomy by ESV and Genus #####
-  ESV_slv_typestr_tax <- left_join(ESV_SILVA_tax[,-2], ESV_typestrain_tax, by = c("ESV", "Genus"))
-  ESV_slv_typestr_tax[is.na(ESV_slv_typestr_tax)] <- ""
+  ##### merge typestrains+SILVA taxonomy by FLASV and Genus #####
+  FLASV_slv_typestr_tax <- left_join(FLASV_SILVA_tax[,-2], FLASV_typestrain_tax, by = c("FLASV", "Genus"))
+  FLASV_slv_typestr_tax[is.na(FLASV_slv_typestr_tax)] <- ""
 
   #write out
-  write_tax(ESV_slv_typestr_tax,
+  write_tax(FLASV_slv_typestr_tax,
             file = paste0(outputfolder, "/tax_slv_typestr.csv"))
 
   ##### denovo taxonomy #####
-  ESV_S <- read_sort_mappings(paste0(tempfolder, "/SILVA_ESV-S.txt"), c("ESV", "Species"))
+  FLASV_S <- read_sort_mappings(paste0(tempfolder, "/SILVA_FLASV-S.txt"), c("FLASV", "Species"))
   S_G <- read_sort_mappings(paste0(tempfolder, "/SILVA_S-G.txt"), c("Species", "Genus"))
   G_F <- read_sort_mappings(paste0(tempfolder, "/SILVA_G-F.txt"), c("Genus", "Family"))
   F_O <- read_sort_mappings(paste0(tempfolder, "/SILVA_F-O.txt"), c("Family", "Order"))
@@ -963,17 +963,17 @@ mergeTaxonomy() {
   C_P <- read_sort_mappings(paste0(tempfolder, "/SILVA_C-P.txt"), c("Class", "Phylum"))
 
   #merge each taxonomic level according to the mapping results
-  denovo_tax <- left_join(ESV_S, S_G, by = "Species")
+  denovo_tax <- left_join(FLASV_S, S_G, by = "Species")
   denovo_tax <- left_join(denovo_tax, G_F, by = "Genus")
   denovo_tax <- left_join(denovo_tax, F_O, by = "Family")
   denovo_tax <- left_join(denovo_tax, O_C, by = "Order")
   denovo_tax <- left_join(denovo_tax, C_P, by = "Class")
 
-  #reorder columns and remove length from ESV ID's (".xxxx")
-  denovo_tax <- denovo_tax[,c("ESV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
+  #reorder columns and remove length from FLASV ID's (".xxxx")
+  denovo_tax <- denovo_tax[,c("FLASV", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
   denovo_tax[,2:7] <- lapply(denovo_tax[,2:7], gsub, pattern = "\\..*$", replacement = "")
 
-  #generate denovo names per taxonomic level based on ESV ID
+  #generate denovo names per taxonomic level based on FLASV ID
   denovo_tax[["Species"]] <- gsub("^[^0-9]+", paste0(prefix, "_s_"), denovo_tax[["Species"]])
   denovo_tax[["Genus"]] <- gsub("^[^0-9]+", paste0(prefix, "_g_"), denovo_tax[["Genus"]])
   denovo_tax[["Family"]] <- gsub("^[^0-9]+", paste0(prefix, "_f_"), denovo_tax[["Family"]])
@@ -986,10 +986,10 @@ mergeTaxonomy() {
             file = paste0(outputfolder, "/tax_denovo.csv"))
 
   #merge SILVA+typestrains+denovo taxonomy
-  #merge by ESV
-  merged_tax <- left_join(x = ESV_slv_typestr_tax,
+  #merge by FLASV
+  merged_tax <- left_join(x = FLASV_slv_typestr_tax,
                           y = denovo_tax,
-                          by = "ESV",
+                          by = "FLASV",
                           suffix = c("", ".denovo"))
 
   #fill out empty entries in typestrains+SILVA with denovo taxonomy
@@ -1001,8 +1001,8 @@ mergeTaxonomy() {
   merged_tax[which(Class %in% c(NA, "")), Class:=Class.denovo]
   merged_tax[which(Phylum %in% c(NA, "")), Phylum:=Phylum.denovo]
 
-  #order by ESV ID
-  merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]|\\..*$", "", ESV))), 1:8]
+  #order by FLASV ID
+  merged_tax <- merged_tax[order(as.integer(gsub("[^0-9+$]|\\..*$", "", FLASV))), 1:8]
 
   ##### search and replace according to a replacement file #####
   replacement_file <- list.files(".",
@@ -1033,12 +1033,12 @@ mergeTaxonomy() {
   ##### fix taxa with more than one parent #####
   #generate a log file first
   polyTaxa <- list()
-  polyTaxa$Species <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Genus), Genus = paste0(sort(unique(Genus)), collapse = ", "), new = first(Genus)), by = Species][nParents > 1,]
-  polyTaxa$Genus <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Family), Family = paste0(sort(unique(Family)), collapse = ", "), new = first(Family)), by = Genus][nParents > 1,]
-  polyTaxa$Family <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Order), Order = paste0(sort(unique(Order)), collapse = ", "), new = first(Order)), by = Family][nParents > 1,]
-  polyTaxa$Order <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Class), Class = paste0(sort(unique(Class)), collapse = ", "), new = first(Class)), by = Order][nParents > 1,]
-  polyTaxa$Class <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Phylum), Phylum = paste0(sort(unique(Phylum)), collapse = ", "), new = first(Phylum)), by = Class][nParents > 1,]
-  polyTaxa$Phylum <- merged_tax[, .(ESV = first(ESV), nParents = uniqueN(Kingdom), Kingdom = paste0(sort(unique(Kingdom)), collapse = ", "), new = first(Kingdom)), by = Phylum][nParents > 1,]
+  polyTaxa$Species <- merged_tax[, .(FLASV = first(FLASV), nParents = uniqueN(Genus), Genus = paste0(sort(unique(Genus)), collapse = ", "), new = first(Genus)), by = Species][nParents > 1,]
+  polyTaxa$Genus <- merged_tax[, .(FLASV = first(FLASV), nParents = uniqueN(Family), Family = paste0(sort(unique(Family)), collapse = ", "), new = first(Family)), by = Genus][nParents > 1,]
+  polyTaxa$Family <- merged_tax[, .(FLASV = first(FLASV), nParents = uniqueN(Order), Order = paste0(sort(unique(Order)), collapse = ", "), new = first(Order)), by = Family][nParents > 1,]
+  polyTaxa$Order <- merged_tax[, .(FLASV = first(FLASV), nParents = uniqueN(Class), Class = paste0(sort(unique(Class)), collapse = ", "), new = first(Class)), by = Order][nParents > 1,]
+  polyTaxa$Class <- merged_tax[, .(FLASV = first(FLASV), nParents = uniqueN(Phylum), Phylum = paste0(sort(unique(Phylum)), collapse = ", "), new = first(Phylum)), by = Class][nParents > 1,]
+  polyTaxa$Phylum <- merged_tax[, .(FLASV = first(FLASV), nParents = uniqueN(Kingdom), Kingdom = paste0(sort(unique(Kingdom)), collapse = ", "), new = first(Kingdom)), by = Phylum][nParents > 1,]
 
   polyTaxaLog <- unlist(sapply(polyTaxa, function(x) {
     if(nrow(x) > 1) {
@@ -1081,11 +1081,11 @@ mergeTaxonomy() {
             file = paste0(outputfolder, "/tax_complete.csv"))
 
   ##### export as different formats #####
-  ## export ESVs with SINTAX taxonomy in headers 
-  ESVs.fa <- Biostrings::readBStringSet(paste0(tempfolder, "/ESVs.fa"))
-  sintax <- left_join(data.frame(ESV = names(ESVs.fa), stringsAsFactors = FALSE), 
+  ## export FLASV's with SINTAX taxonomy in headers 
+  FLASVs.fa <- Biostrings::readBStringSet(paste0(tempfolder, "/FLASVs.fa"))
+  sintax <- left_join(data.frame(FLASV = names(FLASVs.fa), stringsAsFactors = FALSE), 
                       merged_tax,
-                      by = "ESV")
+                      by = "FLASV")
   sintax[["Kingdom"]] <- paste0("d:", sintax[["Kingdom"]])
   sintax[["Phylum"]] <- paste0("p:", sintax[["Phylum"]])
   sintax[["Class"]] <- paste0("c:", sintax[["Class"]])
@@ -1093,10 +1093,10 @@ mergeTaxonomy() {
   sintax[["Family"]] <- paste0("f:", sintax[["Family"]])
   sintax[["Genus"]] <- paste0("g:", sintax[["Genus"]])
   sintax[["Species"]] <- paste0("s:", sintax[["Species"]])
-  sintax <- sintax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  sintax_header <- paste0(sintax[["ESV"]], ";tax=", apply(sintax[,-1], 1, paste0, collapse = ","), ";")
-  names(ESVs.fa) <- sintax_header
-  Biostrings::writeXStringSet(ESVs.fa, paste0(outputfolder, "/ESVs_w_sintax.fa"))
+  sintax <- sintax[,c("FLASV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
+  sintax_header <- paste0(sintax[["FLASV"]], ";tax=", apply(sintax[,-1], 1, paste0, collapse = ","), ";")
+  names(FLASVs.fa) <- sintax_header
+  Biostrings::writeXStringSet(FLASVs.fa, paste0(outputfolder, "/FLASVs_w_sintax.fa"))
 
   ## export taxonomy in QIIME format
   qiime_tax <- merged_tax
@@ -1107,8 +1107,8 @@ mergeTaxonomy() {
   qiime_tax[["Family"]] <- paste0("f__", qiime_tax[["Family"]])
   qiime_tax[["Genus"]] <- paste0("g__", qiime_tax[["Genus"]])
   qiime_tax[["Species"]] <- paste0("s__", qiime_tax[["Species"]])
-  qiime_tax <- qiime_tax[,c("ESV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
-  writeLines(paste0(qiime_tax[["ESV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), paste0(outputfolder, "/tax_complete_qiime.txt"))
+  qiime_tax <- qiime_tax[,c("FLASV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
+  writeLines(paste0(qiime_tax[["FLASV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), paste0(outputfolder, "/tax_complete_qiime.txt"))
 generatedenovotax
 }
 
@@ -1128,34 +1128,34 @@ autotax() {
   checkRPkgs
   orient -i $DATA -d $silva_udb -o temp/fSSUs_oriented.fa
   derep -i temp/fSSUs_oriented.fa -o temp/uniques_wsize.fa
-  denoise -i temp/uniques_wsize.fa -o temp/preESVs.fa
-  findLongest -i temp/preESVs.fa -o temp/ESVs.fa
-  #if -c is provided, add chimera filtered OTU clusters (99% identity) of the ESV's on top
+  denoise -i temp/uniques_wsize.fa -o temp/preFLASVs.fa
+  findLongest -i temp/preFLASVs.fa -o temp/FLASVs.fa
+  #if -c is provided, add chimera filtered OTU clusters (99% identity) of the FLASV's on top
   CLUSTER=${CLUSTER:-false}
   if [ "$CLUSTER" = true ]
   then
-    mv temp/ESVs.fa temp/ESVs_woclusters.fa
-	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/ESVs_woclusters.fa -t $MAX_THREADS -o temp/ESVs.fa
+    mv temp/FLASVs.fa temp/FLASVs_woclusters.fa
+	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/FLASVs_woclusters.fa -t $MAX_THREADS -o temp/FLASVs.fa
   fi
-  #if -d is provided, identify redundant ESVs compared to the ESV database
+  #if -d is provided, identify redundant FLASV's compared to the FLASV database
   #and merge the two before continuing. Used to merge multiple databases
-  if [ -n "${ESVDB:-}" ]
+  if [ -n "${FLASVDB:-}" ]
   then
-    addESVs -i temp/ESVs.fa -d $ESVDB -o temp/ESVs.fa -t $MAX_THREADS
+    addFLASVs -i temp/FLASVs.fa -d $FLASVDB -o temp/FLASVs.fa -t $MAX_THREADS
   fi
-  sinaAlign -i temp/ESVs.fa -o temp/ESVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
-  trimStripAlignment -i temp/ESVs_SILVA_aln.fa -o temp/ESVs_SILVA_aln_trimmed.fa
-  sortESVs -i temp/ESVs_SILVA_aln_trimmed.fa -o temp/ESVs_SILVA_aln_trimmed_sorted.fa
-  searchTaxDB -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $MAX_THREADS
-  searchTaxDB_typestrain -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
-  clusterSpecies -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_ESV-S.txt -c temp/SILVA_ESV-S_centroids.fa
-  clusterGenus -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
-  clusterFamily -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
-  clusterOrder -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_F-O.txt -c temp/SILVA_F-O_centroids.fa
-  clusterClass -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_O-C.txt -c temp/SILVA_O-C_centroids.fa
-  clusterPhylum -i temp/ESVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_C-P.txt -c temp/SILVA_C-P_centroids.fa
+  sinaAlign -i temp/FLASVs.fa -o temp/FLASVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
+  trimStripAlignment -i temp/FLASVs_SILVA_aln.fa -o temp/FLASVs_SILVA_aln_trimmed.fa
+  sortFLASVs -i temp/FLASVs_SILVA_aln_trimmed.fa -o temp/FLASVs_SILVA_aln_trimmed_sorted.fa
+  searchTaxDB -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $MAX_THREADS
+  searchTaxDB_typestrain -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
+  clusterSpecies -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_FLASV-S.txt -c temp/SILVA_FLASV-S_centroids.fa
+  clusterGenus -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
+  clusterFamily -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
+  clusterOrder -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_F-O.txt -c temp/SILVA_F-O_centroids.fa
+  clusterClass -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_O-C.txt -c temp/SILVA_O-C_centroids.fa
+  clusterPhylum -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_C-P.txt -c temp/SILVA_C-P_centroids.fa
   mergeTaxonomy -t temp -o output -p $denovo_prefix
-  cp temp/ESVs.fa output/ESVs.fa
+  cp temp/FLASVs.fa output/FLASVs.fa
   echoDuration
 }
 
@@ -1205,15 +1205,15 @@ then
   while getopts ":hi:d:t:vbc" opt; do
     case ${opt} in
       h )
-        echo "Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
+        echo "Pipeline for extracting Exact Sequence Variants (FLASV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
         echo "Version: $VERSION"
         echo "Options:"
         echo "  -h    Display this help text and exit."
         echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
-        echo "  -c    Cluster the resulting ESV's at 99% (before generating de novo taxonomy),"
+        echo "  -c    Cluster the resulting FLASV's at 99% (before generating de novo taxonomy),"
         echo "          do chimera filtering on the clusters, and then add them on top in the same way as when using -d."
-        echo "  -d    FASTA file with previously processed ESV sequences."
-        echo "          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
+        echo "  -d    FASTA file with previously processed FLASV sequences."
+        echo "          FLASV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
         echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
         echo "  -b    Run all BATS unit tests to assure everything is working as intended (requires git)."
         echo "  -v    Print version and exit."
@@ -1223,7 +1223,7 @@ then
         DATA=$OPTARG
         ;;
       d )
-        ESVDB=$OPTARG
+        FLASVDB=$OPTARG
         ;;
       t )
         MAX_THREADS=$OPTARG
