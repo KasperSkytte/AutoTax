@@ -1,5 +1,5 @@
 # About AutoTax
-*AutoTax* is a linux BASH script that automatically generates de novo taxonomy from full length 16S rRNA exact sequence variants (ESVs). This allows generation of eco-system specific de novo taxonomic databases based on any environmental sample(s). It does so by combining several different software tools, listed below, into a single BASH script that otherwise only requires a single FASTA file as input. For a more detailed description of *AutoTax*, please refer to the paper [Dueholm et al, 2019](https://doi.org/10.1101/672873). *AutoTax* has only been tested on Ubuntu 18.04 LTS, but will probably run just fine on other Linux distributions as long as the required software listed below is installed.
+*AutoTax* is a linux BASH script that automatically generates de novo taxonomy from full length 16S rRNA amplicon sequence variants (FL-ASVs). This allows generation of eco-system specific de novo taxonomic databases based on any environmental sample(s). It does so by combining several different software tools, listed below, into a single BASH script that otherwise only requires a single FASTA file as input. For a more detailed description of *AutoTax*, please refer to the paper [Dueholm et al, 2019](https://doi.org/10.1101/672873). *AutoTax* has only been tested on Ubuntu 18.04 LTS, but will probably run just fine on other Linux distributions as long as the required software listed below is installed.
 
 Table of Contents
 =================
@@ -24,28 +24,28 @@ Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 In brief, the script performs the following steps:
  - Check user input, files and folders, and check for installed R packages, installing missing ones
  
- **Generate/identify ESVs**
+ **Generate/identify FL-ASVs**
  
  - Orient the sequences based on the SILVA taxonomic database (usearch)
  - Dereplicate the input sequences (both strands), and determine the coverage of each unique sequence (usearch)
  - Denoise the dereplicated sequences using UNOISE3, with `minsize = 2` (usearch)
  - Remove all sequences that match exactly (100% identity) with other, but longer sequences (R)
- - Sort the sequences based on coverage, and rename the sequences in order of occurence, in the format `ESVx.length`, e.g. `ESV123.1410` (R)
- - If desired, update an existing ESV database (FASTA file) by matching the generated ESVs to the database, replacing identical ESVs with longer sequences if any, and adding the new ones to the end of the FASTA file, renamed to continue numbering from the database (R)
+ - Sort the sequences based on coverage, and rename the sequences in order of occurence, in the format `FLASVx.length`, e.g. `FLASV123.1410` (R)
+ - If desired, update an existing ESV database (FASTA file) by matching the generated ESVs to the database, replacing identical FL-ASVs with longer sequences if any, and adding the new ones to the end of the FASTA file, renamed to continue numbering from the database (R)
  
  **Generate de novo taxonomy**
  
- - Perform a multiple sequence alignment of the ESVs with both the SILVA and SILVA typestrains databases using SINA, then trim, strip gaps, format, and sort based on ESV IDs (multithreading doesn't always preserve ordering) (SINA+awk+R)
+ - Perform a multiple sequence alignment of the ESVs with both the SILVA and SILVA typestrains databases using SINA, then trim, strip gaps, format, and sort based on FL-ASV IDs (multithreading doesn't always preserve ordering) (SINA+awk+R)
  - Assign taxonomy to that of the best hit in both the SILVA and SILVA typestrains databases (usearch)
- - Cluster the ESVs at different identity thresholds each corresponding to a taxonomic level and use the ESV ID of the cluster centroids as a de novo placeholder name at each level (usearch, thresholds from [Yarza et al, 2014](https://www.nature.com/articles/nrmicro3330))
- - Reformat the output from the last 2 steps into 3 separate tables where each column contains the taxonomy at each taxonomic level (Kingdom->Species) of each ESV (R)  
+ - Cluster the FL-ASVs at different identity thresholds each corresponding to a taxonomic level and use the FL-ASV ID of the cluster centroids as a de novo placeholder name at each level (usearch, thresholds from [Yarza et al, 2014](https://www.nature.com/articles/nrmicro3330))
+ - Reformat the output from the last 2 steps into 3 separate tables where each column contains the taxonomy at each taxonomic level (Kingdom->Species) of each FL-ASV (R)  
  - Merge the 3 tables so that the de novo taxonomy fills in where the assigned taxonomy based on SILVA and SILVA typestrains are below the taxonomic thresholds (R)
  - Manually curate the taxonomy based on a replacement file if any (R)
  
  **Output the taxonomy in the following formats:**
- - ESVs in FASTA format with usearch SINTAX formatted taxonomy in the headers (R)
+ - FL-ASVs in FASTA format with usearch SINTAX formatted taxonomy in the headers (R)
  - QIIME formatted table (R)
- - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each ESV (R)
+ - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each FL-ASV (R)
 
 # Installation and requirements
 As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Simply download the `autotax.bash` script by either:
@@ -82,7 +82,7 @@ Then simply run the script with fx `bash autotax.bash -i myseqs.fa`. Make sure t
 Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
-Pipeline for extracting Exact Sequence Variants (ESV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
+Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
 Version: 1.5.1
 Options:
   -h    Display this help text and exit.
