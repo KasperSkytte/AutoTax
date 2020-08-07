@@ -365,7 +365,6 @@ addFLASVs() {
     esac
   done
   echoWithHeader "Finding new unique FLASV's and adding them to the existing database..."
-  cp $input output/allNewFLASVs.fa
   R --slave --args "$input" "$database" "$output" "$MAX_THREADS" << 'addnewFLASVs'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
@@ -1141,6 +1140,7 @@ autotax() {
   #and merge the two before continuing. Used to merge multiple databases
   if [ -n "${FLASVDB:-}" ]
   then
+    cp temp/FLASVs.fa output/allNewFLASVs.fa
     addFLASVs -i temp/FLASVs.fa -d $FLASVDB -o temp/FLASVs.fa -t $MAX_THREADS
   fi
   sinaAlign -i temp/FLASVs.fa -o temp/FLASVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
