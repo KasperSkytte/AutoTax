@@ -77,8 +77,7 @@ Other than the standard linux tools `awk`, `grep`, and `cat` (which is included 
 Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568) (both SILVA release 132 and 138). **Make sure the paths to these files are set correctly in the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script**. You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
 
 # Usage
-Adjust the variables in the SETUP chunk at the start of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder.
-Then simply run the script with fx `bash autotax.bash -i myseqs.fa`. Make sure the script is executable with `chmod +x autotax.bash`.
+Adjust the variables in the SETUP chunk at the start of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder. Make sure the script is executable with `chmod +x autotax.bash`.
 Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
@@ -93,6 +92,11 @@ Options:
   -b    Run all BATS unit tests to assure everything is working as intended (requires git).
   -v    Print version and exit.
 ```
+
+Using the example data in `/test/example_data/` a usage example would be:
+`bash autotax.bash -i test/example_data/10k_fSSUs.fa -t 20`.
+
+The main output files can then be found in the `output/` folder and all intermediate files along the way in `temp/`.
 
 # Running AutoTax from a docker container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 can then be retrieved from [Docker Hub](https://hub.docker.com/) with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended):
