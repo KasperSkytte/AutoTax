@@ -86,8 +86,10 @@ Version: 1.5.1
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
-  -d    FASTA file with previously processed ESV sequences.
-          ESV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun.
+  -c    Cluster the resulting FLASV's at 99% (before generating de novo taxonomy),
+          do chimera filtering on the clusters, and then add them on top in the same way as when using -d.
+  -d    FASTA file with previously processed FLASV sequences.
+          FLASV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun.
   -t    Maximum number of threads to use. Default is all available cores except 2.
   -b    Run all BATS unit tests to assure everything is working as intended (requires git).
   -v    Print version and exit.

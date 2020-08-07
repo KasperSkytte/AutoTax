@@ -1205,7 +1205,7 @@ then
   while getopts ":hi:d:t:vbc" opt; do
     case ${opt} in
       h )
-        echo "Pipeline for extracting Exact Sequence Variants (FLASV's) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
+        echo "Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
         echo "Version: $VERSION"
         echo "Options:"
         echo "  -h    Display this help text and exit."
