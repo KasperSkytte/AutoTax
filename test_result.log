@@ -19,10 +19,16 @@ ok 17 Step: Orient
 ok 18 Step: Dereplication
 ok 19 Step: Denoise
 ok 20 Step: Find longest and rename
-ok 21 Step (optional): Add additional ESVs to DB
+not ok 21 Step (optional): Add additional FLASVs to DB
+# (in test file tests.bats, line 256)
+#   `[ "$status" -eq 0 ]' failed
+# [2020-08-07 13:30:06]: Finding new unique FLASV's and adding them to the existing database... Error in .Call2("new_input_filexp", filepath, PACKAGE = "XVector") : cannot open file '' Calls: <Anonymous> ... lapply -> lapply -> FUN -> new_input_filexp -> .Call2 Execution halted
+# [2020-08-07 13:30:10]: Finding new unique FLASV's and adding them to the existing database... Warning message: No sequences have been replaced
+# 
+# [2020-08-07 13:30:17]: Finding new unique FLASV's and adding them to the existing database... Error in file(con, "w") : cannot open the connection Calls: writeLines -> file In addition: Warning messages: 1: - 2 FLASVs have been replaced by a longer FLASV, see the logfile "./output/replacedFLASVs.log" for details 2: In file(con, "w") : cannot open file './output/replacedFLASVs.log': No such file or directory Execution halted
 ok 22 Step: Global alignment against SILVA
 ok 23 Step: Trim and strip alignment
-ok 24 Step: Sort ESVs by ID (i.e. highest coverage)
+ok 24 Step: Sort FLASVs by ID (i.e. highest coverage)
 ok 25 Step: Obtaining the taxonomy of the best hit in the SILVA database
 ok 26 Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database
 ok 27 Step: Cluster at species level
