@@ -31,11 +31,11 @@ In brief, the script performs the following steps:
  - Denoise the dereplicated sequences using UNOISE3, with `minsize = 2` (usearch)
  - Remove all sequences that match exactly (100% identity) with other, but longer sequences (R)
  - Sort the sequences based on coverage, and rename the sequences in order of occurence, in the format `FLASVx.length`, e.g. `FLASV123.1410` (R)
- - If desired, update an existing ESV database (FASTA file) by matching the generated ESVs to the database, replacing identical FL-ASVs with longer sequences if any, and adding the new ones to the end of the FASTA file, renamed to continue numbering from the database (R)
+ - If desired, update an existing FL-ASV database (FASTA file) by matching the generated FL-ASVs to the database, replacing identical FL-ASVs with longer sequences if any, and adding the new ones to the end of the FASTA file, renamed to continue numbering from the database (R)
  
  **Generate de novo taxonomy**
  
- - Perform a multiple sequence alignment of the ESVs with both the SILVA and SILVA typestrains databases using SINA, then trim, strip gaps, format, and sort based on FL-ASV IDs (multithreading doesn't always preserve ordering) (SINA+awk+R)
+ - Perform a multiple sequence alignment of the FL-ASVs with both the SILVA and SILVA typestrains databases using SINA, then trim, strip gaps, format, and sort based on FL-ASV IDs (multithreading doesn't always preserve ordering) (SINA+awk+R)
  - Assign taxonomy to that of the best hit in both the SILVA and SILVA typestrains databases (usearch)
  - Cluster the FL-ASVs at different identity thresholds each corresponding to a taxonomic level and use the FL-ASV ID of the cluster centroids as a de novo placeholder name at each level (usearch, thresholds from [Yarza et al, 2014](https://www.nature.com/articles/nrmicro3330))
  - Reformat the output from the last 2 steps into 3 separate tables where each column contains the taxonomy at each taxonomic level (Kingdom->Species) of each FL-ASV (R)  
@@ -86,10 +86,10 @@ Version: 1.5.1
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
-  -c    Cluster the resulting FLASV's at 99% (before generating de novo taxonomy),
+  -c    Cluster the resulting FL-ASVs at 99% (before generating de novo taxonomy),
           do chimera filtering on the clusters, and then add them on top in the same way as when using -d.
-  -d    FASTA file with previously processed FLASV sequences.
-          FLASV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun.
+  -d    FASTA file with previously processed FL-ASV sequences.
+          FL-ASVs generated from the input sequences will then be appended to this and de novo taxonomy is rerun.
   -t    Maximum number of threads to use. Default is all available cores except 2.
   -b    Run all BATS unit tests to assure everything is working as intended (requires git).
   -v    Print version and exit.
