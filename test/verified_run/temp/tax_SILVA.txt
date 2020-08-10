@@ -1,0 +1,85 @@
+FLASV5.1455	EU878332.1.1524 Bacteria;Firmicutes;D8A-2;uncultured bacterium	99.9	1415	2	0	1	1415	1	1524	*	*
+FLASV1.1445	FPLM01002571.16.1519 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Microtrichaceae;Candidatus Microthrix;metagenome	99.9	1405	1	1	1	1404	1	1504	*	*
+FLASV2.1445	FPLM01004279.12.1515 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Microtrichaceae;Candidatus Microthrix;metagenome	99.7	1405	3	1	1	1404	1	1504	*	*
+FLASV9.1449	FPLM01000992.16.1523 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;metagenome	99.9	1414	1	1	1	1413	1	1508	*	*
+FLASV8.1439	CU922997.1.1348 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Prolixibacteraceae;uncultured;uncultured bacterium	99.8	1345	3	0	1	1403	1	1348	*	*
+FLASV12.1455	CU919470.1.1354 Bacteria;Firmicutes;D8A-2;uncultured bacterium	99.6	1351	4	1	1	1415	1	1354	*	*
+FLASV13.1471	HM107102.1.1511 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Dysgonomonadaceae;Proteiniphilum;uncultured bacterium	99.1	1435	12	1	1	1435	1	1511	*	*
+FLASV14.1489	FPLM01004294.12.1558 Bacteria;Fermentibacterota;Fermentibacteria;Fermentibacterales;Fermentibacteraceae;metagenome	99.6	1449	6	0	1	1449	1	1547	*	*
+FLASV7.1456	KC846031.1.1493 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Fastidiosipila;uncultured bacterium	98.0	1416	28	1	1	1415	1	1493	*	*
+FLASV15.1445	FPLM01003243.14.1516 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;ST-12K33;metagenome	99.9	1409	2	0	1	1409	1	1503	*	*
+FLASV17.1524	CU466930.1799801.1801155 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;Cloacimonadaceae;Candidatus Cloacimonas;Candidatus Cloacimonas acidaminovorans str. Evry	99.7	1355	4	0	1	1483	1	1355	*	*
+FLASV3.1457	KC846031.1.1493 Bacteria;Firmicutes;Clostridia;Hungateiclostridiaceae;Fastidiosipila;uncultured bacterium	98.0	1417	28	0	1	1417	1	1493	*	*
+FLASV19.1445	FPLM01004279.12.1515 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Microtrichaceae;Candidatus Microthrix;metagenome	99.6	1405	4	1	1	1404	1	1504	*	*
+FLASV10.1442	HM773498.1.1488 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Tetrasphaera;uncultured bacterium	99.7	1402	4	0	1	1402	1	1488	*	*
+FLASV21.1446	FPLM01002265.10.1513 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;metagenome	99.9	1406	2	0	1	1406	1	1504	*	*
+FLASV18.1417	FPLP01003197.7.1442 Bacteria;Chloroflexi;Anaerolineae;C10-SB1A;metagenome	99.8	1377	3	0	1	1377	1	1436	*	*
+FLASV22.1455	GQ133078.1.1391 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;W5053;uncultured bacterium	99.8	1370	3	0	1	1415	1	1391	*	*
+FLASV23.1453	EU638973.1.1361 Bacteria;Synergistota;Synergistia;Synergistales;Synergistaceae;Acetomicrobium;uncultured Acetomicrobium sp.	99.8	1361	0	3	1	1411	1	1361	*	*
+FLASV24.1434	CZCB01001507.135.1626 Bacteria;Chloroflexi;Anaerolineae;SBR1031;anaerobic digester metagenome	99.9	1394	2	0	1	1394	1	1492	*	*
+FLASV25.1455	CU919470.1.1354 Bacteria;Firmicutes;D8A-2;uncultured bacterium	99.7	1351	3	1	1	1415	1	1354	*	*
+FLASV4.1481	AM943044.1.1276 Bacteria;Firmicutes;Bacilli;Lactobacillales;Carnobacteriaceae;Trichococcus;Trichococcus pasteurii	100.0	1266	0	0	1	1440	1	1276	*	*
+FLASV26.1455	EU878332.1.1524 Bacteria;Firmicutes;D8A-2;uncultured bacterium	99.9	1415	1	0	1	1415	1	1524	*	*
+FLASV28.1487	JN995366.1.1526 Bacteria;Desulfobacterota;Syntrophia;Syntrophales;Syntrophaceae;Syntrophus;uncultured bacterium	99.4	1443	7	1	1	1443	1	1526	*	*
+FLASV20.1439	FPLP01000196.10.1506 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Propionicimonas;metagenome	99.9	1399	1	0	1	1399	1	1497	*	*
+FLASV11.1442	AB294304.1.1440 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;uncultured bacterium	96.6	1401	45	3	1	1401	1	1440	*	*
+FLASV32.1467	KC255309.1.1506 Bacteria;Actinobacteriota;Thermoleophilia;Solirubrobacterales;67-14;uncultured bacterium	99.5	1427	7	0	1	1427	1	1506	*	*
+FLASV33.1454	EU878332.1.1524 Bacteria;Firmicutes;D8A-2;uncultured bacterium	99.8	1415	2	1	1	1414	1	1524	*	*
+FLASV34.1463	JX456451.1.1502 Bacteria;Firmicutes;Incertae Sedis;DTU014;uncultured Clostridiales bacterium	99.9	1422	2	0	1	1422	1	1502	*	*
+FLASV35.1472	FN563246.1.1514 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;Cloacimonadaceae;W5;uncultured bacterium	99.9	1431	1	0	1	1431	1	1514	*	*
+FLASV27.1446	AB175383.1.1446 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Rikenellaceae;Rikenellaceae RC9 gut group;uncultured bacterium	99.6	1410	6	0	1	1410	1	1446	*	*
+FLASV37.1445	FPLM01002571.16.1519 Bacteria;Actinobacteriota;Acidimicrobiia;Microtrichales;Microtrichaceae;Candidatus Microthrix;metagenome	99.6	1405	4	1	1	1404	1	1504	*	*
+FLASV38.1442	FPLP01006639.16.1516 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;Tetrasphaera;metagenome	99.6	1403	5	1	1	1402	1	1501	*	*
+FLASV39.1436	AY570656.1.1441 Archaea;Halobacterota;Methanosarcinia;Methanosarciniales;Methanosaetaceae;Methanosaeta;uncultured archaeon	99.6	1364	4	1	1	1363	1	1441	*	*
+FLASV40.1444	FPLP01009454.16.1517 Bacteria;Actinobacteriota;Actinobacteria;Micrococcales;Intrasporangiaceae;metagenome	100.0	1404	0	0	1	1404	1	1502	*	*
+FLASV30.1461	CZCA01001080.28.1546 Bacteria;Firmicutes;Limnochordia;MBA03;anaerobic digester metagenome	100.0	1420	0	0	1	1420	1	1519	*	*
+FLASV41.1446	FPLM01000829.16.1519 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Rikenellaceae;DMER64;metagenome	99.9	1410	2	0	1	1410	1	1504	*	*
+FLASV42.1425	FJ660505.1.1475 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Terrisporobacter;uncultured bacterium	99.9	1385	2	0	1	1385	1	1475	*	*
+FLASV44.1425	AB506399.1.1495 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;uncultured bacterium	99.6	1385	5	0	1	1385	1	1495	*	*
+FLASV45.1460	FPLM01002536.16.1533 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Rhodocyclaceae;Dechloromonas;metagenome	99.4	1420	8	0	1	1420	1	1518	*	*
+FLASV43.1435	FPLP01006341.16.1509 Bacteria;Actinobacteriota;Actinobacteria;Propionibacteriales;Propionibacteriaceae;Micropruina;metagenome	98.9	1396	15	1	1	1395	1	1494	*	*
+FLASV46.1450	EU812988.1.1503 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;uncultured;uncultured bacterium	99.5	1409	7	0	1	1409	1	1503	*	*
+FLASV48.1486	FPLM01001890.2.1527 Bacteria;Desulfobacterota;Syntrophia;Syntrophales;Smithellaceae;Smithella;metagenome	100.0	1442	0	0	1	1442	1	1526	*	*
+FLASV47.1457	FPLP01011372.20.1534 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Comamonadaceae;Rhodoferax;metagenome	99.8	1417	3	0	1	1417	1	1515	*	*
+FLASV50.1396	JN683993.1.1432 Bacteria;Planctomycetota;Phycisphaerae;Phycisphaerales;Phycisphaeraceae;SM1A02;uncultured bacterium	98.3	1361	23	0	1	1361	1	1432	*	*
+FLASV49.1458	KC333938.1.1497 Bacteria;Firmicutes;Desulfotomaculia;Desulfotomaculales;Pelotomaculum;uncultured bacterium	99.9	1418	1	0	1	1418	1	1497	*	*
+FLASV52.1474	CXWJ01035424.14.1545 Bacteria;Acidobacteriota;Vicinamibacteria;Vicinamibacterales;Vicinamibacteraceae;wastewater metagenome	99.5	1433	7	0	1	1433	1	1532	*	*
+FLASV53.1472	FN563246.1.1514 Bacteria;Cloacimonadota;Cloacimonadia;Cloacimonadales;Cloacimonadaceae;W5;uncultured bacterium	100.0	1431	0	0	1	1431	1	1514	*	*
+FLASV51.1452	KP150956.1.1491 Bacteria;Firmicutes;Incertae Sedis;DTU014;uncultured bacterium	99.9	1412	1	0	1	1412	1	1491	*	*
+FLASV54.1446	HQ010708.1.1485 Bacteria;Proteobacteria;Gammaproteobacteria;Competibacterales;Competibacteraceae;Candidatus Competibacter;uncultured bacterium	99.9	1406	2	0	1	1406	1	1485	*	*
+FLASV55.1446	FPLM01008610.18.1521 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;metagenome	100.0	1406	0	0	1	1406	1	1504	*	*
+FLASV56.1455	EU878332.1.1524 Bacteria;Firmicutes;D8A-2;uncultured bacterium	99.8	1415	3	0	1	1415	1	1524	*	*
+FLASV58.1456	KF444938.1.1495 Bacteria;Firmicutes;Incertae Sedis;DTU014;uncultured Symbiobacterium sp.	99.5	1416	7	0	1	1416	1	1495	*	*
+FLASV59.1458	FPLP01011393.13.1528 Bacteria;Proteobacteria;Gammaproteobacteria;Run-SP154;metagenome	99.9	1418	2	0	1	1418	1	1516	*	*
+FLASV60.1455	FPLP01002188.10.1523 Bacteria;Proteobacteria;Gammaproteobacteria;Cellvibrionales;Spongiibacteraceae;BD1-7 clade;metagenome	99.8	1416	2	1	1	1415	1	1514	*	*
+FLASV61.1433	EU381878.1.1471 Bacteria;Firmicutes;Clostridia;Oscillospirales;Ruminococcaceae;Ruminococcus;uncultured rumen bacterium	99.1	1393	12	0	1	1393	1	1471	*	*
+FLASV31.1442	HQ183815.1.1482 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;uncultured;uncultured Natronoanaerobium sp.	99.6	1401	5	0	1	1401	1	1482	*	*
+FLASV63.1448	AB603812.1.1396 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured Bacteroidetes bacterium	99.3	1395	9	1	1	1412	1	1396	*	*
+FLASV16.1445	HQ183765.1.1484 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;uncultured;uncultured Bacillus sp.	97.8	1405	30	1	1	1405	1	1484	*	*
+FLASV64.1406	GQ052952.1.1244 Bacteria;Proteobacteria;Alphaproteobacteria;Rhodobacterales;Rhodobacteraceae;Rhodobacter;uncultured bacterium	97.3	1244	34	0	1	1363	1	1244	*	*
+FLASV62.1481	AM943044.1.1276 Bacteria;Firmicutes;Bacilli;Lactobacillales;Carnobacteriaceae;Trichococcus;Trichococcus pasteurii	99.9	1266	1	0	1	1440	1	1276	*	*
+FLASV66.1439	FPLP01010156.15.1511 Bacteria;Bacteroidota;Bacteroidia;Chitinophagales;Saprospiraceae;uncultured;metagenome	99.7	1402	4	0	1	1402	1	1497	*	*
+FLASV68.1439	FPLP01002627.15.1511 Bacteria;Bacteroidota;Bacteroidia;Chitinophagales;Saprospiraceae;uncultured;metagenome	99.7	1402	4	0	1	1402	1	1497	*	*
+FLASV67.1438	AB506199.1.1508 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;uncultured bacterium	99.7	1397	4	0	1	1397	1	1508	*	*
+FLASV65.1470	HQ156100.1.1409 Bacteria;Actinobacteriota;Thermoleophilia;Gaiellales;uncultured;uncultured prokaryote	97.9	1405	28	1	1	1429	1	1409	*	*
+FLASV70.1446	CU925431.1.1346 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;uncultured bacterium	99.6	1343	5	0	1	1406	1	1346	*	*
+FLASV72.1436	X51423.206.1677 Archaea;Halobacterota;Methanosarcinia;Methanosarciniales;Methanosaetaceae;Methanosaeta;Methanothrix soehngenii	100.0	1363	0	0	1	1363	1	1472	*	*
+FLASV73.1454	EU878326.1.1524 Bacteria;Synergistota;Synergistia;Synergistales;Synergistaceae;Acetomicrobium;uncultured bacterium	99.9	1412	1	0	1	1412	1	1524	*	*
+FLASV69.1450	EU812988.1.1503 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;uncultured;uncultured bacterium	99.6	1409	6	0	1	1409	1	1503	*	*
+FLASV75.1446	FPLM01007899.16.1519 Bacteria;Firmicutes;Clostridia;Christensenellales;Christensenellaceae;Christensenellaceae R-7 group;metagenome	99.9	1406	1	0	1	1406	1	1504	*	*
+FLASV76.1448	MF464061.1.1328 Bacteria;Bacteroidota;Bacteroidia;Bacteroidales;Bacteroidetes vadinHA17;uncultured bacterium	99.6	1329	4	1	1	1411	1	1328	*	*
+FLASV77.1496	AJ306782.1.1566 Bacteria;Caldatribacteriota;Caldatribacteriia;Caldatribacteriales;Caldatribacteriaceae;Candidatus Caldatribacterium;uncultured bacterium	99.6	1455	6	0	1	1455	1	1566	*	*
+FLASV78.1439	KT936379.1.953 Archaea;Euryarchaeota;Methanobacteria;Methanobacteriales;Methanobacteriaceae;Methanobacterium;uncultured bacterium	99.4	953	3	3	1	1366	1	953	*	*
+FLASV79.1427	FPLP01001714.13.1497 Bacteria;Chloroflexi;Anaerolineae;Ardenticatenales;uncultured;metagenome	99.6	1386	5	0	1	1386	1	1485	*	*
+FLASV80.1482	FPLM01000245.1.1511 Bacteria;Desulfobacterota;Syntrophorhabdia;Syntrophorhabdales;Syntrophorhabdaceae;Syntrophorhabdus;metagenome	99.7	1434	4	0	1	1441	1	1511	*	*
+FLASV81.1425	AB506399.1.1495 Bacteria;Firmicutes;Clostridia;Peptostreptococcales-Tissierellales;Peptostreptococcaceae;Romboutsia;uncultured bacterium	99.6	1385	5	0	1	1385	1	1495	*	*
+FLASV82.1411	HM007527.1.1469 Bacteria;Proteobacteria;Alphaproteobacteria;Sphingomonadales;Sphingomonadaceae;uncultured;uncultured bacterium	99.4	1370	7	1	1	1370	1	1469	*	*
+FLASV74.1438	AB506199.1.1508 Bacteria;Firmicutes;Clostridia;Clostridiales;Clostridiaceae;Clostridium sensu stricto 1;uncultured bacterium	99.6	1397	5	0	1	1397	1	1508	*	*
+FLASV84.1440	KT936389.1.1028 Archaea;Halobacterota;Methanosarcinia;Methanosarciniales;Methanosarcinaceae;Methanomethylovorans;uncultured bacterium	99.8	956	2	0	1	1366	1	1028	*	*
+FLASV83.1457	FPLP01003820.16.1530 Bacteria;Proteobacteria;Gammaproteobacteria;Burkholderiales;Comamonadaceae;Rhodoferax;metagenome	99.9	1417	2	0	1	1417	1	1515	*	*
+FLASV85.1424	CU920956.1.1322 Bacteria;Chloroflexi;Anaerolineae;Anaerolineales;Anaerolineaceae;uncultured;uncultured bacterium	99.9	1319	1	0	1	1383	1	1322	*	*
+FLASV71.1461	CZCA01001080.28.1546 Bacteria;Firmicutes;Limnochordia;MBA03;anaerobic digester metagenome	99.9	1420	1	0	1	1420	1	1519	*	*
+FLASV36.1467	JF935174.1.1436 Bacteria;Firmicutes;Dethiobacteria;Dethiobacterales;Dethiobacteraceae;Dethiobacter;uncultured bacterium	95.2	1389	54	3	1	1426	1	1436	*	*
+FLASV57.1464	JF417953.1.1492 Bacteria;Firmicutes;Clostridia;Eubacteriales;Garciellaceae;Irregularibacter;uncultured bacterium	92.1	1424	98	5	1	1423	1	1492	*	*
+FLASV29.1471	EU358731.1.1513 Bacteria;Caldatribacteriota;JS1;uncultured bacterium	97.8	1431	29	2	1	1431	1	1513	*	*
+FLASV6.1463	CZCB01007045.46.1566 Bacteria;Bacteroidota;Bacteroidia;Sphingobacteriales;Lentimicrobiaceae;Lentimicrobium;anaerobic digester metagenome	100.0	1427	0	0	1	1427	1	1521	*	*
