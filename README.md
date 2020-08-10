@@ -76,6 +76,12 @@ Other than the standard linux tools `awk`, `grep`, and `cat` (which is included 
 ## Database files
 Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568) (both SILVA release 132 and 138). **Make sure the paths to these files are set correctly in the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script**. You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
 
+For SILVA version 138 this can be done from a shell by the following commands:
+```
+wget https://ndownloader.figshare.com/files/22790396 -O SILVA138_NR99.zip
+unzip SILVA138_NR99.zip -d refdatabases/
+```
+
 # Usage
 Adjust the variables in the SETUP chunk at the start of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder. Make sure the script is executable with `chmod +x autotax.bash`.
 Type `bash autotax.bash -h` to show available options and version:
