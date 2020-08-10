@@ -13,7 +13,7 @@ Table of Contents
    * [Usage](#usage)
    * [Running AutoTax from a docker container (recommended)](#running-autotax-from-a-docker-container-recommended)
       * [Important notes when running through docker container](#important-notes-when-running-through-docker-container)
-   * [Unit tests (WIP)](#unit-tests-wip)
+   * [Unit tests](#unit-tests)
    * [Generating input full-length 16S sequences](#generating-input-full-length-16s-sequences)
    * [See also](#see-also)
    * [Notes](#notes)
