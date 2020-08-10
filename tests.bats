@@ -249,7 +249,7 @@ load autotax
 	[ "$status" -eq 0 ]
 
 	#add new unique fSSUs
-	local in=${test_dir}example_data/5k_fSSUs_addons.fa
+	local in=${test_dir}example_data/100_addon_FLASVs.fa
 	local out=temp/FLASVs_waddons.fa
 	run addFLASVs -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging

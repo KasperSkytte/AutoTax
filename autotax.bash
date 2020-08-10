@@ -443,10 +443,10 @@ addFLASVs() {
                        " FLASVs have" 
                      else 
                        " FLASV has",
-                     " been replaced by a longer FLASV, see the logfile \"./output/replacedFLASVs.log\" for details"),
+                     " been replaced by a longer FLASV, see the logfile \"replacedFLASVs.log\" for details"),
               call. = FALSE)
-      writeLines(replacementLog,
-                 "./output/replacedFLASVs.log")
+      #writeLines(replacementLog,
+      #           "replacedFLASVs.log")
     } else if(nrow(replaceSeqs) == 0)
       warning("No sequences have been replaced", call. = FALSE)
   }
