@@ -1170,7 +1170,7 @@ runTests() {
 
   #check if current working directory is at the root of a cloned AutoTax git repo
   if [ $(git rev-parse --is-inside-work-tree) ] && \
-    [ $(basename -s .git `git config --get remote.origin.url`) == "AutoTax" ] && \
+    [ $(basename -s .git `git config --get remote.origin.url` | awk '{print tolower($0)}') == "autotax" ] && \
     [ $(git rev-parse --git-dir 2> /dev/null) == ".git" ]
   then
     #setup
