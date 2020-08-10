@@ -82,7 +82,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.5.1
+Version: 1.5.4
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
