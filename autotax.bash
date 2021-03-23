@@ -1,5 +1,5 @@
 #!/bin/bash
-export VERSION="1.5.4"
+export VERSION="1.5.4_vsearch"
 
 #################################
 ############# setup #############
@@ -169,7 +169,7 @@ orient() {
   done
   echoWithHeader "  - Orienting sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -orient $input -db $database -fastaout $output -threads 1 -quiet
+  vsearch -orient $input -db $database -fastaout $output -threads 1 -quiet
 }
 
 derep() {
@@ -195,7 +195,7 @@ derep() {
   done
   echoWithHeader "  - Dereplicating sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -fastx_uniques $input -fastaout $output -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
+  vsearch -fastx_uniques $input -fastaout $output -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
 }
 
 denoise() {
@@ -221,7 +221,7 @@ denoise() {
   done
   # Denoise with UNOISE3 accepting sequences seen only twice (see article supplementary for why this is acceptable)
   echoWithHeader "  - Denoising sequences using UNOISE3"
-  usearch11 -unoise3 $input -zotus $output -minsize 2
+  vsearch -unoise3 $input -zotus $output -minsize 2
   #cp temp/uniques_wsize.fa temp/preFLASVs.fa
 }
 
@@ -321,15 +321,15 @@ add99OTUclusters() {
   echoWithHeader "Expanding FLASV's with 99% clusters on top"
   ## Cluster sequences at 99% id using cluster_smallmem.
   echoWithHeader "  - Clustering sequences (at 99% identity)"
-  usearch11 -cluster_smallmem $input -id 0.99 -maxrejects 0 -sortedby size -centroids temp/FL-OTUs.fa
+  vsearch -cluster_smallmem $input -id 0.99 -maxrejects 0 -sortedby size -centroids temp/FL-OTUs.fa
 
   ## Identity chimera using uchime2_ref with the FLASV's as a reference database.
   echoWithHeader "  - Identifying chimeras in the clusters"
-  usearch11 -uchime2_ref temp/FL-OTUs.fa -db $database -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
+  vsearch -uchime2_ref temp/FL-OTUs.fa -db $database -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
 
   ## Remove chimera.
   echoWithHeader "  - Filtering chimeras"
-  usearch11 -search_exact temp/FL-OTUs-chimeras.fa -db temp/FL-OTUs.fa -strand plus -dbnotmatched temp/FL-OTUs-CF.fa -quiet
+  vsearch -search_exact temp/FL-OTUs-chimeras.fa -db temp/FL-OTUs.fa -strand plus -dbnotmatched temp/FL-OTUs-CF.fa -quiet
 
   ## add to FLASV's
   echoWithHeader "  - Adding clustered sequences"
@@ -590,7 +590,7 @@ searchTaxDB() {
     esac
   done
   echoWithHeader "Finding taxonomy of best hit in SILVA database..."
-  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $output -threads $MAX_THREADS
+  vsearch -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $output -threads $MAX_THREADS
 }
 
 searchTaxDB_typestrain() {
@@ -621,7 +621,7 @@ searchTaxDB_typestrain() {
     esac
   done
   echoWithHeader "Finding the taxonomy of species within the 98.7% threshold in the typestrains database..."
-  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $output -threads $MAX_THREADS
+  vsearch -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $output -threads $MAX_THREADS
 }
 
 #assign with identity thresholds based on Yarza et al, 2014 using cluster_smallmem (no multithread support) to preserve order of input sequences.
@@ -650,7 +650,7 @@ clusterSpecies() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Species level (98.7% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.987 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  vsearch -quiet -cluster_smallmem $input -id 0.987 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterGenus() {
@@ -678,7 +678,7 @@ clusterGenus() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Genus level (94.5% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.945 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  vsearch -quiet -cluster_smallmem $input -id 0.945 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterFamily() {
@@ -706,7 +706,7 @@ clusterFamily() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Family level (86.5% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.865 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  vsearch -quiet -cluster_smallmem $input -id 0.865 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterOrder() {
@@ -734,7 +734,7 @@ clusterOrder() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Order level (82.0% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.82 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  vsearch -quiet -cluster_smallmem $input -id 0.82 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterClass() {
@@ -762,7 +762,7 @@ clusterClass() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Class level (78.5% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.785 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  vsearch -quiet -cluster_smallmem $input -id 0.785 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 clusterPhylum() {
@@ -790,7 +790,7 @@ clusterPhylum() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Phylum level (75.0% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  vsearch -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
 }
 
 mergeTaxonomy() {
