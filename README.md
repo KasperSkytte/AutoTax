@@ -119,7 +119,7 @@ Alternatively build the image manually by downloading the [Dockerfile](https://g
 ```
 git clone https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
-sudo docker build -t kasperskytte/autotax:latest docker/
+sudo docker build -t kasperskytte/autotax:latest .
 ```
 
 The image also contains the autotax github repository itself (most recent from master branch) in `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
