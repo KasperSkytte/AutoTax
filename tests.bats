@@ -37,9 +37,9 @@ load autotax
   [ -n ${MAX_THREADS} ]
 }
 
-@test "usearch11 in \$PATH" {
-	usearch11=$(which usearch11)
-	[ -n ${usearch11} ]
+@test "vsearch in \$PATH" {
+	vsearch=$(which vsearch)
+	[ -n ${vsearch} ]
 }
 
 @test "sina in \$PATH" {
