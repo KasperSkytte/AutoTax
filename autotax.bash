@@ -169,7 +169,7 @@ orient() {
   done
   echoWithHeader "  - Orienting sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  vsearch -orient $input -db $database -fastaout $output -threads 1 -quiet
+  vsearch --orient $input --db $database --fastaout $output --quiet
 }
 
 derep() {
@@ -1161,7 +1161,7 @@ autotax() {
 runTests() {
   #check for git
   git=$(which git)
-  if [ -z ${git} ]
+  if [ -z "$git" ]
   then
     echo "git not found, please install"
     exit 1
@@ -1191,10 +1191,6 @@ runTests() {
     echo "Unit testing can only be performed at the root of a cloned AutoTax git repository as several additional files are needed for testing."
     exit 1
   fi
-  #if [ -f /.dockerenv ]; then
-  #  echo "running in docker"
-  #fi
-  #exit 0
 }
 
 #only run autotax if script is not sourced
