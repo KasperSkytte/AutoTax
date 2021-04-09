@@ -3,7 +3,7 @@
 .RData
 .Ruserdata
 *.Rproj
-usearch11
+usearch*
 refdatabases/
 
 gh-md-toc
