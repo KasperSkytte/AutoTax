@@ -19,7 +19,7 @@ Table of Contents
    * [Unit tests](#unit-tests)
    * [Generating input full-length 16S sequences](#generating-input-full-length-16s-sequences)
    * [See also](#see-also)
-   * [Notes](#notes)
+   * [vsearch to replace usearch](#vsearch-to-replace-usearch)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
@@ -189,7 +189,7 @@ ok 32 Step: Cluster at phylum level
 ok 33 Step: Merge and output taxonomy
 ```
 
-The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax), the latest test log of the master branch can be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
+The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax), the latest test log of the master branch can always be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
 
 # Generating input full-length 16S sequences
 *AutoTax* is made to take input sequences obtained from the method described in [Karst et al, 2018](https://www.nature.com/articles/nbt.4045). The sequences need to be processed first using the Perl scripts in the `/fSSU-pipelines` subfolder. 
@@ -199,5 +199,5 @@ It is also possible to use full-length 16S sequences obtained from other methods
 # See also
 In the future full ribosomal operon taxonomic databases may be possible using Nanopore Sequencing and Unique Molecular Tagging, see https://www.biorxiv.org/content/10.1101/645903v2.
 
-# Notes
-If you want to use vsearch instead of usearch, feel free to adjust the script accordingly and test it. We would love to hear about the results if so, we have only used and tested usearch10 and usearch11. 
+# vsearch to replace usearch
+A vsearch version of AutoTax is work in progress and is available at the development branch. But bear in mind that we have only used and tested usearch10 and usearch11 and the results presented in the paper has been done with usearch11, so results will likely be different compared to when using usearch (though still reliable in its own way, but don't mix output from both usearch and vsearch). The latest docker image with the vsearch version will be available by appending `_vsearch` to any version of the image on docker hub.
