@@ -23,6 +23,7 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD5
   mkdir -p ~/.R && \
   echo "MAKEFLAGS = -j100" > ~/.R/Makevars && \
   echo "options(repos = c(CRAN = 'https://mirrors.dotsrc.org/cran'), download.file.method = 'libcurl')" >> /usr/lib/R/etc/Rprofile.site && \
+  sed -i s/^R_LIBS_USER=/#R_LIBS_USER=/g /etc/R/Renviron &&\
   R -e "install.packages('BiocManager')" && \
   R -e "BiocManager::install(version = '3.9', ask = FALSE, Ncpus = 100)" && \
   R -e "BiocManager::install(c('Biostrings', 'doParallel', 'stringr', 'data.table', 'tidyr', 'dplyr'), Ncpus = 100, version = '3.9', ask = FALSE)"
