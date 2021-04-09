@@ -15,7 +15,7 @@ export typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains
 export denovo_prefix="denovo"
 
 #set threads to a default value if not provided by the user
-export MAX_THREADS=${MAX_THREADS:-$((`nproc`-2))}
+export MAX_THREADS=${MAX_THREADS:-$(($(nproc)-2))}
 
 ##################################
 ########## end of setup ##########
@@ -25,10 +25,9 @@ export MAX_THREADS=${MAX_THREADS:-$((`nproc`-2))}
 
 #error handling
 userError() {
-  local self=`basename "$0"`
   echo "Invalid usage: $1" 1>&2
   echo ""
-  echo "Run 'bash $self -h' for help"
+  eval "bash $0 -h"
 }
 
 #adds a header to echo, for a better console output overview
@@ -1192,7 +1191,7 @@ runTests() {
 
   #check if current working directory is at the root of a cloned AutoTax git repo
   if [ $(git rev-parse --is-inside-work-tree) ] && \
-    [ $(basename -s .git `git config --get remote.origin.url` | awk '{print tolower($0)}') == "autotax" ] && \
+    [ $(basename -s .git $(git config --get remote.origin.url) | awk '{print tolower($0)}') == "autotax" ] && \
     [ $(git rev-parse --git-dir 2> /dev/null) == ".git" ]
   then
     #setup
