@@ -1,13 +1,13 @@
-# About AutoTax
+# AutoTax
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/kasperskytte/autotax)][hub]
+![Docker Pulls](https://img.shields.io/docker/pulls/kasperskytte/autotax)
 
 *AutoTax* is a linux BASH script that automatically generates de novo taxonomy from full length 16S rRNA amplicon sequence variants (FL-ASVs). This allows generation of eco-system specific de novo taxonomic databases based on any environmental sample(s). It does so by combining several different software tools, listed below, into a single BASH script that otherwise only requires a single FASTA file as input. For a more detailed description of *AutoTax*, please refer to the paper [Dueholm et al, 2020](https://doi.org/10.1128/mBio.01557-20). *AutoTax* has only been tested on Ubuntu 18.04 LTS, but will probably run just fine on other Linux distributions as long as the required software listed below is installed.
 
 Table of Contents
 =================
 
-   * [About AutoTax](#about-autotax)
+   * [AutoTax](#autotax)
    * [Table of Contents](#table-of-contents)
    * [What the script does](#what-the-script-does)
    * [Installation and requirements](#installation-and-requirements)
