@@ -31,46 +31,6 @@ userError() {
   echo "Run 'bash $self -h' for help"
 }
 
-checkRPkgs() {
-  echoWithHeader "Checking for required R packages and installing if missing..."
-  #Run R and check for installed packages, install if needed
-  R --slave << 'checkRpkgs'
-    suppressPackageStartupMessages({
-      #Biostrings (and BiocManager which is used to install Biostrings)
-      if(!require("Biostrings")) {
-        if(!require("BiocManager")) {
-          install.packages("BiocManager")
-        }
-        BiocManager::install("Biostrings", update = FALSE, ask = FALSE)
-      }
-
-      #doParallel
-      if(!require("doParallel"))
-        install.packages("doParallel")
-      
-      #stringr
-      if(!require("stringr"))
-        install.packages("stringr")
-        
-      #stringi
-      if(!require("stringi"))
-        install.packages("stringi")
-
-      #data.table
-      if(!require("data.table"))
-        install.packages("data.table")
-
-      #tidyr
-      if(!require("tidyr"))
-        install.packages("tidyr")
-
-      #dplyr
-      if(!require("dplyr"))
-        install.packages("dplyr")
-      })
-checkRpkgs
-}
-
 #adds a header to echo, for a better console output overview
 echoWithHeader() {
   #check user arguments
@@ -90,7 +50,7 @@ checkBASH() {
     echo "Error: function must not be passed any arguments" >&2
     exit 1
   fi
-  if [ ! -n "$BASH" ]
+  if [ -z "$BASH" ]
     then
     echo "Error: script must be run with BASH (bash)!" 1>&2
     exit 1
@@ -144,6 +104,46 @@ checkInputData() {
   fi
 }
 
+checkRPkgs() {
+  echoWithHeader "Checking for required R packages and installing if missing..."
+  #Run R and check for installed packages, install if needed
+  R --slave << 'checkRpkgs'
+    suppressPackageStartupMessages({
+      #Biostrings (and BiocManager which is used to install Biostrings)
+      if(!require("Biostrings")) {
+        if(!require("BiocManager")) {
+          install.packages("BiocManager")
+        }
+        BiocManager::install("Biostrings", update = FALSE, ask = FALSE)
+      }
+
+      #doParallel
+      if(!require("doParallel"))
+        install.packages("doParallel")
+      
+      #stringr
+      if(!require("stringr"))
+        install.packages("stringr")
+        
+      #stringi
+      if(!require("stringi"))
+        install.packages("stringi")
+
+      #data.table
+      if(!require("data.table"))
+        install.packages("data.table")
+
+      #tidyr
+      if(!require("tidyr"))
+        install.packages("tidyr")
+
+      #dplyr
+      if(!require("dplyr"))
+        install.packages("dplyr")
+      })
+checkRpkgs
+}
+
 orient() {
   #check user arguments
   local OPTIND
@@ -176,7 +176,7 @@ orient() {
 derep() {
   #check user arguments
   local OPTIND
-  while getopts ":i:d:o:" opt; do
+  while getopts ":i:o:" opt; do
     case ${opt} in
       i )
         local input=$OPTARG
@@ -202,7 +202,7 @@ derep() {
 denoise() {
   #check user arguments
   local OPTIND
-  while getopts ":i:d:o:" opt; do
+  while getopts ":i:o:" opt; do
     case ${opt} in
       i )
         local input=$OPTARG
@@ -1161,8 +1161,7 @@ autotax() {
 
 runTests() {
   #check for git
-  git=$(which git)
-  if [ -z ${git} ]
+  if [ -z "$(which git)" ]
   then
     echo "git not found, please install"
     exit 1
@@ -1181,11 +1180,11 @@ runTests() {
     mkdir -p ${test_run_dir}temp
     mkdir -p ${test_run_dir}output
     #run in parallel if GNU parallel is installed
-    if [ -z $(which parallel) ]
+    if [ -z "$(which parallel)" ]
     then
       (./bats/bin/bats -t tests.bats) |& tee test_result.log
     else
-      (./bats/bin/bats -t -j $((`nproc`-2)) tests.bats) |& tee test_result.log
+      (./bats/bin/bats -t -j $(($(nproc)-2)) tests.bats) |& tee test_result.log
     fi
     exit 0
   else
