@@ -57,6 +57,25 @@ checkBASH() {
   fi
 }
 
+#check if command is found in $PATH and is executable
+checkCmd() {
+  #check user arguments
+  if [ ! $# -eq 1 ]
+  then
+    echo "Error: function must be passed exactly 1 argument" >&2
+    exit 1
+  fi
+
+  cmd="$1"
+	if [ -z "$(which "$cmd")" ]
+  then
+    echo "Error: $cmd not found in \$PATH"
+    exit 1
+  else
+    true
+  fi
+}
+
 #check if a folder is present and empty
 checkFolder() {
   #check user arguments
@@ -1120,6 +1139,10 @@ autotax() {
   #set appropriate error handling
   set -o errexit -o pipefail -o nounset #-o noclobber
   checkBASH
+  checkCmd usearch11
+  checkCmd sina
+  checkCmd R
+  checkCmd Rscript
   checkInputData
   checkFiles $silva_db $silva_udb $typestrains_udb
   checkFolder temp

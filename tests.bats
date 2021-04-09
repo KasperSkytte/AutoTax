@@ -38,23 +38,19 @@ load autotax
 }
 
 @test "usearch11 in \$PATH" {
-	usearch11=$(which usearch11)
-	[ -n ${usearch11} ]
+	checkCmd usearch11
 }
 
 @test "sina in \$PATH" {
-	sina=$(which sina)
-	[ -n ${sina} ]
+	checkCmd sina
 }
 
 @test "R in \$PATH" {
-	R=$(which R)
-	[ -n ${R} ]
+	checkCmd R
 }
 
 @test "Rscript in \$PATH" {
-	Rscript=$(which Rscript)
-	[ -n ${Rscript} ]
+	checkCmd Rscript
 }
 
 @test "Check installed R packages" {
