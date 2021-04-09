@@ -195,7 +195,7 @@ derep() {
   done
   echoWithHeader "  - Dereplicating sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  vsearch -fastx_uniques $input -fastaout $output -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
+  vsearch -derep_fulllength $input --output $output --sizeout --minuniquesize 1 --strand plus --relabel preFLASV -threads 1 -quiet
 }
 
 denoise() {
