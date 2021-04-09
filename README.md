@@ -14,8 +14,8 @@ Table of Contents
       * [Software](#software)
       * [Database files](#database-files)
    * [Usage](#usage)
-   * [Running AutoTax from a docker container (recommended)](#running-autotax-from-a-docker-container-recommended)
-      * [Important notes when running through docker container](#important-notes-when-running-through-docker-container)
+   * [Running AutoTax from a container (recommended)](#running-autotax-from-a-container-recommended)
+      * [Important notes when running AutoTax through a container](#important-notes-when-running-autotax-through-a-container)
    * [Unit tests](#unit-tests)
    * [Generating input full-length 16S sequences](#generating-input-full-length-16s-sequences)
    * [See also](#see-also)
@@ -62,7 +62,7 @@ git clone https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
 ```
 
-Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux). The tools can be installed manually by refering to the documentation of the individual tools. It is recommended to run AutoTax through the docker container image based on Ubuntu linux 18.04, however, with everything pre-installed and tested (except database files), see [this section](#running-autotax-from-a-docker-container-recommended).
+Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux). The tools can be installed manually by refering to the documentation of the individual tools. It is recommended to run AutoTax through the docker container image based on Ubuntu linux 18.04, however, with everything pre-installed and tested (except database files), see the [container section](#running-autotax-from-a-docker-container-recommended).
 
 ## Software
  - GNU parallel (version 20161222)
@@ -109,7 +109,7 @@ Using the example data in `/test/example_data/` a usage example would be:
 
 The main output files can then be found in the `output/` folder and all intermediate files along the way in `temp/`.
 
-# Running AutoTax from a docker container (recommended)
+# Running AutoTax from a container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 can then be retrieved from [Docker Hub](https://hub.docker.com/) with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended):
 ```
 sudo docker pull kasperskytte/autotax:latest
@@ -122,20 +122,31 @@ cd AutoTax
 sudo docker build -t kasperskytte/autotax:latest docker/
 ```
 
-The image also contains the autotax github repository itself (most recent from master branch) in `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
+The image also contains the autotax github repository itself (most recent from master branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
 ```
 sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -h
 ```
 
-## Important notes when running through docker container
+Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible and is as simple as:
+```
+singularity run --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest -h
+```
+
+Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh). 
+
+## Important notes when running AutoTax through a container
 As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version (limited to 4GB memory and is doubtfully going to be sufficient, but you are welcome to try) and place the executable in the same folder that is mounted inside the container and name it `usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
 
-By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script into the current working folder, adjust the paths, and run that instead of that included in the image.
+By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script into the current working folder, adjust the paths, and run that instead of the script included in the image.
 
-When running through the docker container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. Furthermore, the output folders `temp` and `output` will be owned by root, so it's a good idea to change ownership afterwards with fx:
+When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
+
+Furthermore, the output folders `temp` and `output` will be owned by root if run through docker, so it's a good idea to either change ownership afterwards with fx:
 ```
 sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 ```
+
+or run docker with appropriate user ID mapping (`--user` option).
 
 # Unit tests
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. This requires you to run from the root of a clone of the AutoTax git repository as several additional test files are needed. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
