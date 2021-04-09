@@ -152,7 +152,41 @@ or run docker with appropriate user ID mapping (`--user` option).
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. This requires you to run from the root of a clone of the AutoTax git repository as several additional test files are needed. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
-sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -b
+$ sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -b
+1..33
+ok 1 Variable set: VERSION
+ok 2 silva_db database file
+ok 3 silva_udb database file
+ok 4 typestrains_udb database file
+ok 5 Variable set: denovo_prefix
+ok 6 Variable set: MAX_THREADS
+ok 7 usearch11 in $PATH
+ok 8 sina in $PATH
+ok 9 R in $PATH
+ok 10 Rscript in $PATH
+ok 11 Check installed R packages
+ok 12 Echo with timestamp
+ok 13 Shell is BASH
+ok 14 Error if temp/ folder exists
+ok 15 Error if output/ folder exists
+ok 16 Check input data
+ok 17 Step: Orient
+ok 18 Step: Dereplication
+ok 19 Step: Denoise
+ok 20 Step: Find longest and rename
+ok 21 Step (optional): Add additional FLASVs to DB
+ok 22 Step: Global alignment against SILVA
+ok 23 Step: Trim and strip alignment
+ok 24 Step: Sort FLASVs by ID (i.e. highest coverage)
+ok 25 Step: Obtaining the taxonomy of the best hit in the SILVA database
+ok 26 Step: Obtaining the taxonomy of species (>98.7% id) in the SILVA typestrains database
+ok 27 Step: Cluster at species level
+ok 28 Step: Cluster at genus level
+ok 29 Step: Cluster at family level
+ok 30 Step: Cluster at order level
+ok 31 Step: Cluster at class level
+ok 32 Step: Cluster at phylum level
+ok 33 Step: Merge and output taxonomy
 ```
 
 The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax), the latest test log of the master branch can be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
