@@ -1202,6 +1202,7 @@ runTests() {
   then
     echoWithHeader "Unpacking data required for testing (using the data included in the container)"
     unzip -o /opt/autotax/test/testdata.zip -d test/
+    cp -v /opt/autotax/tests.bats /opt/autotax/autotax.bash -t /autotax
   else
     echoWithHeader "Downloading data required for testing"
     wget -q https://github.com/KasperSkytte/AutoTax/raw/129af21c8476e4fa874335fb1199dc879d1010e9/test/testdata.zip
