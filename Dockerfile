@@ -23,6 +23,7 @@ RUN apt-get update && \
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
   locale-gen en_US.utf8 && \
   /usr/sbin/update-locale LANG=en_US.UTF-8
+
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 
@@ -61,8 +62,11 @@ RUN wget -q https://github.com/torognes/vsearch/releases/download/v2.17.0/vsearc
   rm vsearch-2.17.0-linux-x86_64.tar.gz
 
 ### install BATS for unit testing
-RUN git clone https://github.com/bats-core/bats-core.git && \
-  /opt/bats-core/install.sh /usr/local
+RUN wget -q https://github.com/bats-core/bats-core/archive/refs/tags/v1.3.0.tar.gz && \
+  tar -zxf v1.3.0.tar.gz && \
+  rm v1.3.0.tar.gz && \
+  /opt/bats-core-1.3.0/install.sh /usr/local && \
+  rm -rf /opt/bats-core-1.3.0
 
 ### copy AutoTax repo into /opt/autotax
 COPY . /opt/autotax/
