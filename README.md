@@ -65,11 +65,10 @@ cd AutoTax
 Other than the standard linux tools `awk`, `grep`, and `cat` (which is included in most Linux distributions), AutoTax depends on a few other software tools, however, which need to be installed and be available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux). The tools can be installed manually by refering to the documentation of the individual tools. It is recommended to run AutoTax through the docker container image based on Ubuntu linux 18.04, however, with everything pre-installed and tested (except database files), see the [container section](#running-autotax-from-a-docker-container-recommended).
 
 ## Software
- - GNU parallel (version 20161222)
  - usearch (version 10 or later)
  - SINA (version 1.6 or later)
  - R (version 3.5 or later) with the following packages installed (the script will attempt to install if missing):
-   - Biostrings (from Bioconductor, be ready for trouble if you dont have administrative rights, try manually if it fails)
+   - Biostrings (from Bioconductor through `BiocManager::install()`)
    - doParallel
    - stringr (and stringi)
    - data.table
