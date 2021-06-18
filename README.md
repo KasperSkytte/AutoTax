@@ -91,7 +91,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.5.5
+Version: 1.6.0
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
@@ -141,7 +141,8 @@ By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/mas
 
 When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
 
-Furthermore, the output folders `temp` and `output` will be owned by root if run through docker, so it's a good idea to either change ownership afterwards with fx:
+To adjust the path to the database files when running through docker simply adjust the variables `silva_db`, `silva_udb`, and `typestrains_udb` when starting the container (`--env` option, fx `--env silva_db="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"`). They will be passed on to the `autotax.bash` script. The same goes for the `denovo_prefix` variable.
+
 Furthermore, the output folders `temp` and `output` will likely be owned by root if you haven't done the [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/), so it's a good idea to either run docker with appropriate user ID mapping (`--user` option), or adjust the ownership afterwards with fx:
 
 ```
@@ -190,6 +191,8 @@ ok 33 Step: Merge and output taxonomy
 ```
 
 The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax). The latest test log of the master branch can always be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
+
+Beware that these tests are done by verifying that the output from the individual steps are identical to the output from a previous, manually verified, run, and that this is specific to the particular version of SILVA used (currently release 138.1).
 
 # Generating input full-length 16S sequences
 *AutoTax* is made to take input sequences obtained from the method described in [Karst et al, 2018](https://www.nature.com/articles/nbt.4045). The sequences need to be processed first using the Perl scripts in the `/fSSU-pipelines` subfolder. 

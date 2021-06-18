@@ -1,5 +1,5 @@
-#!/bin/bash
-export VERSION="1.5.5"
+#!/usr/bin/env bash
+export VERSION="1.6.0"
 
 #################################
 ############# setup #############
@@ -7,12 +7,12 @@ export VERSION="1.5.5"
 # Set paths to the SILVA nr99 database and the typestrain database extracted from SILVA nr99 (see article supplementary for details). 
 # .udb files have to be created first from fasta files using the example below:
 # usearch11 -makeudb_usearch SILVA_132_SSURef_Nr99_tax_silva.fasta -output SILVA_132_SSURef_Nr99_tax_silva.udb
-export silva_db="refdatabases/SILVA_138_SSURef_NR99_11_11_19_opt.arb"
-export silva_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva.udb"
-export typestrains_udb="refdatabases/SILVA_138_SSURef_NR99_tax_silva_typestrains.udb"
+export silva_db=${silva_db:-"refdatabases/SILVA_138.1_SSURef_NR99_12_06_20_opt.arb"}
+export silva_udb=${silva_udb:-"refdatabases/SILVA_138.1_SSURef_NR99_tax_silva.udb"}
+export typestrains_udb=${typestrains_udb:-"refdatabases/SILVA_138.1_SSURef_NR99_tax_silva_typestrains.udb"}
 
 #de novo taxonomy prefix. Results will be in the format "prefix_g_123" for a de novo Genus based on FLASV number 123
-export denovo_prefix="denovo"
+export denovo_prefix=${denovo_prefix:-"denovo"}
 
 #set threads to a default value if not provided by the user
 export MAX_THREADS=${MAX_THREADS:-$(($(nproc)-2))}
