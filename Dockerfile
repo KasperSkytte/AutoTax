@@ -77,6 +77,7 @@ ENV PATH="/opt/autotax:/autotax:/opt/sina-1.6.0-linux/bin:/opt/vsearch-2.17.0-li
 ### clean up
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
+VOLUME /autotax
 WORKDIR /autotax
 ENTRYPOINT ["bash", "/opt/autotax/autotax.bash"]
 CMD ["-h"]
