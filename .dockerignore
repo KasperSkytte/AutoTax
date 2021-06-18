@@ -1,3 +1,9 @@
-refdatabases/
-gitignore/
-usearch*
+#ignore everything
+**
+
+#except
+!fSSU-pipelines
+!test/testdata.zip
+!autotax.bash
+!tests.bats
+!getsilvadb.sh
