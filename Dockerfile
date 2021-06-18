@@ -74,6 +74,8 @@ RUN chmod +x /opt/autotax/autotax.bash
 ### make sure everything is in PATH
 ENV PATH="/opt/autotax:/autotax:/opt/sina-1.6.0-linux/bin:/opt/vsearch-2.17.0-linux-x86_64/bin:${PATH}"
 
+### clean up
+RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
 
 WORKDIR /autotax
 ENTRYPOINT ["bash", "/opt/autotax/autotax.bash"]
