@@ -7,19 +7,20 @@
 Table of Contents
 =================
 
-   * [AutoTax](#autotax)
-   * [Table of Contents](#table-of-contents)
-   * [What the script does](#what-the-script-does)
-   * [Installation and requirements](#installation-and-requirements)
-      * [Software](#software)
-      * [Database files](#database-files)
-   * [Usage](#usage)
-   * [Running AutoTax from a container (recommended)](#running-autotax-from-a-container-recommended)
-      * [Important notes when running AutoTax through a container](#important-notes-when-running-autotax-through-a-container)
-   * [Unit tests](#unit-tests)
-   * [Generating input full-length 16S sequences](#generating-input-full-length-16s-sequences)
-   * [See also](#see-also)
-   * [vsearch to replace usearch](#vsearch-to-replace-usearch)
+* [AutoTax](#autotax)
+* [Table of Contents](#table-of-contents)
+* [What the script does](#what-the-script-does)
+* [Installation and requirements](#installation-and-requirements)
+   * [Software](#software)
+   * [Database files](#database-files)
+* [Usage](#usage)
+* [Running AutoTax from a container (recommended)](#running-autotax-from-a-container-recommended)
+   * [Running getsilvadb.sh through a container](#running-getsilvadbsh-through-a-container)
+   * [Important notes when running AutoTax through a container](#important-notes-when-running-autotax-through-a-container)
+* [Unit tests](#unit-tests)
+* [Generating input full-length 16S sequences](#generating-input-full-length-16s-sequences)
+* [See also](#see-also)
+* [vsearch to replace usearch](#vsearch-to-replace-usearch)
 
 Created by [gh-md-toc](https://github.com/ekalinin/github-markdown-toc)
 
@@ -84,6 +85,8 @@ wget https://ndownloader.figshare.com/files/22790396 -O SILVA138_NR99.zip
 unzip SILVA138_NR99.zip -d refdatabases/
 ```
 
+From now on you can just use the `getsilvadb.sh` script to choose a specific release version, download the required files directly from https://www.arb-silva.de/, and then automagically reformat, extract typestrains, and generate UDB databases for usearch. This is perhaps easiest through a container, see [Running getsilvadb.sh through a container](#running-getsilvadbsh-through-a-container)
+
 # Usage
 Adjust the variables in the SETUP chunk at the start of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder. Make sure the script is executable with `chmod +x autotax.bash`.
 Type `bash autotax.bash -h` to show available options and version:
@@ -131,7 +134,13 @@ Running the AutoTax docker container using [Singularity](https://sylabs.io/) is 
 singularity run --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest -h
 ```
 
-Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh). 
+Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
+
+## Running getsilvadb.sh through a container
+Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
+```
+singularity exec --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest getsilvadb.sh
+```
 
 ## Important notes when running AutoTax through a container
 As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version (limited to 4GB memory and is doubtfully going to be sufficient, but you are welcome to try) and place the executable in the same folder that is mounted inside the container and name it `usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
