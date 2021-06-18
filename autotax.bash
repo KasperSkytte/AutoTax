@@ -1182,41 +1182,42 @@ autotax() {
 }
 
 runTests() {
-  #check for git
-  if [ -z "$(which git)" ]
+  #define and clear folders
+  #ALL WITH / AT THE END!!
+  export test_dir="test/"
+  export verified_run_dir="${test_dir}verified_run/"
+  export test_run_dir="${test_dir}test_run/"
+  export example_data_dir="${test_dir}example_data/"
+
+  echoWithHeader "Clearing test run folders and files in ${test_dir}"
+  rm -rvf \
+    "$verified_run_dir" \
+    "$test_run_dir" \
+    "$example_data_dir"
+
+  #if running through docker use the data included in the image
+  #(naive, doesnt check whether its actually an autotax image)
+  #otherwise download directly from github
+  if [ -f /.dockerenv ]
   then
-    echo "git not found, please install"
-    exit 1
+    echoWithHeader "Unpacking data required for testing (using the data included in the container)"
+    unzip -o /opt/autotax/test/testdata.zip -d test/
+  else
+    echoWithHeader "Downloading data required for testing"
+    wget -q https://github.com/KasperSkytte/AutoTax/raw/129af21c8476e4fa874335fb1199dc879d1010e9/test/testdata.zip
+    echoWithHeader "Unpacking test data"
+    unzip -o testdata.zip -d test/
   fi
 
-  #check if current working directory is at the root of a cloned AutoTax git repo
-  if [ $(git rev-parse --is-inside-work-tree) ] && \
-    [ $(basename -s .git $(git config --get remote.origin.url) | awk '{print tolower($0)}') == "autotax" ] && \
-    [ $(git rev-parse --git-dir 2> /dev/null) == ".git" ]
+  echoWithHeader "Starting unit testing"
+  #run in parallel if GNU parallel is installed
+  if [ -z "$(which parallel)" ]
   then
-    #setup
-    export test_dir=test/ #WITH / AT THE END!
-    export verified_run_dir=${test_dir}verified_run/ #WITH / AT THE END!
-    export test_run_dir=${test_dir}test_run/ #WITH / AT THE END!
-    rm -rf $test_run_dir
-    mkdir -p ${test_run_dir}temp
-    mkdir -p ${test_run_dir}output
-    #run in parallel if GNU parallel is installed
-    if [ -z "$(which parallel)" ]
-    then
-      (./bats/bin/bats -t tests.bats) |& tee test_result.log
-    else
-      (./bats/bin/bats -t -j $(($(nproc)-2)) tests.bats) |& tee test_result.log
-    fi
-    exit 0
+    (bats -t tests.bats) |& tee test_result.log
   else
-    echo "Unit testing can only be performed at the root of a cloned AutoTax git repository as several additional files are needed for testing."
-    exit 1
+    (bats -t -j $(($(nproc)-2)) tests.bats) |& tee test_result.log
   fi
-  #if [ -f /.dockerenv ]; then
-  #  echo "running in docker"
-  #fi
-  #exit 0
+  exit 0
 }
 
 #only run autotax if script is not sourced

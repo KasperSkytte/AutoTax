@@ -129,7 +129,7 @@ load autotax
 
 @test "Step: Orient" {
 	#test input file name
-	local in=${test_dir}example_data/5k_fSSUs.fa
+	local in=${example_data_dir}5k_fSSUs.fa
 
 	#test output file name, dont use "output" as it is reserved by BATS
 	local out=temp/fSSUs_oriented.fa
@@ -245,7 +245,7 @@ load autotax
 	[ "$status" -eq 0 ]
 
 	#add new unique fSSUs
-	local in=${test_dir}example_data/100_addon_FLASVs.fa
+	local in=${example_data_dir}100_addon_FLASVs.fa
 	local out=temp/FLASVs_waddons.fa
 	run addFLASVs -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
 	echo $output >&2 #redirect to stderr for debugging

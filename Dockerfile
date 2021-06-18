@@ -55,7 +55,6 @@ RUN wget -q https://github.com/epruesse/SINA/releases/download/v1.6.0/sina-1.6.0
   tar -zxf sina-1.6.0-linux.tar.gz && \
   rm sina-1.6.0-linux.tar.gz
 
-
 ### install vsearch
 RUN wget -q https://github.com/torognes/vsearch/releases/download/v2.17.0/vsearch-2.17.0-linux-x86_64.tar.gz && \
   tar -zxf vsearch-2.17.0-linux-x86_64.tar.gz && \
@@ -73,7 +72,8 @@ COPY . /opt/autotax/
 RUN chmod +x /opt/autotax/autotax.bash
 
 ### make sure everything is in PATH
-ENV PATH="/autotax:/opt/sina-1.6.0-linux/bin/:/opt/vsearch-2.17.0-linux-x86_64/bin:${PATH}"
+ENV PATH="/opt/autotax:/autotax:/opt/sina-1.6.0-linux/bin:/opt/vsearch-2.17.0-linux-x86_64/bin:${PATH}"
+
 
 WORKDIR /autotax
 ENTRYPOINT ["bash", "/opt/autotax/autotax.bash"]
