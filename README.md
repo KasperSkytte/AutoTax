@@ -112,19 +112,19 @@ The main output files can then be found in the `output/` folder and all intermed
 # Running AutoTax from a container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 can then be retrieved from [Docker Hub](https://hub.docker.com/) with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended):
 ```
-sudo docker pull kasperskytte/autotax:latest
+docker pull kasperskytte/autotax:latest
 ```
 
 Alternatively build the image manually by downloading the [Dockerfile](https://github.com/KasperSkytte/AutoTax/blob/master/docker/Dockerfile) directly from the github repository (may take 10-20 minutes):
 ```
 git clone https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
-sudo docker build -t kasperskytte/autotax:latest .
+docker build -t kasperskytte/autotax:latest .
 ```
 
 The image also contains the autotax github repository itself (most recent from master branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
 ```
-sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -h
+docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -h
 ```
 
 Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible and is as simple as:
@@ -142,17 +142,17 @@ By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/mas
 When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
 
 Furthermore, the output folders `temp` and `output` will be owned by root if run through docker, so it's a good idea to either change ownership afterwards with fx:
+Furthermore, the output folders `temp` and `output` will likely be owned by root if you haven't done the [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/), so it's a good idea to either run docker with appropriate user ID mapping (`--user` option), or adjust the ownership afterwards with fx:
+
 ```
 sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 ```
-
-or run docker with appropriate user ID mapping (`--user` option).
 
 # Unit tests
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. This requires you to run from the root of a clone of the AutoTax git repository as several additional test files are needed. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
-$ sudo docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -b
+$ docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -b
 1..33
 ok 1 Variable set: VERSION
 ok 2 silva_db database file
@@ -189,7 +189,7 @@ ok 32 Step: Cluster at phylum level
 ok 33 Step: Merge and output taxonomy
 ```
 
-The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax), the latest test log of the master branch can always be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
+The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax). The latest test log of the master branch can always be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
 
 # Generating input full-length 16S sequences
 *AutoTax* is made to take input sequences obtained from the method described in [Karst et al, 2018](https://www.nature.com/articles/nbt.4045). The sequences need to be processed first using the Perl scripts in the `/fSSU-pipelines` subfolder. 
