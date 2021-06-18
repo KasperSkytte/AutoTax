@@ -9,3 +9,7 @@ refdatabases/
 gh-md-toc
 
 gitignore/
+
+test/example_data/
+
+test/verified_run/

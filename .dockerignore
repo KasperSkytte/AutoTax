@@ -3,7 +3,7 @@
 
 #except
 !fSSU-pipelines
-!test/testdata.zip
+!test/*.zip
 !autotax.bash
 !tests.bats
 !getsilvadb.sh
