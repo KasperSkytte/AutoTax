@@ -10,7 +10,7 @@ load autotax
   [ -n ${silva_db} ]
 
   #expect non-empty and readable file
-  checkFiles $silva_db
+  checkDBFiles $silva_db
 }
 
 @test "silva_udb database file" {
@@ -18,7 +18,7 @@ load autotax
   [ -n ${silva_udb} ]
 
   #expect non-empty and readable file
-  checkFiles $silva_udb
+  checkDBFiles $silva_udb
 }
 
 @test "typestrains_udb database file" {
@@ -26,7 +26,7 @@ load autotax
   [ -n ${typestrains_udb} ]
 
   #expect non-empty and readable file
-  checkFiles $typestrains_udb
+  checkDBFiles $typestrains_udb
 }
 
 @test "Variable set: denovo_prefix" {

@@ -93,7 +93,7 @@ checkFolder() {
   fi
 }
 
-checkFiles() {
+checkDBFiles() {
   #check user arguments
   if [ $# -eq 0 ]
   then
@@ -109,7 +109,7 @@ checkFiles() {
     fi
   done
   if [ -n "$NEfiles" ]; then
-    echo -e "Error: the following files or folders were not found:$NEfiles\nExiting"
+    echo -e "Error: the following database files were not found:$NEfiles\nYou can download and correctly reformat the SILVA database with the getsilvadb.sh script, refer to the documentation on https://github.com/KasperSkytte/autotax/ for instructions.\nExiting"
     exit 1
   fi
 }
@@ -1143,7 +1143,7 @@ autotax() {
   checkCmd R
   checkCmd Rscript
   checkInputData
-  checkFiles $silva_db $silva_udb $typestrains_udb
+  checkDBFiles $silva_db $silva_udb $typestrains_udb
   checkFolder temp
   checkFolder output
   checkRPkgs
