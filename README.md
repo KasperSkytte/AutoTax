@@ -32,7 +32,7 @@ In brief, the script performs the following steps:
  
  - Orient the sequences based on the SILVA taxonomic database (usearch)
  - Dereplicate the input sequences (both strands), and determine the coverage of each unique sequence (usearch)
- - Denoise the dereplicated sequences using UNOISE3, with `minsize = 2` (usearch)
+ - Denoise the dereplicated sequences using UNOISE3, with `minsize = 2` by default (usearch)
  - Remove all sequences that match exactly (100% identity) with other, but longer sequences (R)
  - Sort the sequences based on coverage, and rename the sequences in order of occurence, in the format `FLASVx.length`, e.g. `FLASV123.1410` (R)
  - If desired, update an existing FL-ASV database (FASTA file) by matching the generated FL-ASVs to the database, replacing identical FL-ASVs with longer sequences if any, and adding the new ones to the end of the FASTA file, renamed to continue numbering from the database (R)
@@ -93,7 +93,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.6.0
+Version: 1.6.1
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
@@ -136,10 +136,21 @@ singularity run --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest -h
 
 Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
 
+The various setup variables (settings/options) in the start of the `autotax.bash` script can easily be adjusted by using the `-e` option with docker, fx `-e denovo_prefix="midas" -e denoise_minsize=4`, and similarly `--env` with singularity.
+
 ## Running getsilvadb.sh through a container
 Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
 ```
-singularity exec --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest getsilvadb.sh
+$ singularity exec --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest getsilvadb.sh -h
+INFO:    Using cached SIF image
+This script downloads a desired release version of the SILVA database and makes it ready for AutoTax.
+Version: 1.0
+Options:
+  -h    Display this help text and exit.
+  -r    (required) The desired SILVA release version, fx "138.1".
+  -o    Output folder. (Default: refdatabases/)
+  -t    Max number of threads to use. (Default: all available except 2)
+  -v    Print version and exit.
 ```
 
 ## Important notes when running AutoTax through a container
