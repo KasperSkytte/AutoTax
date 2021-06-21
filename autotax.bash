@@ -1,12 +1,14 @@
 #!/usr/bin/env bash
-export VERSION="1.6.0"
+export VERSION="1.6.1"
 
 #################################
 ############# setup #############
 #################################
+# All of the following environment variables can also be set outside of this script.
+# If not, the defaults set here will be used instead. This is also useful when running through a container,
+# fx: docker run -it -e denoise_minsize=1 -e denovo_prefix="someprefix" kasperskytte/autotax -i xxx, so you don't have rebuild.
 # Set paths to the SILVA nr99 database and the typestrain database extracted from SILVA nr99 (see article supplementary for details). 
-# .udb files have to be created first from fasta files using the example below:
-# usearch11 -makeudb_usearch SILVA_132_SSURef_Nr99_tax_silva.fasta -output SILVA_132_SSURef_Nr99_tax_silva.udb
+# Use the getsilvadb.sh script to download a specific SILVA release version and correctly reformat files
 export silva_db=${silva_db:-"refdatabases/SILVA_138.1_SSURef_NR99_12_06_20_opt.arb"}
 export silva_udb=${silva_udb:-"refdatabases/SILVA_138.1_SSURef_NR99_tax_silva.udb"}
 export typestrains_udb=${typestrains_udb:-"refdatabases/SILVA_138.1_SSURef_NR99_tax_silva_typestrains.udb"}
@@ -16,6 +18,9 @@ export denovo_prefix=${denovo_prefix:-"denovo"}
 
 #set threads to a default value if not provided by the user
 export MAX_THREADS=${MAX_THREADS:-$(($(nproc)-2))}
+
+#set default UNOISE3 minsize
+export denoise_minsize=${denoise_minsize:-2}
 
 ##################################
 ########## end of setup ##########
@@ -240,7 +245,7 @@ denoise() {
   done
   # Denoise with UNOISE3 accepting sequences seen only twice (see article supplementary for why this is acceptable)
   echoWithHeader "  - Denoising sequences using UNOISE3"
-  usearch11 -unoise3 $input -zotus $output -minsize 2
+  usearch11 -unoise3 $input -zotus $output -minsize ${denoise_minsize}
   #cp temp/uniques_wsize.fa temp/preFLASVs.fa
 }
 
@@ -1238,7 +1243,7 @@ then
         echo "  -d    FASTA file with previously processed FLASV sequences."
         echo "          FLASV's generated from the input sequences will then be appended to this and de novo taxonomy is rerun."
         echo "  -t    Maximum number of threads to use. Default is all available cores except 2."
-        echo "  -b    Run all BATS unit tests to assure everything is working as intended (requires git)."
+        echo "  -b    Run all BATS unit tests to assure everything is working as intended."
         echo "  -v    Print version and exit."
         exit 1
         ;;
