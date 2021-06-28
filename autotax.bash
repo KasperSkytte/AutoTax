@@ -43,7 +43,7 @@ echoWithHeader() {
     echo "Error: function must be passed exactly 1 argument" >&2
     exit 1
   fi
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')]: $1"
+  echo " *** [$(date '+%Y-%m-%d %H:%M:%S')]: $1"
 }
 
 #check if script is run with BASH

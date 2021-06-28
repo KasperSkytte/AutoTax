@@ -13,3 +13,7 @@ gitignore/
 test/example_data/
 
 test/verified_run/
+
+temp/
+
+output/
