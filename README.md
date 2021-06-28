@@ -88,7 +88,8 @@ unzip SILVA138_NR99.zip -d refdatabases/
 From now on you can just use the `getsilvadb.sh` script to choose a specific release version, download the required files directly from https://www.arb-silva.de/, and then automagically reformat, extract typestrains, and generate UDB databases for usearch. This is perhaps easiest through a container, see [Running getsilvadb.sh through a container](#running-getsilvadbsh-through-a-container)
 
 # Usage
-Adjust the variables in the SETUP chunk at the start of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to match the paths to the database files and executables. If you downloaded SILVA138 using the link above, you don't have to adjust anything if you create a folder named `refdatabases` and extract all the files into the folder. Make sure the script is executable with `chmod +x autotax.bash`.
+Make sure the script is executable with `chmod +x autotax.bash`. 
+
 Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
@@ -110,6 +111,14 @@ Using the example data in `/test/example_data/` a usage example would be:
 `bash autotax.bash -i test/example_data/10k_fSSUs.fa -t 20`.
 
 The main output files can then be found in the `output/` folder and all intermediate files along the way in `temp/`.
+
+Make sure to adjust the variables in the `SETUP` chunk at the beginning of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to set options and to provide the respective filepaths to the database files. You can also just [`export`](https://www.computerhope.com/unix/bash/export.htm) the variables from the current shell before running autotax. Current variables are:
+
+- `silva_db`: Path to the SILVA `.arb` database file
+- `silva_udb`: Path to the SILVA SSURef database file in `.udb` format
+- `typestrains_udb`: Path to the typestrains database file in `.udb` format
+- `denovo_prefix`: A character string which will be the prefix for de novo taxonomy, resulting in e.g. `denovo_s_23` if set to `denovo` (default)
+- `denoise_minsize`: The minimum abundance of each unique input sequence. Input sequences with lower abundance than this threshold will be discarded. Passed on directly to [UNOISE3](https://drive5.com/usearch/manual/cmd_unoise3.html) during the denoise step. Set this to `1` to skip denoising, e.g. if input sequences are already pre-processed, or output from a previous autotax run etc, in which case the pipeline will fail due to 0 sequences output from this step.
 
 # Running AutoTax from a container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 can then be retrieved from [Docker Hub](https://hub.docker.com/) with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended):
