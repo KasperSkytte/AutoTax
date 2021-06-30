@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export VERSION="1.6.1"
+export VERSION="1.6.2"
 
 #################################
 ############# setup #############
@@ -224,14 +224,18 @@ derep() {
 
 denoise() {
   #check user arguments
+  local minsize=2
   local OPTIND
-  while getopts ":i:o:" opt; do
+  while getopts ":i:o:s:" opt; do
     case ${opt} in
       i )
         local input=$OPTARG
         ;;
       o )
         local output=$OPTARG
+        ;;
+      s )
+        local minsize=$OPTARG
         ;;
       \? )
         userError "Invalid Option: -$OPTARG"
@@ -245,8 +249,7 @@ denoise() {
   done
   # Denoise with UNOISE3 accepting sequences seen only twice (see article supplementary for why this is acceptable)
   echoWithHeader "  - Denoising sequences using UNOISE3"
-  usearch11 -unoise3 $input -zotus $output -minsize ${denoise_minsize}
-  #cp temp/uniques_wsize.fa temp/preFLASVs.fa
+  usearch11 -unoise3 $input -zotus $output -minsize $minsize
 }
 
 findLongest() {
@@ -1278,7 +1281,7 @@ then
     esac
   done
   shift $((OPTIND -1))
-  autotax
+  (autotax) |& tee autotax_log.txt
   if [ $? -gt 0 ]
   then
     exit 1

@@ -71,7 +71,7 @@ load autotax
 	[ "$status" -eq 0 ]
 
 	#check if output pattern matches the format " *** [2020-03-16 10:08:30]: test"
-	pattern="^ *** \[[0-9\ -:]*\]: test$"
+	pattern="^ \*\*\* \[[0-9\ -:]*\]: test$"
 	[[ ${lines[0]} =~ $pattern ]]
 }
 
@@ -186,7 +186,7 @@ load autotax
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run denoise -i $in -o ${test_run_dir}$out
+	run denoise -i $in -o ${test_run_dir}$out -s 2
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
