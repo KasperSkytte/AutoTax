@@ -131,37 +131,40 @@ checkRPkgs() {
   echoWithHeader "Checking for required R packages and installing if missing..."
   #Run R and check for installed packages, install if needed
   R --slave << 'checkRpkgs'
+    checkPkg <- function(pkg) {
+      any(installed.packages()[,"Package"] %in% pkg)
+    }
     suppressPackageStartupMessages({
       #Biostrings (and BiocManager which is used to install Biostrings)
-      if(!require("Biostrings")) {
-        if(!require("BiocManager")) {
+      if(!checkPkg("Biostrings")) {
+        if(!checkPkg("BiocManager")) {
           install.packages("BiocManager")
         }
         BiocManager::install("Biostrings", update = FALSE, ask = FALSE)
       }
 
       #doParallel
-      if(!require("doParallel"))
+      if(!checkPkg("doParallel"))
         install.packages("doParallel")
       
       #stringr
-      if(!require("stringr"))
+      if(!checkPkg("stringr"))
         install.packages("stringr")
         
       #stringi
-      if(!require("stringi"))
+      if(!checkPkg("stringi"))
         install.packages("stringi")
 
       #data.table
-      if(!require("data.table"))
+      if(!checkPkg("data.table"))
         install.packages("data.table")
 
       #tidyr
-      if(!require("tidyr"))
+      if(!checkPkg("tidyr"))
         install.packages("tidyr")
 
       #dplyr
-      if(!require("dplyr"))
+      if(!checkPkg("dplyr"))
         install.packages("dplyr")
       })
 checkRpkgs
@@ -1216,6 +1219,7 @@ runTests() {
     wget -q https://github.com/KasperSkytte/AutoTax/raw/master/test/testdata_SILVA138.1.zip
     echoWithHeader "Unpacking test data"
     unzip -o testdata_SILVA138.1.zip -d test/
+    rm testdata_SILVA138.1.zip
   fi
 
   echoWithHeader "Starting unit testing"
