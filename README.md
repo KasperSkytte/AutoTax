@@ -126,19 +126,19 @@ The script can also be sourced from another script to only load the individual f
 # Running AutoTax from a container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended) is provided with:
 ```
-docker pull ghcr.io/kasperskytte/autotax:latest
+docker pull ghcr.io/kasperskytte/autotax:main
 ```
 
 Alternatively build the image manually from the git repo.
 
 The image also contains the autotax github repository itself (most recent from main branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
 ```
-docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -h
+docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:main -h
 ```
 
 Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible (3.9 or later) and is as simple as:
 ```
-singularity run --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest -h
+singularity run --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:main -h
 ```
 
 Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
@@ -148,7 +148,7 @@ The various setup variables (settings/options) in the start of the `autotax.bash
 ## Running getsilvadb.sh through a container
 Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
 ```
-$ singularity exec --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
+$ singularity exec --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:main getsilvadb.sh -h
 INFO:    Using cached SIF image
 This script downloads a desired release version of the SILVA database and makes it ready for AutoTax.
 Version: 1.0
@@ -161,9 +161,9 @@ Options:
 ```
 
 ## Important notes when running AutoTax through a container
-As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version (limited to 4GB memory and is doubtfully going to be sufficient, but you are welcome to try) and place the executable in the same folder that is mounted inside the container and name it `usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
+As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version which is preinstalled (limited to 4GB memory, most likely not sufficient). Place the executable in the same folder that is mounted inside the container and name it `usearch11` or mount it directly at `/autotax/usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
 
-By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script into the current working folder, adjust the paths, and run that instead of the script included in the image.
+By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138.1 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script into the current working folder, adjust the paths, and run that instead of the script included in the image.
 
 When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
 
@@ -179,7 +179,7 @@ sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
-$ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -b
+$ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:main -b
 1..33
 ok 1 Variable set: VERSION
 ok 2 silva_db database file
