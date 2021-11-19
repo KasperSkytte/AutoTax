@@ -136,7 +136,7 @@ The image also contains the autotax github repository itself (most recent from m
 docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -h
 ```
 
-Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible and is as simple as:
+Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible (3.9 or later) and is as simple as:
 ```
 singularity run --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest -h
 ```
