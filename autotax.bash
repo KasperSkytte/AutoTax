@@ -6,7 +6,7 @@ export VERSION="1.6.3"
 #################################
 # All of the following environment variables can also be set outside of this script.
 # If not, the defaults set here will be used instead. This is also useful when running through a container,
-# fx: docker run -it -e denoise_minsize=1 -e denovo_prefix="someprefix" kasperskytte/autotax -i xxx, so you don't have rebuild.
+# fx: docker run -it -e denoise_minsize=1 -e denovo_prefix="someprefix" ghcr.io/kasperskytte/autotax -i xxx, so you don't have rebuild.
 # Set paths to the SILVA nr99 database and the typestrain database extracted from SILVA nr99 (see article supplementary for details). 
 # Use the getsilvadb.sh script to download a specific SILVA release version and correctly reformat files
 export silva_db=${silva_db:-"refdatabases/SILVA_138.1_SSURef_NR99_12_06_20_opt.arb"}
@@ -1220,7 +1220,7 @@ runTests() {
     cp -v /opt/autotax/tests.bats /opt/autotax/autotax.bash -t /autotax
   else
     echoWithHeader "Downloading data required for testing"
-    wget -q https://github.com/KasperSkytte/AutoTax/raw/master/test/testdata_SILVA138.1.zip
+    wget -q https://github.com/KasperSkytte/AutoTax/raw/main/test/testdata_SILVA138.1.zip
     echoWithHeader "Unpacking test data"
     unzip -o testdata_SILVA138.1.zip -d test/
     rm testdata_SILVA138.1.zip

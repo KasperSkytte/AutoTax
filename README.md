@@ -1,7 +1,5 @@
 # AutoTax
 
-![Docker Pulls](https://img.shields.io/docker/pulls/kasperskytte/autotax)
-
 *AutoTax* is a linux BASH script that automatically generates de novo taxonomy from full length 16S rRNA amplicon sequence variants (FL-ASVs). This allows generation of eco-system specific de novo taxonomic databases based on any environmental sample(s). It does so by combining several different software tools, listed below, into a single BASH script that otherwise only requires a single FASTA file as input. For a more detailed description of *AutoTax*, please refer to the paper [Dueholm et al, 2020](https://doi.org/10.1128/mBio.01557-20). *AutoTax* has only been tested on Ubuntu 18.04 LTS, but will probably run just fine on other Linux distributions as long as the required software listed below is installed.
 
 Table of Contents
@@ -53,12 +51,14 @@ In brief, the script performs the following steps:
  - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each FL-ASV (R)
 
 # Installation and requirements
-As AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, so there is no installation to do for the AutoTax script itself. Simply download the `autotax.bash` script by either:
+The recommended way to run AutoTax is through the official Docker container, either by using Docker (privileged, but most convenient) or Singularity (non-privileged), see [Running AutoTax from a container (recommended)](#running-autotax-from-a-container-recommended).
+
+Otherwise, as AutoTax is simply a BASH script that wraps and combines other software tools and their outputs, there is no installation to do for the AutoTax script itself, just make sure to meet the software requirements listed below. Simply download the `autotax.bash` script by either:
 ```
-wget https://raw.githubusercontent.com/KasperSkytte/AutoTax/master/autotax.bash
+wget https://raw.githubusercontent.com/KasperSkytte/AutoTax/main/autotax.bash
 ```
 
-or clone the github repository by (make sure git is installed):
+or clone the github repository (make sure git is installed):
 ```
 git clone https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
@@ -78,7 +78,7 @@ Other than the standard linux tools `awk`, `grep`, and `cat` (which is included 
    - dplyr
 
 ## Database files
-Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568) (both SILVA release 132 and 138). **Make sure the paths to these files are set correctly in the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script**. You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
+Other than these software tools, SILVA and SILVA typestrains database files in both UDB and ARB format are needed. A zip file of all 4 files can be found on figshare [here](https://doi.org/10.6084/m9.figshare.9994568) (both SILVA release 132 and 138). **Make sure the paths to these files are set correctly in the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script**. You can also use other databases, but the script is made to handle the finicky details of SILVA particularly. If you want to use other databases, you will need to adjust the script.
 
 For SILVA version 138 this can be done from a shell by the following commands:
 ```
@@ -95,7 +95,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.6.1
+Version: 1.6.3
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
@@ -113,7 +113,7 @@ Using the example data in `/test/example_data/` a usage example would be:
 
 The main output files can then be found in the `output/` folder and all intermediate files along the way in `temp/`.
 
-Make sure to adjust the variables in the `SETUP` chunk at the beginning of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script to set options and to provide the respective filepaths to the database files. You can also just [`export`](https://www.computerhope.com/unix/bash/export.htm) the variables from the current shell before running autotax. Current variables are:
+Make sure to adjust the variables in the `SETUP` chunk at the beginning of the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script to set options and to provide the respective filepaths to the database files. You can also just [`export`](https://www.computerhope.com/unix/bash/export.htm) the variables from the current shell before running autotax. Current variables are:
 
 - `silva_db`: Path to the SILVA `.arb` database file
 - `silva_udb`: Path to the SILVA SSURef database file in `.udb` format
@@ -121,27 +121,24 @@ Make sure to adjust the variables in the `SETUP` chunk at the beginning of the [
 - `denovo_prefix`: A character string which will be the prefix for de novo taxonomy, resulting in e.g. `denovo_s_23` if set to `denovo` (default)
 - `denoise_minsize`: The minimum abundance of each unique input sequence. Input sequences with lower abundance than this threshold will be discarded. Passed on directly to [UNOISE3](https://drive5.com/usearch/manual/cmd_unoise3.html) during the denoise step. Set this to `1` to skip denoising, e.g. if input sequences are already pre-processed, or output from a previous autotax run etc, in which case the pipeline will fail due to 0 sequences output from this step.
 
+The script can also be sourced from another script to only load the individual functions to adjust the workflow manually. Adding `. autotax.bash` to the script won't run autotax but only load the functions.
+
 # Running AutoTax from a container (recommended)
-To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 can then be retrieved from [Docker Hub](https://hub.docker.com/) with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended):
+To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 with all the required software and dependencies preinstalled (exact versions that are tested and guaranteed to work as intended) is provided with:
 ```
-docker pull kasperskytte/autotax:latest
-```
-
-Alternatively build the image manually by downloading the [Dockerfile](https://github.com/KasperSkytte/AutoTax/blob/master/docker/Dockerfile) directly from the github repository (may take 10-20 minutes):
-```
-git clone https://github.com/KasperSkytte/AutoTax.git
-cd AutoTax
-docker build -t kasperskytte/autotax:latest .
+docker pull ghcr.io/kasperskytte/autotax:latest
 ```
 
-The image also contains the autotax github repository itself (most recent from master branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
+Alternatively build the image manually from the git repo.
+
+The image also contains the autotax github repository itself (most recent from main branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container as `/autotax`:
 ```
-docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -h
+docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -h
 ```
 
 Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible and is as simple as:
 ```
-singularity run --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest -h
+singularity run --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest -h
 ```
 
 Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
@@ -151,7 +148,7 @@ The various setup variables (settings/options) in the start of the `autotax.bash
 ## Running getsilvadb.sh through a container
 Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
 ```
-$ singularity exec --bind ${PWD}:/autotax docker://kasperskytte/autotax:latest getsilvadb.sh -h
+$ singularity exec --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
 INFO:    Using cached SIF image
 This script downloads a desired release version of the SILVA database and makes it ready for AutoTax.
 Version: 1.0
@@ -166,7 +163,7 @@ Options:
 ## Important notes when running AutoTax through a container
 As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version (limited to 4GB memory and is doubtfully going to be sufficient, but you are welcome to try) and place the executable in the same folder that is mounted inside the container and name it `usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
 
-By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/master/autotax.bash) script into the current working folder, adjust the paths, and run that instead of the script included in the image.
+By default the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script included in the image is executed, which assumes you have extracted the SILVA138 database (most recent as of the time of writing) into a folder named `refdatabases` in the current working directory as described in [Database files](#database-files). If you wish to use a different version you need to adjust the paths in the script itself, hence you must also copy the [`autotax.bash`](https://github.com/KasperSkytte/AutoTax/blob/main/autotax.bash) script into the current working folder, adjust the paths, and run that instead of the script included in the image.
 
 When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
 
@@ -182,7 +179,7 @@ sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
-$ docker run -it --rm --name autotax -v ${PWD}:/autotax kasperskytte/autotax:latest -b
+$ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -b
 1..33
 ok 1 Variable set: VERSION
 ok 2 silva_db database file
@@ -219,7 +216,7 @@ ok 32 Step: Cluster at phylum level
 ok 33 Step: Merge and output taxonomy
 ```
 
-The exact docker command above is being used for testing the master branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax). The latest test log of the master branch can always be seen [here](https://github.com/KasperSkytte/AutoTax/blob/master/test_result.log)).
+The exact docker command above is being used for testing the main branch on [https://github.com/kasperskytte/autotax](https://github.com/kasperskytte/autotax). The latest test log of the main branch can always be seen [here](https://github.com/KasperSkytte/AutoTax/blob/main/test_result.log)).
 
 Beware that these tests are done by verifying that the output from the individual steps are identical to the output from a previous, manually verified, run, and that this is specific to the particular version of SILVA used (currently release 138.1).
 
