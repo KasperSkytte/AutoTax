@@ -48,6 +48,7 @@ In brief, the script performs the following steps:
  
  **Output the taxonomy in the following formats:**
  - FL-ASVs in FASTA format with usearch SINTAX formatted taxonomy in the headers (R)
+ - FL-ASVs in FASTA format with DADA2 formatted taxonomy in the headers (R)
  - QIIME formatted table (R)
  - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each FL-ASV (R)
 

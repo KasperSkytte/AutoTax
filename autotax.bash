@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export VERSION="1.6.2"
+export VERSION="1.6.3"
 
 #################################
 ############# setup #############
@@ -1137,6 +1137,10 @@ mergeTaxonomy() {
   qiime_tax[["Species"]] <- paste0("s__", qiime_tax[["Species"]])
   qiime_tax <- qiime_tax[,c("FLASV", "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")]
   writeLines(paste0(qiime_tax[["FLASV"]], "\t", apply(qiime_tax[,-1], 1, paste0, collapse = "; ")), paste0(outputfolder, "/tax_complete_qiime.txt"))
+
+  ## export FLASV's with DADA2 formatted taxonomy in headers
+  names(FLASVs.fa) <- apply(merged_tax[,-1], 1, paste0, collapse = ";")
+  Biostrings::writeXStringSet(FLASVs.fa, paste0(outputfolder, "/FLASVs_w_dada2.fa"))
 generatedenovotax
 }
 
