@@ -26,7 +26,7 @@ ENV LANG en_US.UTF-8
 
 ### install and setup R and the R library
 #specific version of R to be installed
-ENV R_BASE_VERSION 3.6.0
+ENV R_BASE_VERSION 3.6.3
 
 #install R, remove user library from .libPaths() as it may be used instead
 #if user has installed any pkgs on host system and $HOME is mounted
