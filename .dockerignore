@@ -2,7 +2,6 @@
 **
 
 #except
-!fSSU-pipelines
 !test/*.zip
 !autotax.bash
 !tests.bats
