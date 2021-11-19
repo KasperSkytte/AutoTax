@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export VERSION="1.6.3"
+export VERSION="1.6.4"
 
 #################################
 ############# setup #############
@@ -1164,7 +1164,7 @@ autotax() {
   checkRPkgs
   orient -i $DATA -d $silva_udb -o temp/fSSUs_oriented.fa
   derep -i temp/fSSUs_oriented.fa -o temp/uniques_wsize.fa
-  denoise -i temp/uniques_wsize.fa -o temp/preFLASVs.fa
+  denoise -i temp/uniques_wsize.fa -o temp/preFLASVs.fa -s $denoise_minsize
   findLongest -i temp/preFLASVs.fa -o temp/FLASVs.fa
   #if -c is provided, add chimera filtered OTU clusters (99% identity) of the FLASV's on top
   CLUSTER=${CLUSTER:-false}
