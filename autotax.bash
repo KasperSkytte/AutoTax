@@ -109,7 +109,7 @@ checkDBFiles() {
   local files="$@"
   local NEfiles=""
   for file in $files; do
-    if [ ! -s $file -o -z $file ]; then
+    if [ ! -s $file ] || [ -z $file ]; then
       NEfiles="${NEfiles}\n$file"
     fi
   done
@@ -1213,7 +1213,7 @@ runTests() {
   #if running through docker use the data included in the image
   #(naive, doesnt check whether its actually an autotax image)
   #otherwise download directly from github
-  if [ -f /.dockerenv ]
+  if [ -f "/.dockerenv" ] || [ -d "/.singularity.d" ]
   then
     echoWithHeader "Unpacking data required for testing (using the data included in the container)"
     unzip -o /opt/autotax/test/testdata_SILVA138.1.zip -d test/

@@ -138,7 +138,10 @@ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autot
 
 Running the AutoTax docker container using [Singularity](https://sylabs.io/) is also possible (3.9 or later) and is as simple as:
 ```
-singularity run --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:main -h
+singularity run \
+  --bind ${PWD}:/autotax \
+  --pwd /autotax \
+  docker://ghcr.io/kasperskytte/autotax:main -h
 ```
 
 Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I have made to install singularity here: [install_singularity.sh](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
