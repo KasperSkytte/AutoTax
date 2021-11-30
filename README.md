@@ -121,10 +121,10 @@ The `autotax.bash` script essentially consists of individual functions that can 
 # Running AutoTax from a container (recommended)
 To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 with all the required software and dependencies preinstalled (exact versions that are tested and working as intended) is provided with:
 ```
-docker pull ghcr.io/kasperskytte/autotax:main
+docker pull ghcr.io/kasperskytte/autotax:latest
 ```
 
-Alternatively build the image manually from the git repo. You can also use a specific (and locked) image to ensure complete reproducibilty by using semver tags instead of just pulling the latest image from the `main` branch every time, for instance: `ghcr.io/kasperskytte/autotax:v1.6.5`.
+Alternatively build the image manually from the git repo. You can also use a specific (and locked) image to ensure complete reproducibilty by using semver tags instead of just pulling the latest image every time, for instance: `ghcr.io/kasperskytte/autotax:v1.6.5`.
 
 The image also contains the autotax git repository itself (most recent from main branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container at `/autotax`:
 ```
@@ -132,7 +132,7 @@ docker run \
   -it \
   -v ${PWD}:/autotax \
   -e denovo_prefix="midas" \
-  ghcr.io/kasperskytte/autotax:main -h
+  ghcr.io/kasperskytte/autotax:latest -h
 ```
 
 Running the AutoTax docker container using [Singularity](https://sylabs.io/) instead is also possible (3.9 or later to be compatible with https://ghcr.io) and is as simple as:
@@ -141,7 +141,7 @@ singularity run \
   --bind ${PWD}:/autotax \
   --pwd /autotax \
   --env denovo_prefix="midas" \
-  docker://ghcr.io/kasperskytte/autotax:main -h
+  docker://ghcr.io/kasperskytte/autotax:latest -h
 ```
 
 Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I've made to install singularity [here](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
@@ -151,7 +151,7 @@ Setting the required [Environment variables](#environment-variables) is done by 
 ## Running getsilvadb.sh through a container
 Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
 ```
-$ singularity exec --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:main getsilvadb.sh -h
+$ singularity exec --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
 INFO:    Using cached SIF image
 This script downloads a desired release version of the SILVA database and makes it ready for AutoTax.
 Version: 1.0
@@ -178,7 +178,7 @@ sudo chown -R $(id -u ${USER}):$(id -g ${USER}) temp/ output/
 AutoTax is being unit tested by the [Bash Automated Testing System](https://github.com/bats-core/bats-core). To run the tests, preferably before running with your own data, you can do so with the `autotax.bash -b` argument. The test result is printed to the terminal as well as a log file `test_result.log`. If you want to run through docker, you can run the tests properly with the following command:
 
 ```
-$ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:main -b
+$ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -b
 1..33
 ok 1 Variable set: VERSION
 ok 2 silva_db database file
