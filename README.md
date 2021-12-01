@@ -151,7 +151,7 @@ Setting the required [Environment variables](#environment-variables) is done by 
 ## Running getsilvadb.sh through a container
 Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
 ```
-$ singularity exec --bind ${PWD}:/autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
+$ singularity exec --bind ${PWD}:/autotax --pwd /autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
 INFO:    Using cached SIF image
 This script downloads a desired release version of the SILVA database and makes it ready for AutoTax.
 Version: 1.0
