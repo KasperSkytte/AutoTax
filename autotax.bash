@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export VERSION="1.6.4"
+export version="1.6.4"
 
 #################################
 ############# setup #############
@@ -17,7 +17,7 @@ export typestrains_udb=${typestrains_udb:-"refdatabases/SILVA_138.1_SSURef_NR99_
 export denovo_prefix=${denovo_prefix:-"denovo"}
 
 #set threads to a default value if not provided by the user
-export MAX_THREADS=${MAX_THREADS:-$(($(nproc)-2))}
+export maxthreads=${maxthreads:-$(($(nproc)-2))}
 
 #set default UNOISE3 minsize
 export denoise_minsize=${denoise_minsize:-2}
@@ -109,7 +109,7 @@ checkDBFiles() {
   local files="$@"
   local NEfiles=""
   for file in $files; do
-    if [ ! -s $file ] || [ -z $file ]; then
+    if [ ! -s $file -o -z $file ]; then
       NEfiles="${NEfiles}\n$file"
     fi
   done
@@ -264,7 +264,7 @@ findLongest() {
         local input=$OPTARG
         ;;
       t )
-        local MAX_THREADS=$OPTARG
+        local maxthreads=$OPTARG
         ;;
       o )
         local output=$OPTARG
@@ -283,7 +283,7 @@ findLongest() {
   #To ensure reproducibility, the output FLASV's will be ordered first by decending size (times the unique FLASV has been observed) and when sizes are identical by preFLASV ID (ascending). 
   echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
   #Rename with new ID's to "FLASV(ID).(length)" fx: "FLASV1.1413"
-  R --slave --args "$input" "$output" "$MAX_THREADS" << 'findLongestSortFLASVsBySizeAndID'
+  R --slave --args "$input" "$output" "$maxthreads" << 'findLongestSortFLASVsBySizeAndID'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
     input <- as.character(args[[1]])
@@ -329,7 +329,7 @@ add99OTUclusters() {
         local input=$OPTARG
         ;;
       t )
-        local MAX_THREADS=$OPTARG
+        local maxthreads=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -351,19 +351,35 @@ add99OTUclusters() {
   echoWithHeader "Expanding FLASV's with 99% clusters on top"
   ## Cluster sequences at 99% id using cluster_smallmem.
   echoWithHeader "  - Clustering sequences (at 99% identity)"
-  usearch11 -cluster_smallmem $input -id 0.99 -maxrejects 0 -sortedby size -centroids temp/FL-OTUs.fa
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.99 \
+    -maxrejects 0 \
+    -sortedby size \
+    -centroids temp/FL-OTUs.fa
 
   ## Identity chimera using uchime2_ref with the FLASV's as a reference database.
   echoWithHeader "  - Identifying chimeras in the clusters"
-  usearch11 -uchime2_ref temp/FL-OTUs.fa -db $database -strand plus -mode sensitive -chimeras temp/FL-OTUs-chimeras.fa -quiet
+  usearch11 -uchime2_ref \
+    temp/FL-OTUs.fa \
+    -db $database \
+    -strand plus \
+    -mode sensitive \
+    -chimeras temp/FL-OTUs-chimeras.fa \
+    -quiet
 
   ## Remove chimera.
   echoWithHeader "  - Filtering chimeras"
-  usearch11 -search_exact temp/FL-OTUs-chimeras.fa -db temp/FL-OTUs.fa -strand plus -dbnotmatched temp/FL-OTUs-CF.fa -quiet
+  usearch11 -search_exact \
+    temp/FL-OTUs-chimeras.fa \
+    -db temp/FL-OTUs.fa \
+    -strand plus \
+    -dbnotmatched temp/FL-OTUs-CF.fa \
+    -quiet
 
   ## add to FLASV's
   echoWithHeader "  - Adding clustered sequences"
-  addFLASVs -i temp/FL-OTUs-CF.fa -d $database -o $output -t $MAX_THREADS
+  addFLASVs -i temp/FL-OTUs-CF.fa -d $database -o $output -t $maxthreads
 }
 
 addFLASVs() {
@@ -375,7 +391,7 @@ addFLASVs() {
         local input=$OPTARG
         ;;
       t )
-        local MAX_THREADS=$OPTARG
+        local maxthreads=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -394,7 +410,7 @@ addFLASVs() {
     esac
   done
   echoWithHeader "Finding new unique FLASV's and adding them to the existing database..."
-  R --slave --args "$input" "$database" "$output" "$MAX_THREADS" << 'addnewFLASVs'
+  R --slave --args "$input" "$database" "$output" "$maxthreads" << 'addnewFLASVs'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
     input <- args[[1]]
@@ -502,7 +518,7 @@ sinaAlign() {
         local database=$OPTARG
         ;;
       t )
-        local MAX_THREADS=$OPTARG
+        local maxthreads=$OPTARG
         ;;
       l )
         local logfile=$OPTARG
@@ -518,7 +534,12 @@ sinaAlign() {
     esac
   done
   echoWithHeader "Aligning FLASV's with SILVA database using SINA..."
-  sina -i $input -o $output -r $database --threads $MAX_THREADS --log-file $logfile
+  sina \
+    -i $input \
+    -o $output \
+    -r $database \
+    --threads $maxthreads \
+    --log-file $logfile
 }
 
 trimStripAlignment() {
@@ -601,7 +622,7 @@ searchTaxDB() {
         local input=$OPTARG
         ;;
       t )
-        local MAX_THREADS=$OPTARG
+        local maxthreads=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -632,7 +653,7 @@ searchTaxDB_typestrain() {
         local input=$OPTARG
         ;;
       t )
-        local MAX_THREADS=$OPTARG
+        local maxthreads=$OPTARG
         ;;
       d )
         local database=$OPTARG
@@ -680,7 +701,13 @@ clusterSpecies() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Species level (98.7% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.987 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.987 \
+    -maxrejects 0 \
+    -uc $output \
+    -centroids $centroids \
+    -sortedby other
 }
 
 clusterGenus() {
@@ -708,7 +735,14 @@ clusterGenus() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Genus level (94.5% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.945 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.945 \
+    -maxrejects 0 \
+    -uc $output \
+    -centroids $centroids \
+    -sortedby other \
+    -quiet
 }
 
 clusterFamily() {
@@ -736,7 +770,14 @@ clusterFamily() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Family level (86.5% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.865 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.865 \
+    -maxrejects 0 \
+    -uc $output \
+    -centroids $centroids \
+    -sortedby other \
+    -quiet
 }
 
 clusterOrder() {
@@ -764,7 +805,14 @@ clusterOrder() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Order level (82.0% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.82 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.82 \
+    -maxrejects 0 \
+    -uc $output \
+    -centroids $centroids \
+    -sortedby other \
+    -quiet
 }
 
 clusterClass() {
@@ -792,7 +840,14 @@ clusterClass() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Class level (78.5% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.785 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.785 \
+    -maxrejects 0 \
+    -uc $output \
+    -centroids $centroids \
+    -sortedby other \
+    -quiet
 }
 
 clusterPhylum() {
@@ -820,7 +875,14 @@ clusterPhylum() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Phylum level (75.0% identity)"
-  usearch11 -quiet -cluster_smallmem $input -id 0.75 -maxrejects 0 -uc $output -centroids $centroids -sortedby other
+  usearch11 -cluster_smallmem \
+    $input \
+    -id 0.75 \
+    -maxrejects 0 \
+    -uc $output \
+    -centroids $centroids \
+    -sortedby other \
+    -quiet
 }
 
 mergeTaxonomy() {
@@ -1171,20 +1233,20 @@ autotax() {
   if [ "$CLUSTER" = true ]
   then
     mv temp/FLASVs.fa temp/FLASVs_woclusters.fa
-	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/FLASVs_woclusters.fa -t $MAX_THREADS -o temp/FLASVs.fa
+	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/FLASVs_woclusters.fa -t $maxthreads -o temp/FLASVs.fa
   fi
   #if -d is provided, identify redundant FLASV's compared to the FLASV database
   #and merge the two before continuing. Used to merge multiple databases
   if [ -n "${FLASVDB:-}" ]
   then
     cp temp/FLASVs.fa output/allNewFLASVs.fa
-    addFLASVs -i temp/FLASVs.fa -d $FLASVDB -o temp/FLASVs.fa -t $MAX_THREADS
+    addFLASVs -i temp/FLASVs.fa -d $FLASVDB -o temp/FLASVs.fa -t $maxthreads
   fi
-  sinaAlign -i temp/FLASVs.fa -o temp/FLASVs_SILVA_aln.fa -d $silva_db -t $MAX_THREADS -l temp/sinaAlign_log.txt
+  sinaAlign -i temp/FLASVs.fa -o temp/FLASVs_SILVA_aln.fa -d $silva_db -t $maxthreads -l temp/sinaAlign_log.txt
   trimStripAlignment -i temp/FLASVs_SILVA_aln.fa -o temp/FLASVs_SILVA_aln_trimmed.fa
   sortFLASVs -i temp/FLASVs_SILVA_aln_trimmed.fa -o temp/FLASVs_SILVA_aln_trimmed_sorted.fa
-  searchTaxDB -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $MAX_THREADS
-  searchTaxDB_typestrain -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $MAX_THREADS
+  searchTaxDB -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $maxthreads
+  searchTaxDB_typestrains -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $maxthreads
   clusterSpecies -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_FLASV-S.txt -c temp/SILVA_FLASV-S_centroids.fa
   clusterGenus -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
   clusterFamily -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
@@ -1213,7 +1275,7 @@ runTests() {
   #if running through docker use the data included in the image
   #(naive, doesnt check whether its actually an autotax image)
   #otherwise download directly from github
-  if [ -f "/.dockerenv" ] || [ -d "/.singularity.d" ]
+  if [ -f /.dockerenv ]
   then
     echoWithHeader "Unpacking data required for testing (using the data included in the container)"
     unzip -o /opt/autotax/test/testdata_SILVA138.1.zip -d test/
@@ -1245,7 +1307,7 @@ then
     case ${opt} in
       h )
         echo "Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy"
-        echo "Version: $VERSION"
+        echo "Version: $version"
         echo "Options:"
         echo "  -h    Display this help text and exit."
         echo "  -i    Input FASTA file with full length DNA sequences to process (required)."
@@ -1265,10 +1327,10 @@ then
         FLASVDB=$OPTARG
         ;;
       t )
-        MAX_THREADS=$OPTARG
+        maxthreads=$OPTARG
         ;;
       v )
-        echo $VERSION
+        echo $version
         exit 0
         ;;
       b )

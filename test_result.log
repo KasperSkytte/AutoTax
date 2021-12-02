@@ -1,10 +1,10 @@
 1..33
-ok 1 Variable set: VERSION
+ok 1 Variable set: version
 ok 2 silva_db database file
 ok 3 silva_udb database file
 ok 4 typestrains_udb database file
 ok 5 Variable set: denovo_prefix
-ok 6 Variable set: MAX_THREADS
+ok 6 Variable set: maxthreads
 ok 7 usearch11 in $PATH
 ok 8 sina in $PATH
 ok 9 R in $PATH

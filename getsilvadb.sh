@@ -30,8 +30,8 @@ usageError() {
 
 #default settings
 #use all logical cores except 2 unless adjusted by user
-MAX_THREADS=${MAX_THREADS:-$(($(nproc)-2))}
-VERSION="1.0"
+maxthreads=${maxthreads:-$(($(nproc)-2))}
+version="1.0"
 output="refdatabases/"
 
 #fetch and check options provided by user
@@ -41,7 +41,7 @@ while getopts ":r:o:t:hv" opt; do
 case ${opt} in
   h )
     echo "This script downloads a desired release version of the SILVA database and makes it ready for AutoTax."
-    echo "Version: $VERSION"
+    echo "Version: $version"
     echo "Options:"
     echo "  -h    Display this help text and exit."
     echo "  -r    (required) The desired SILVA release version, fx \"138.1\"."
@@ -58,10 +58,10 @@ case ${opt} in
     output="$OPTARG"
     ;;
   t )
-    MAX_THREADS=$OPTARG
+    maxthreads=$OPTARG
     ;;
   v )
-    echo "Version: $VERSION"
+    echo "Version: $version"
     exit 0
     ;;
   \? )
@@ -96,10 +96,10 @@ scriptMessage() {
 
 ##### START OF SCRIPT #####
 echo "#################################################"
-echo "Script version:         $VERSION"
+echo "Script version:         $version"
 echo "SILVA release version:  $SILVArelease"
 echo "Output folder:          $output"
-echo "Max. threads to use:    $MAX_THREADS"
+echo "Max. threads to use:    $maxthreads"
 echo "#################################################"
 echo
 
@@ -116,14 +116,14 @@ scriptMessage "Unpacking files"
 gunzip ${SILVAfastafile}.fasta.gz ${SILVAmetadatafile}.gz
 
 scriptMessage "Extracting typestrain accession ID's from the database and converting taxonomy strings in FASTA headers to SINTAX format"
-R --slave --args "$SILVAfastafile" "$SILVAmetadatafile" "$MAX_THREADS" << 'rscript'
+R --slave --args "$SILVAfastafile" "$SILVAmetadatafile" "$maxthreads" << 'rscript'
 #!/usr/local/bin/Rscript
 
 #extract passed args from shell script
 args <- commandArgs(trailingOnly = TRUE)
 SILVAfastafile <- args[[1]]
 SILVAmetadatafile <- args[[2]]
-MAX_THREADS <- args[[3]]
+maxthreads <- args[[3]]
 
 #load R packages
 suppressPackageStartupMessages({
@@ -134,7 +134,7 @@ suppressPackageStartupMessages({
     require("doParallel")
 })
 
-data.table::setDTthreads(MAX_THREADS)
+data.table::setDTthreads(maxthreads)
 
 #read metadata file and extract typestrains accession ID's (those with [T] flags)
 metadata <- fread(SILVAmetadatafile, select = c("acc", "flags"))
@@ -198,7 +198,7 @@ usearch11 -fastx_getseqs ${SILVAfastafile}.fasta \
   -labels typestrains_accessionIDs.txt \
   -fastaout ${SILVAfastafile}_typestrains.fasta \
   -label_substr_match \
-  -threads ${MAX_THREADS}
+  -threads ${maxthreads}
 
 scriptMessage "Making UDB database from typestrains FASTA file"
 usearch11 -makeudb_usearch ${SILVAfastafile}_typestrains.fasta \

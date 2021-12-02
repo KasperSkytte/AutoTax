@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 load autotax
 
-@test "Variable set: VERSION" {
-  [ -n ${VERSION} ]
+@test "Variable set: version" {
+  [ -n ${version} ]
 }
 
 @test "silva_db database file" {
@@ -33,8 +33,8 @@ load autotax
   [ -n ${denovo_prefix} ]
 }
 
-@test "Variable set: MAX_THREADS" {
-  [ -n ${MAX_THREADS} ]
+@test "Variable set: maxthreads" {
+  [ -n ${maxthreads} ]
 }
 
 @test "usearch11 in \$PATH" {
@@ -209,7 +209,7 @@ load autotax
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run findLongest -i $in -o ${test_run_dir}$out -t $MAX_THREADS
+	run findLongest -i $in -o ${test_run_dir}$out -t $maxthreads
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -235,7 +235,7 @@ load autotax
 	[ "$status" -eq 1 ]
 
 	#add identical, already generated FLASVs, and expect no new unique/redundant FLASVs
-	run addFLASVs -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
+	run addFLASVs -i $in -d $db -o ${test_run_dir}$out -t $maxthreads
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -247,7 +247,7 @@ load autotax
 	#add new unique fSSUs
 	local in=${example_data_dir}100_addon_FLASVs.fa
 	local out=temp/FLASVs_waddons.fa
-	run addFLASVs -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
+	run addFLASVs -i $in -d $db -o ${test_run_dir}$out -t $maxthreads
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -276,7 +276,7 @@ load autotax
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run sinaAlign -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS -l ${test_run_dir}$log
+	run sinaAlign -i $in -d $db -o ${test_run_dir}$out -t $maxthreads -l ${test_run_dir}$log
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -350,7 +350,7 @@ load autotax
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run searchTaxDB -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
+	run searchTaxDB -i $in -d $db -o ${test_run_dir}$out -t $maxthreads
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
@@ -377,7 +377,7 @@ load autotax
 	[ "$status" -eq 1 ]
 
 	#expect no error
-	run searchTaxDB_typestrain -i $in -d $db -o ${test_run_dir}$out -t $MAX_THREADS
+	run searchTaxDB_typestrain -i $in -d $db -o ${test_run_dir}$out -t $maxthreads
 	echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
