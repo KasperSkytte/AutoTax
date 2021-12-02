@@ -682,9 +682,9 @@ searchTaxDB() {
   find "$tmpsplitdir" \
     -type f \
     -name '*.b6' \
-    -exec cat > "$tmpsplitdir/combined.b6" {} +
+    -exec cat > "$tmpsplitdir/combined.txt" {} +
   
-  sort -V "$tmpsplitdir/combined.b6" > "$output"
+  sort -V "$tmpsplitdir/combined.txt" > "$output"
 
   rm -rf "$tmpsplitdir"
 }
@@ -752,9 +752,9 @@ searchTaxDB_typestrain() {
   find "$tmpsplitdir" \
     -type f \
     -name '*.b6' \
-    -exec cat > "$tmpsplitdir/combined.b6" {} +
+    -exec cat > "$tmpsplitdir/combined.txt" {} +
   
-  sort -V "$tmpsplitdir/combined.b6" > "$output"
+  sort -V "$tmpsplitdir/combined.txt" > "$output"
 
   rm -rf "$tmpsplitdir"
 }
