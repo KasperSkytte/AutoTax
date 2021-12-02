@@ -47,7 +47,7 @@ RUN apt-get -qqy update \
   && ln -s /opt/R/${R_BASE_VERSION}/bin/Rscript /usr/local/bin/Rscript \
   && mkdir -p ~/.R \
   && echo "MAKEFLAGS = -j" > ~/.R/Makevars \
-  && echo "options(repos = c(CRAN = 'https://packagemanager.rstudio.com/all/__linux__/bionic/2021-11-17+MTo2MzM5NDY2LDI6NDUyNjIxNTs1MDMxRDg3Qg'), download.file.method = 'libcurl')" >> /opt/R/${R_BASE_VERSION}/lib/R/etc/Rprofile.site \
+  && echo "options(repos = c(CRAN = 'https://mirrors.dotsrc.org/cran'), download.file.method = 'libcurl')" >> /opt/R/${R_BASE_VERSION}/lib/R/etc/Rprofile.site \
   && sed -i s/^R_LIBS_USER=/#R_LIBS_USER=/g /opt/R/${R_BASE_VERSION}/lib/R/etc/Renviron \
   && R -e "install.packages('BiocManager')" \
   && R -e "BiocManager::install(version = '3.9', ask = FALSE, Ncpus = 100)" \
