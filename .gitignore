@@ -17,3 +17,5 @@ test/verified_run/
 temp/
 
 output/
+
+autotax_log.txt
