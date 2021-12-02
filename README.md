@@ -65,9 +65,10 @@ cd AutoTax
 ```
 
 ## Required software
- - usearch11
- - SINA (version 1.6 or later)
- - R (version 3.5 or later) with the following packages installed (the script will attempt to install if missing):
+ - usearch (11)
+ - SINA (1.6 or later)
+ - GNU parallel (20161222-1)
+ - R (3.5 or later) with the following packages installed (the script will attempt to install if missing):
    - Biostrings (from Bioconductor through `BiocManager::install()`)
    - doParallel
    - stringr (and stringi)
@@ -89,6 +90,7 @@ Before running *AutoTax* it's important to set a few options and filepaths to th
 - `typestrains_udb`: Path to the typestrains database file in `.udb` format
 - `denovo_prefix`: A character string which will be the prefix for de novo taxonomy, resulting in e.g. `denovo_s_23` if set to `denovo` (default)
 - `denoise_minsize`: The minimum abundance of each unique input sequence. Input sequences with lower abundance than this threshold will be discarded. Passed on directly to [UNOISE3](https://drive5.com/usearch/manual/cmd_unoise3.html) during the denoise step. Set this to `1` to skip denoising, e.g. if input sequences are already pre-processed, or output from a previous autotax run etc, in which case the pipeline will fail due to 0 sequences output from this step.
+- `usearch_global_threads`: Any `usearch_global` command will be split into smaller separate jobs using GNU parallel as the multithreading implementation in usearch does not scale linearly. It's much faster to run many smaller jobs. This sets the max number of threads each parallel command will use. Increase this if you lack memory.
 
 # Usage
 Make sure the script is executable with `chmod +x autotax.bash`. 
@@ -97,7 +99,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.6.5
+Version: 1.7
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
@@ -180,7 +182,7 @@ AutoTax is being unit tested by the [Bash Automated Testing System](https://gith
 ```
 $ docker run -it --rm --name autotax -v ${PWD}:/autotax ghcr.io/kasperskytte/autotax:latest -b
 1..33
-ok 1 Variable set: VERSION
+ok 1 Variable set: version
 ok 2 silva_db database file
 ok 3 silva_udb database file
 ok 4 typestrains_udb database file

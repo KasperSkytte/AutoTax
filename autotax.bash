@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export version="1.6.4"
+export version="1.7"
 
 #################################
 ############# setup #############
@@ -21,6 +21,10 @@ export maxthreads=${maxthreads:-$(($(nproc)-2))}
 
 #set default UNOISE3 minsize
 export denoise_minsize=${denoise_minsize:-2}
+
+#max number of threads to use for each parallel usearch_global process
+#used in searchTaxDB and searchTaxDB_typestrain. Faster than multithreading
+export usearch_global_jobsize=${usearch_global_jobsize:-5}
 
 ##################################
 ########## end of setup ##########
@@ -641,7 +645,48 @@ searchTaxDB() {
     esac
   done
   echoWithHeader "Finding taxonomy of best hit in SILVA database..."
-  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -top_hit_only -strand plus -id 0 -blast6out $output -threads $MAX_THREADS
+
+  #usearch11 -usearch_global does not scale linearly with the number of threads,
+  #it's much faster to split into smaller jobs and run in parallel using
+  #GNU parallel, then concatenate tables afterwards
+  
+  #number of threads to use for each parallel process of usearch_global
+  usearch_global_jobsize=${usearch_global_jobsize:-5}
+  jobs=$((( "${maxthreads}" / "${usearch_global_jobsize}")))
+
+  #create and/or clear a temporary folder for split input files
+  tmpsplitdir="$(dirname $output)/tmpsplit"
+  rm -rf "$tmpsplitdir"
+  mkdir -p "$tmpsplitdir"
+  echoWithHeader "  - Splitting input file in $jobs to run in parallel"
+  #minus 1 job because of leftover seqs from equal split
+  usearch11 -fastx_split "$input" \
+    -splits $(($jobs - 1)) \
+    -outname "${tmpsplitdir}/seqs_@.fa" \
+    -quiet
+
+  echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((($jobs * $usearch_global_jobsize))) total)"
+  find "$tmpsplitdir" -type f -name 'seqs_*.fa' |\
+    parallel --progress usearch11 -usearch_global {} \
+      -db $database \
+      -maxaccepts 0 \
+      -maxrejects 0 \
+      -top_hit_only \
+      -strand plus \
+      -id 0 \
+      -blast6out "{.}.b6" \
+      -threads "$usearch_global_jobsize" \
+      -quiet
+
+  echoWithHeader "  - Combining output search tables into a single table"
+  find "$tmpsplitdir" \
+    -type f \
+    -name '*.b6' \
+    -exec cat > "$tmpsplitdir/combined.b6" {} +
+  
+  sort -V "$tmpsplitdir/combined.b6" > "$output"
+
+  rm -rf "$tmpsplitdir"
 }
 
 searchTaxDB_typestrain() {
@@ -672,7 +717,46 @@ searchTaxDB_typestrain() {
     esac
   done
   echoWithHeader "Finding the taxonomy of species within the 98.7% threshold in the typestrains database..."
-  usearch11 -usearch_global $input -db $database -maxaccepts 0 -maxrejects 0 -strand plus -id 0.987 -blast6out $output -threads $MAX_THREADS
+  #usearch11 -usearch_global does not scale linearly with the number of threads,
+  #it's much faster to split into smaller jobs and run in parallel using
+  #GNU parallel, then concatenate tables afterwards
+  
+  #number of threads to use for each parallel process of usearch_global
+  usearch_global_jobsize=${usearch_global_jobsize:-5}
+  jobs=$((( "${maxthreads}" / "${usearch_global_jobsize}")))
+
+  #create and/or clear a temporary folder for split input files
+  tmpsplitdir="$(dirname $output)/tmpsplit"
+  rm -rf "$tmpsplitdir"
+  mkdir -p "$tmpsplitdir"
+  echoWithHeader "  - Splitting input file in $jobs to run in parallel"
+  #minus 1 job because of leftover seqs from equal split
+  usearch11 -fastx_split "$input" \
+    -splits $(($jobs - 1)) \
+    -outname "${tmpsplitdir}/seqs_@.fa" \
+    -quiet
+
+  echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((($jobs * $usearch_global_jobsize))) total)"
+  find "$tmpsplitdir" -type f -name 'seqs_*.fa' |\
+    parallel --progress usearch11 -usearch_global {} \
+      -db $database \
+      -maxaccepts 0 \
+      -maxrejects 0 \
+      -strand plus \
+      -id 0.987 \
+      -blast6out "{.}.b6" \
+      -threads "$usearch_global_jobsize" \
+      -quiet
+
+  echoWithHeader "  - Combining output search tables into a single table"
+  find "$tmpsplitdir" \
+    -type f \
+    -name '*.b6' \
+    -exec cat > "$tmpsplitdir/combined.b6" {} +
+  
+  sort -V "$tmpsplitdir/combined.b6" > "$output"
+
+  rm -rf "$tmpsplitdir"
 }
 
 #assign with identity thresholds based on Yarza et al, 2014 using cluster_smallmem (no multithread support) to preserve order of input sequences.
@@ -1246,7 +1330,7 @@ autotax() {
   trimStripAlignment -i temp/FLASVs_SILVA_aln.fa -o temp/FLASVs_SILVA_aln_trimmed.fa
   sortFLASVs -i temp/FLASVs_SILVA_aln_trimmed.fa -o temp/FLASVs_SILVA_aln_trimmed_sorted.fa
   searchTaxDB -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $maxthreads
-  searchTaxDB_typestrains -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $maxthreads
+  searchTaxDB_typestrain -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $maxthreads
   clusterSpecies -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_FLASV-S.txt -c temp/SILVA_FLASV-S_centroids.fa
   clusterGenus -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
   clusterFamily -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
