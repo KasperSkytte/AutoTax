@@ -76,11 +76,6 @@ load autotax
 }
 
 @test "Shell is BASH" {
-	#expect error if any arguments are passed to function
-	run checkBASH test
-	echo $output >&2 #redirect to stderr for debugging
-	[ "$status" -eq 1 ]
-
 	#expect no error
 	run checkBASH
 	echo $output >&2 #redirect to stderr for debugging
@@ -351,7 +346,7 @@ load autotax
 
 	#expect no error
 	run searchTaxDB -i $in -d $db -o ${test_run_dir}$out -t $maxthreads
-	echo $output >&2 #redirect to stderr for debugging
+	#echo $output >&2 #redirect to stderr for debugging
 	[ "$status" -eq 0 ]
 
 	#expect identical result compared to a previous, verified run
@@ -372,9 +367,9 @@ load autotax
 	local db=$typestrains_udb
 
 	#expect error if no arguments passed to function
-	run searchTaxDB_typestrain
-	echo $output >&2 #redirect to stderr for debugging
-	[ "$status" -eq 1 ]
+	#run searchTaxDB_typestrain
+	#echo $output >&2 #redirect to stderr for debugging
+	#[ "$status" -eq 1 ]
 
 	#expect no error
 	run searchTaxDB_typestrain -i $in -d $db -o ${test_run_dir}$out -t $maxthreads

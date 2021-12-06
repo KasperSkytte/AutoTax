@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export version="1.7"
+export version="1.7.1"
 
 #################################
 ############# setup #############
@@ -39,25 +39,23 @@ userError() {
   eval "bash $0 -h"
 }
 
-#adds a header to echo, for a better console output overview
-echoWithHeader() {
-  #check user arguments
-  if [ ! $# -eq 1 ]
+#check for empty command line for function
+checkOpts() {
+  if [ "$#" -lt 1 ]
   then
-    echo "Error: function must be passed exactly 1 argument" >&2
+    userError "No options passed to function"
     exit 1
   fi
-  echo " *** [$(date '+%Y-%m-%d %H:%M:%S')]: $1"
+}
+
+#adds a header to echo, for a better console output overview
+echoWithHeader() {
+  checkOpts "$@"
+  echo " *** [$(date '+%Y-%m-%d %H:%M:%S')]: $*"
 }
 
 #check if script is run with BASH
 checkBASH() {
-  #check user arguments
-  if [ ! $# -eq 0 ]
-  then
-    echo "Error: function must not be passed any arguments" >&2
-    exit 1
-  fi
   if [ -z "$BASH" ]
     then
     echo "Error: script must be run with BASH (bash)!" 1>&2
@@ -93,22 +91,19 @@ checkFolder() {
     exit 1
   fi
   if [ -d $1 ]
-      then
-          echoWithHeader "A directory named '$1' already exists and is needed for this script to run. Please backup or delete the folder."
-          echoWithHeader "Exiting script."
-          exit 1
-      else
-        mkdir -p $1
+  then
+      echoWithHeader "A directory named '$1' already exists and is needed for this script to run. Please backup or delete the folder."
+      echoWithHeader "Exiting script."
+      exit 1
+  else
+    mkdir -p $1
   fi
 }
 
 checkDBFiles() {
   #check user arguments
-  if [ $# -eq 0 ]
-  then
-    echo "Error: function must be passed one or more arguments" >&2
-    exit 1
-  fi
+  checkOpts "$@"
+  
   #check if each files exist and is non-zero
   local files="$@"
   local NEfiles=""
@@ -176,6 +171,8 @@ checkRpkgs
 
 orient() {
   #check user arguments
+  checkOpts "$@"
+
   local OPTIND
   while getopts ":i:d:o:" opt; do
     case ${opt} in
@@ -205,6 +202,8 @@ orient() {
 
 derep() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:o:" opt; do
     case ${opt} in
@@ -231,6 +230,8 @@ derep() {
 
 denoise() {
   #check user arguments
+  checkOpts "$@"
+  
   local minsize=2
   local OPTIND
   while getopts ":i:o:s:" opt; do
@@ -261,6 +262,8 @@ denoise() {
 
 findLongest() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:t:o:" opt; do
     case ${opt} in
@@ -326,6 +329,8 @@ findLongestSortFLASVsBySizeAndID
 
 add99OTUclusters() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:t:d:o:" opt; do
     case ${opt} in
@@ -388,6 +393,8 @@ add99OTUclusters() {
 
 addFLASVs() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:t:d:o:" opt; do
     case ${opt} in
@@ -509,6 +516,8 @@ addnewFLASVs
 #Define function to align and trim sequences based on the global SILVA alignment using SINA
 sinaAlign() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:o:d:t:l:" opt; do
     case ${opt} in
@@ -548,6 +557,8 @@ sinaAlign() {
 
 trimStripAlignment() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:o:" opt; do
     case ${opt} in
@@ -576,6 +587,8 @@ trimStripAlignment() {
 
 sortFLASVs() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:o:" opt; do
     case ${opt} in
@@ -619,6 +632,8 @@ sortSINAoutput
 # whereas for the type strain database we find all references with >=98.7% identity 
 searchTaxDB() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:t:d:o:" opt; do
     case ${opt} in
@@ -652,10 +667,10 @@ searchTaxDB() {
   
   #number of threads to use for each parallel process of usearch_global
   usearch_global_jobsize=${usearch_global_jobsize:-5}
-  jobs=$((( "${maxthreads}" / "${usearch_global_jobsize}")))
+  jobs=$(( maxthreads / usearch_global_jobsize ))
 
   #create and/or clear a temporary folder for split input files
-  tmpsplitdir="$(dirname $output)/tmpsplit"
+  tmpsplitdir="${output}_tmpsplit"
   rm -rf "$tmpsplitdir"
   mkdir -p "$tmpsplitdir"
   echoWithHeader "  - Splitting input file in $jobs to run in parallel"
@@ -691,6 +706,8 @@ searchTaxDB() {
 
 searchTaxDB_typestrain() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:t:d:o:" opt; do
     case ${opt} in
@@ -723,10 +740,10 @@ searchTaxDB_typestrain() {
   
   #number of threads to use for each parallel process of usearch_global
   usearch_global_jobsize=${usearch_global_jobsize:-5}
-  jobs=$((( "${maxthreads}" / "${usearch_global_jobsize}")))
+  jobs=$(( maxthreads / usearch_global_jobsize ))
 
   #create and/or clear a temporary folder for split input files
-  tmpsplitdir="$(dirname $output)/tmpsplit"
+  tmpsplitdir="${output}_tmpsplit"
   rm -rf "$tmpsplitdir"
   mkdir -p "$tmpsplitdir"
   echoWithHeader "  - Splitting input file in $jobs to run in parallel"
@@ -762,6 +779,8 @@ searchTaxDB_typestrain() {
 #assign with identity thresholds based on Yarza et al, 2014 using cluster_smallmem (no multithread support) to preserve order of input sequences.
 clusterSpecies() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:c:o:" opt; do
     case ${opt} in
@@ -796,6 +815,8 @@ clusterSpecies() {
 
 clusterGenus() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:c:o:" opt; do
     case ${opt} in
@@ -831,6 +852,8 @@ clusterGenus() {
 
 clusterFamily() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:c:o:" opt; do
     case ${opt} in
@@ -866,6 +889,8 @@ clusterFamily() {
 
 clusterOrder() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:c:o:" opt; do
     case ${opt} in
@@ -901,6 +926,8 @@ clusterOrder() {
 
 clusterClass() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:c:o:" opt; do
     case ${opt} in
@@ -936,6 +963,8 @@ clusterClass() {
 
 clusterPhylum() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":i:c:o:" opt; do
     case ${opt} in
@@ -971,6 +1000,8 @@ clusterPhylum() {
 
 mergeTaxonomy() {
   #check user arguments
+  checkOpts "$@"
+  
   local OPTIND
   while getopts ":t:o:p:" opt; do
     case ${opt} in
