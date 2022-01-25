@@ -81,6 +81,7 @@ RUN wget -q https://github.com/bats-core/bats-core/archive/refs/tags/v1.3.0.tar.
 ### copy AutoTax repo into /opt/autotax
 COPY . /opt/autotax/
 RUN chmod +x /opt/autotax/autotax.bash
+RUN chmod +x /opt/autotax/getsilvadb.sh
 
 ### make sure everything is in PATH
 ENV PATH="/opt/usearch11.0.667_i86linux32:${PATH}"
