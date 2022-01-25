@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export version="1.7.1"
+export version="1.7.2"
 
 #################################
 ############# setup #############
@@ -197,7 +197,7 @@ orient() {
   done
   echoWithHeader "  - Orienting sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -orient $input -db $database -fastaout $output -threads 1 -quiet
+  usearch11 -orient "$input" -db "$database" -fastaout "$output" -threads 1 -quiet
 }
 
 derep() {
@@ -225,7 +225,7 @@ derep() {
   done
   echoWithHeader "  - Dereplicating sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -fastx_uniques $input -fastaout $output -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
+  usearch11 -fastx_uniques "$input" -fastaout "$output" -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
 }
 
 denoise() {
@@ -361,7 +361,7 @@ add99OTUclusters() {
   ## Cluster sequences at 99% id using cluster_smallmem.
   echoWithHeader "  - Clustering sequences (at 99% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.99 \
     -maxrejects 0 \
     -sortedby size \
@@ -371,7 +371,7 @@ add99OTUclusters() {
   echoWithHeader "  - Identifying chimeras in the clusters"
   usearch11 -uchime2_ref \
     temp/FL-OTUs.fa \
-    -db $database \
+    -db "$database" \
     -strand plus \
     -mode sensitive \
     -chimeras temp/FL-OTUs-chimeras.fa \
@@ -388,7 +388,7 @@ add99OTUclusters() {
 
   ## add to FLASV's
   echoWithHeader "  - Adding clustered sequences"
-  addFLASVs -i temp/FL-OTUs-CF.fa -d $database -o $output -t $maxthreads
+  addFLASVs -i temp/FL-OTUs-CF.fa -d "$database" -o "$output" -t "$maxthreads"
 }
 
 addFLASVs() {
@@ -548,11 +548,11 @@ sinaAlign() {
   done
   echoWithHeader "Aligning FLASV's with SILVA database using SINA..."
   sina \
-    -i $input \
-    -o $output \
-    -r $database \
-    --threads $maxthreads \
-    --log-file $logfile
+    -i "$input" \
+    -o "$output" \
+    -r "$database" \
+    --threads "$maxthreads" \
+    --log-file "$logfile"
 }
 
 trimStripAlignment() {
@@ -580,9 +580,9 @@ trimStripAlignment() {
   done
   echoWithHeader "  - Trimming, formatting, and sorting data..."
   #trim sequences and strip alignment gaps
-  awk '!/^>/ {$0=substr($0, 1048, 41788)}1' $input > $output
-  usearch11 -quiet -fasta_stripgaps $output -fastaout tmp.fa \
-    && mv tmp.fa $output
+  awk '!/^>/ {$0=substr($0, 1048, 41788)}1' "$input" > "$output"
+  usearch11 -quiet -fasta_stripgaps "$output" -fastaout tmp.fa \
+    && mv tmp.fa "$output"
 }
 
 sortFLASVs() {
@@ -609,7 +609,7 @@ sortFLASVs() {
     esac
   done
   #sort sequences and stats files by FLASV ID using R
-  R --slave --args $input $output << 'sortSINAoutput'
+  R --slave --args "$input" "$output" << 'sortSINAoutput'
   #extract passed args from shell script
   args <- commandArgs(trailingOnly = TRUE)
   input <- args[[1]]
@@ -676,14 +676,14 @@ searchTaxDB() {
   echoWithHeader "  - Splitting input file in $jobs to run in parallel"
   #minus 1 job because of leftover seqs from equal split
   usearch11 -fastx_split "$input" \
-    -splits $(($jobs - 1)) \
+    -splits $((jobs - 1)) \
     -outname "${tmpsplitdir}/seqs_@.fa" \
     -quiet
 
-  echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((($jobs * $usearch_global_jobsize))) total)"
+  echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((jobs * usearch_global_jobsize)) total)"
   find "$tmpsplitdir" -type f -name 'seqs_*.fa' |\
     parallel --progress usearch11 -usearch_global {} \
-      -db $database \
+      -db "$database" \
       -maxaccepts 0 \
       -maxrejects 0 \
       -top_hit_only \
@@ -749,14 +749,14 @@ searchTaxDB_typestrain() {
   echoWithHeader "  - Splitting input file in $jobs to run in parallel"
   #minus 1 job because of leftover seqs from equal split
   usearch11 -fastx_split "$input" \
-    -splits $(($jobs - 1)) \
+    -splits $((jobs - 1)) \
     -outname "${tmpsplitdir}/seqs_@.fa" \
     -quiet
 
-  echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((($jobs * $usearch_global_jobsize))) total)"
+  echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((jobs * $usearch_global_jobsize)) total)"
   find "$tmpsplitdir" -type f -name 'seqs_*.fa' |\
     parallel --progress usearch11 -usearch_global {} \
-      -db $database \
+      -db "$database" \
       -maxaccepts 0 \
       -maxrejects 0 \
       -strand plus \
@@ -805,11 +805,11 @@ clusterSpecies() {
   done
   echoWithHeader "Clustering FLASV's at Species level (98.7% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.987 \
     -maxrejects 0 \
-    -uc $output \
-    -centroids $centroids \
+    -uc "$output" \
+    -centroids "$centroids" \
     -sortedby other
 }
 
@@ -841,11 +841,11 @@ clusterGenus() {
   done
   echoWithHeader "Clustering FLASV's at Genus level (94.5% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.945 \
     -maxrejects 0 \
-    -uc $output \
-    -centroids $centroids \
+    -uc "$output" \
+    -centroids "$centroids" \
     -sortedby other \
     -quiet
 }
@@ -878,11 +878,11 @@ clusterFamily() {
   done
   echoWithHeader "Clustering FLASV's at Family level (86.5% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.865 \
     -maxrejects 0 \
-    -uc $output \
-    -centroids $centroids \
+    -uc "$output" \
+    -centroids "$centroids" \
     -sortedby other \
     -quiet
 }
@@ -915,11 +915,11 @@ clusterOrder() {
   done
   echoWithHeader "Clustering FLASV's at Order level (82.0% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.82 \
     -maxrejects 0 \
-    -uc $output \
-    -centroids $centroids \
+    -uc "$output" \
+    -centroids "$centroids" \
     -sortedby other \
     -quiet
 }
@@ -952,11 +952,11 @@ clusterClass() {
   done
   echoWithHeader "Clustering FLASV's at Class level (78.5% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.785 \
     -maxrejects 0 \
-    -uc $output \
-    -centroids $centroids \
+    -uc "$output" \
+    -centroids "$centroids" \
     -sortedby other \
     -quiet
 }
@@ -989,11 +989,11 @@ clusterPhylum() {
   done
   echoWithHeader "Clustering FLASV's at Phylum level (75.0% identity)"
   usearch11 -cluster_smallmem \
-    $input \
+    "$input" \
     -id 0.75 \
     -maxrejects 0 \
-    -uc $output \
-    -centroids $centroids \
+    -uc "$output" \
+    -centroids "$centroids" \
     -sortedby other \
     -quiet
 }
@@ -1322,7 +1322,7 @@ generatedenovotax
 }
 
 echoDuration() {
-  duration=$(printf '%02dh:%02dm:%02ds\n' $(($SECONDS/3600)) $(($SECONDS%3600/60)) $(($SECONDS%60)))
+  duration=$(printf '%02dh:%02dm:%02ds\n' $((SECONDS/3600)) $((SECONDS%3600/60)) $((SECONDS%60)))
   echoWithHeader "Done in: $duration! Results are in the ./output/ folder, enjoy!"
 }
 
@@ -1335,40 +1335,40 @@ autotax() {
   checkCmd R
   checkCmd Rscript
   checkInputData
-  checkDBFiles $silva_db $silva_udb $typestrains_udb
+  checkDBFiles "$silva_db" "$silva_udb" "$typestrains_udb"
   checkFolder temp
   checkFolder output
   checkRPkgs
-  orient -i $DATA -d $silva_udb -o temp/fSSUs_oriented.fa
+  orient -i "$DATA" -d "$silva_udb" -o temp/fSSUs_oriented.fa
   derep -i temp/fSSUs_oriented.fa -o temp/uniques_wsize.fa
-  denoise -i temp/uniques_wsize.fa -o temp/preFLASVs.fa -s $denoise_minsize
+  denoise -i temp/uniques_wsize.fa -o temp/preFLASVs.fa -s "$denoise_minsize"
   findLongest -i temp/preFLASVs.fa -o temp/FLASVs.fa
   #if -c is provided, add chimera filtered OTU clusters (99% identity) of the FLASV's on top
   CLUSTER=${CLUSTER:-false}
   if [ "$CLUSTER" = true ]
   then
     mv temp/FLASVs.fa temp/FLASVs_woclusters.fa
-	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/FLASVs_woclusters.fa -t $maxthreads -o temp/FLASVs.fa
+	  add99OTUclusters -i temp/uniques_wsize.fa -d temp/FLASVs_woclusters.fa -t "$maxthreads" -o temp/FLASVs.fa
   fi
   #if -d is provided, identify redundant FLASV's compared to the FLASV database
   #and merge the two before continuing. Used to merge multiple databases
   if [ -n "${FLASVDB:-}" ]
   then
     cp temp/FLASVs.fa output/allNewFLASVs.fa
-    addFLASVs -i temp/FLASVs.fa -d $FLASVDB -o temp/FLASVs.fa -t $maxthreads
+    addFLASVs -i temp/FLASVs.fa -d "$FLASVDB" -o temp/FLASVs.fa -t "$maxthreads"
   fi
-  sinaAlign -i temp/FLASVs.fa -o temp/FLASVs_SILVA_aln.fa -d $silva_db -t $maxthreads -l temp/sinaAlign_log.txt
+  sinaAlign -i temp/FLASVs.fa -o temp/FLASVs_SILVA_aln.fa -d "$silva_db" -t "$maxthreads" -l temp/sinaAlign_log.txt
   trimStripAlignment -i temp/FLASVs_SILVA_aln.fa -o temp/FLASVs_SILVA_aln_trimmed.fa
   sortFLASVs -i temp/FLASVs_SILVA_aln_trimmed.fa -o temp/FLASVs_SILVA_aln_trimmed_sorted.fa
-  searchTaxDB -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $silva_udb -o temp/tax_SILVA.txt -t $maxthreads
-  searchTaxDB_typestrain -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d $typestrains_udb -o temp/tax_typestrains.txt -t $maxthreads
+  searchTaxDB -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d "$silva_udb" -o temp/tax_SILVA.txt -t "$maxthreads"
+  searchTaxDB_typestrain -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -d "$typestrains_udb" -o temp/tax_typestrains.txt -t "$maxthreads"
   clusterSpecies -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_FLASV-S.txt -c temp/SILVA_FLASV-S_centroids.fa
   clusterGenus -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_S-G.txt -c temp/SILVA_S-G_centroids.fa
   clusterFamily -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_G-F.txt -c temp/SILVA_G-F_centroids.fa
   clusterOrder -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_F-O.txt -c temp/SILVA_F-O_centroids.fa
   clusterClass -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_O-C.txt -c temp/SILVA_O-C_centroids.fa
   clusterPhylum -i temp/FLASVs_SILVA_aln_trimmed_sorted.fa -o temp/SILVA_C-P.txt -c temp/SILVA_C-P_centroids.fa
-  mergeTaxonomy -t temp -o output -p $denovo_prefix
+  mergeTaxonomy -t temp -o output -p "$denovo_prefix"
   cp temp/FLASVs.fa output/FLASVs.fa
   echoDuration
 }
