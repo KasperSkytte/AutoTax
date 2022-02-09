@@ -1,0 +1,3 @@
+[submodule "filtershortseqs"]
+	path = filtershortseqs
+	url = git@github.com:KasperSkytte/filtershortseqs.git
