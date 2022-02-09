@@ -7,7 +7,7 @@ Table of Contents
 
 * [What the script does](#what-the-script-does)
 * [Installation and requirements](#installation-and-requirements)
-   * [Required software](#required-software)
+   * [Required software](#required-software-tools)
    * [Required database files](#required-database-files)
 * [Environment variables](#environment-variables)
 * [Usage](#usage)
@@ -58,16 +58,17 @@ Alternatively, install *AutoTax* natively by downloading the `autotax.bash` scri
 ```
 wget https://raw.githubusercontent.com/KasperSkytte/AutoTax/main/autotax.bash
 ```
-or clone the git repository (make sure git is installed):
+or clone the git repository (recursively to include submodules):
 ```
-git clone https://github.com/KasperSkytte/AutoTax.git
+git clone --recursive https://github.com/KasperSkytte/AutoTax.git
 cd AutoTax
 ```
 
-## Required software
+## Required software tools
  - usearch (11)
  - SINA (1.6 or later)
  - GNU parallel (20161222-1)
+ - [filterShortSeqs](https://github.com/KasperSkytte/filtershortseqs/), credit goes to [Nick Green](https://github.com/nickgreensgithub/find_longest_sequences). The initial R implementation was extremely inefficient
  - R (3.5 or later) with the following packages installed (the script will attempt to install if missing):
    - Biostrings (from Bioconductor through `BiocManager::install()`)
    - doParallel
@@ -99,7 +100,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.7
+Version: 1.7.4
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
@@ -118,15 +119,15 @@ Using the example data in `/test/example_data/` a usage example would be:
 The main output files can then be found in the `output/` folder and all intermediate files along the way in `temp/`.
 
 ## Customization
-The `autotax.bash` script essentially consists of individual functions that can be used independently. This is what makes it possible to run unit tests on a BASH script, but it also makes it possible to source the individual functions manually from another script to create custom workflows. Simply adding `. autotax.bash` to the script won't run autotax, but will load the functions.
+The `autotax.bash` script essentially consists of individual functions that can be used independently. This is what makes it possible to run unit tests on a BASH script, but it also makes it possible to source the individual functions manually from another script to create custom workflows or resuming from a previous run. Simply adding `. autotax.bash` to the script won't run autotax, but will load the functions.
 
 # Running AutoTax from a container (recommended)
-To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 18.04 with all the required software and dependencies preinstalled (exact versions that are tested and working as intended) is provided with:
+To run AutoTax through a docker container first install [Docker Engine - Community](https://docs.docker.com/install/linux/docker-ce/ubuntu/) as described there. A prebuilt image `autotax` based on Ubuntu Linux 20.04 with all the required software and dependencies preinstalled (exact versions that are tested and working as intended) is provided with:
 ```
 docker pull ghcr.io/kasperskytte/autotax:latest
 ```
 
-Alternatively build the image manually from the git repo. You can also use a specific (and locked) image to ensure complete reproducibilty by using semver tags instead of just pulling the latest image every time, for instance: `ghcr.io/kasperskytte/autotax:v1.6.5`.
+Alternatively build the image manually from the git repo. You can also use a specific (and locked) image to ensure complete reproducibilty by using semver tags instead of just pulling the latest image every time, for instance: `ghcr.io/kasperskytte/autotax:v1.7.4`.
 
 The image also contains the autotax git repository itself (most recent from main branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container at `/autotax`:
 ```

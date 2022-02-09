@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export version="1.7.3"
+export version="1.7.4"
 
 #################################
 ############# setup #############
@@ -286,45 +286,29 @@ findLongest() {
         ;;
     esac
   done
-  # Remove shorter FLASV's that also part of longer FLASV's
-  #To ensure reproducibility, the output FLASV's will be ordered first by decending size (times the unique FLASV has been observed) and when sizes are identical by preFLASV ID (ascending). 
-  echoWithHeader "  - Finding the longest representative sequence of identical sequences, then reorder and rename..."
+  
+  echoWithHeader "  - Finding the longest representative sequence of identical sequences, filtering the shorter ones..."
+  filterShortSeqs "$input" "$output" "$maxthreads"
+
+  echoWithHeader "  - Renaming sequences to FLASV(ID).(length)"
   #Rename with new ID's to "FLASV(ID).(length)" fx: "FLASV1.1413"
-  R --slave --args "$input" "$output" "$maxthreads" << 'findLongestSortFLASVsBySizeAndID'
+  R --slave --args "$output" << 'renameFLASVs'
     #extract passed args from shell script
     args <- commandArgs(trailingOnly = TRUE)
-    input <- as.character(args[[1]])
-    output <- as.character(args[[2]])
-    nProc <- as.integer(args[[3]])
+    output <- as.character(args[[1]])
     
     #load R packages
     suppressPackageStartupMessages({
       require("Biostrings")
-      require("doParallel")
     })
     
     #read sequences
-    FLASVs <- Biostrings::readBStringSet(input)
-    seqs_chr <- as.character(FLASVs)
-    
-    #Find the longest of representative FLASV's and remove shorter, but otherwise identical FLASV's
-    registerDoParallel(cores = nProc)
-    removeIDs <- foreach(
-      i = seq_along(seqs_chr),
-      .combine = c,
-      .inorder = TRUE
-    ) %dopar% {
-      if(any(stringi::stri_detect_fixed(str = seqs_chr[-c(i)], pattern = seqs_chr[i])))
-        return(i)
-    }
-    stopImplicitCluster()
-    if(!is.null(removeIDs))
-      FLASVs <- FLASVs[-removeIDs]
+    FLASVs <- Biostrings::readBStringSet(output)
     
     #rename the sequences and write out
     names(FLASVs) <- paste0("FLASV", 1:length(FLASVs), ".", lengths(FLASVs))
     Biostrings::writeXStringSet(FLASVs, file = output)
-findLongestSortFLASVsBySizeAndID
+renameFLASVs
 }
 
 add99OTUclusters() {
