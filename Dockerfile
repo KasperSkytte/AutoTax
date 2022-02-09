@@ -1,4 +1,4 @@
-FROM ubuntu:bionic-20210930
+FROM ubuntu:focal-20210827
 
 WORKDIR /opt
 
@@ -13,7 +13,9 @@ RUN apt-get update -qqy \
     git \
     wget \
     locales \
-    parallel=20161222-1 \
+    make \
+    cmake \
+    parallel=20161222-1.1 \
   && mkdir -p ~/.parallel/will-cite #citing is out of context here, messes up TAP output
 
 ### generate and set up locales
@@ -40,7 +42,7 @@ RUN apt-get -qqy update \
     libcairo2-dev \
     pandoc \
     curl \
-  && curl -O https://cdn.rstudio.com/r/ubuntu-1804/pkgs/r-${R_BASE_VERSION}_1_amd64.deb \
+  && curl -O https://cdn.rstudio.com/r/ubuntu-2004/pkgs/r-${R_BASE_VERSION}_1_amd64.deb \
   && gdebi --non-interactive r-${R_BASE_VERSION}_1_amd64.deb \
   && rm r-${R_BASE_VERSION}_1_amd64.deb \
   && ln -s /opt/R/${R_BASE_VERSION}/bin/R /usr/local/bin/R \
@@ -56,20 +58,22 @@ RUN apt-get -qqy update \
 ### install SINA
 RUN wget -q https://github.com/epruesse/SINA/releases/download/v1.6.0/sina-1.6.0-linux.tar.gz \
   && tar -zxf sina-1.6.0-linux.tar.gz \
-  && rm sina-1.6.0-linux.tar.gz
+  && rm sina-1.6.0-linux.tar.gz \
+  && ln -s /opt/sina-1.6.0-linux/bin/sina /usr/local/bin/sina \
+  && chmod +x /usr/local/bin/sina
 
 ### install usearch 32-bit limited free version
 RUN wget -q http://drive5.com/downloads/usearch11.0.667_i86linux32.gz -O usearch11.gz \
   && gunzip usearch11.gz \
-  && chmod +x usearch11 \
-  && mkdir -p usearch11.0.667_i86linux32 \
-  && mv usearch11 -t usearch11.0.667_i86linux32/
-  
+  && ln -s /opt/usearch11 /usr/local/bin/usearch11 \
+  && chmod +x /usr/local/bin/usearch11
 
 ### install vsearch
 RUN wget -q https://github.com/torognes/vsearch/releases/download/v2.17.0/vsearch-2.17.0-linux-x86_64.tar.gz \
   && tar -zxf vsearch-2.17.0-linux-x86_64.tar.gz \
-  && rm vsearch-2.17.0-linux-x86_64.tar.gz
+  && rm vsearch-2.17.0-linux-x86_64.tar.gz \
+  && ln -s /opt/vsearch-2.17.0-linux-x86_64/bin/vsearch /usr/local/bin/vsearch \
+  && chmod +x /usr/local/bin/vsearch
 
 ### install BATS for unit testing
 RUN wget -q https://github.com/bats-core/bats-core/archive/refs/tags/v1.3.0.tar.gz \
@@ -80,13 +84,16 @@ RUN wget -q https://github.com/bats-core/bats-core/archive/refs/tags/v1.3.0.tar.
 
 ### copy AutoTax repo into /opt/autotax
 COPY . /opt/autotax/
-RUN chmod +x /opt/autotax/autotax.bash
-RUN chmod +x /opt/autotax/getsilvadb.sh
+RUN chmod +x /opt/autotax/autotax.bash /opt/autotax/getsilvadb.sh
+
+### compile filterShortSeqs from submodule
+RUN cd /opt/autotax/filtershortseqs && \
+  cmake CMakelists.txt && \
+  make && \
+  ln -s /opt/autotax/filtershortseqs/filterShortSeqs /usr/local/bin/filterShortSeqs && \
+  chmod +x /usr/local/bin/filterShortSeqs
 
 ### make sure everything is in PATH
-ENV PATH="/opt/usearch11.0.667_i86linux32:${PATH}"
-ENV PATH="/opt/sina-1.6.0-linux/bin:${PATH}"
-ENV PATH="/opt/vsearch-2.17.0-linux-x86_64/bin:${PATH}"
 ENV PATH="/opt/autotax:${PATH}"
 ENV PATH="/autotax:${PATH}"
 
