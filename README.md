@@ -68,7 +68,7 @@ cd AutoTax
  - usearch (11)
  - SINA (1.6 or later)
  - GNU parallel (20161222-1)
- - [filterShortSeqs](https://github.com/KasperSkytte/filtershortseqs/), credit goes to [Nick Green](https://github.com/nickgreensgithub/find_longest_sequences). The initial R implementation was extremely inefficient
+ - [findLongSeqs](https://github.com/KasperSkytte/find_longest_sequences/), credit goes to [Nick Green](https://github.com/nickgreensgithub/find_longest_sequences). The initial R implementation was extremely inefficient
  - R (3.5 or later) with the following packages installed (the script will attempt to install if missing):
    - Biostrings (from Bioconductor through `BiocManager::install()`)
    - doParallel

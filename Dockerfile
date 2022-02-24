@@ -86,12 +86,12 @@ RUN wget -q https://github.com/bats-core/bats-core/archive/refs/tags/v1.3.0.tar.
 COPY . /opt/autotax/
 RUN chmod +x /opt/autotax/autotax.bash /opt/autotax/getsilvadb.sh
 
-### compile filterShortSeqs from submodule
-RUN cd /opt/autotax/filtershortseqs && \
+### compile findLongSeqs from submodule
+RUN cd /opt/autotax/findLongSeqs && \
   cmake CMakelists.txt && \
   make && \
-  ln -s /opt/autotax/filtershortseqs/filterShortSeqs /usr/local/bin/filterShortSeqs && \
-  chmod +x /usr/local/bin/filterShortSeqs
+  ln -s /opt/autotax/findLongSeqs/findLongSeqs /usr/local/bin/findLongSeqs && \
+  chmod +x /usr/local/bin/findLongSeqs
 
 ### make sure everything is in PATH
 ENV PATH="/opt/autotax:${PATH}"

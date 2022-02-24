@@ -288,7 +288,7 @@ findLongest() {
   done
   
   echoWithHeader "  - Finding the longest representative sequence of identical sequences, filtering the shorter ones..."
-  filterShortSeqs "$input" "$output" "$maxthreads"
+  findLongSeqs "$input" "$output" "$maxthreads"
 
   echoWithHeader "  - Renaming sequences to FLASV(ID).(length)"
   #Rename with new ID's to "FLASV(ID).(length)" fx: "FLASV1.1413"

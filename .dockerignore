@@ -6,6 +6,6 @@
 !autotax.bash
 !tests.bats
 !getsilvadb.sh
-!filtershortseqs/include/progressbar.h
-!filtershortseqs/CMakeLists.txt
-!filtershortseqs/main.cpp
+!findLongSeqs/include/progressbar.h
+!findLongSeqs/CMakeLists.txt
+!findLongSeqs/main.cpp

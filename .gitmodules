@@ -1,3 +1,6 @@
-[submodule "filtershortseqs"]
-	path = filtershortseqs
-	url = git@github.com:KasperSkytte/filtershortseqs.git
+[submodule "find_longest_sequences"]
+	path = findLongSeqs
+	url = git@github.com:kasperskytte/find_longest_sequences.git
+[submodule "findLongSeqs"]
+	path = findLongSeqs
+	url = git@github.com:kasperskytte/find_longest_sequences.git
