@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export version="1.7.4"
+export version="1.7.5"
 
 #################################
 ############# setup #############

@@ -100,7 +100,7 @@ Type `bash autotax.bash -h` to show available options and version:
 ```
 $ bash autotax.bash -h
 Pipeline for extracting Full-length 16S rRNA Amplicon Sequence Variants (FL-ASVs) from full length 16S rRNA gene DNA sequences and generating de novo taxonomy
-Version: 1.7.4
+Version: 1.7.5
 Options:
   -h    Display this help text and exit.
   -i    Input FASTA file with full length DNA sequences to process (required).
@@ -127,7 +127,7 @@ To run AutoTax through a docker container first install [Docker Engine - Communi
 docker pull ghcr.io/kasperskytte/autotax:latest
 ```
 
-Alternatively build the image manually from the git repo. You can also use a specific (and locked) image to ensure complete reproducibilty by using semver tags instead of just pulling the latest image every time, for instance: `ghcr.io/kasperskytte/autotax:v1.7.4`.
+Alternatively build the image manually from the git repo. You can also use a specific (and locked) image to ensure complete reproducibilty by using semver tags instead of just pulling the latest image every time, for instance: `ghcr.io/kasperskytte/autotax:v1.7.5`.
 
 The image also contains the autotax git repository itself (most recent from main branch) located at `/opt/autotax/`. Now run AutoTax with the current working directory mounted inside the container at `/autotax`:
 ```
