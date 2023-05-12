@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-export version="1.7.5"
+export version="1.7.6"
 
 #################################
 ############# setup #############
@@ -25,6 +25,8 @@ export denoise_minsize=${denoise_minsize:-2}
 #max number of threads to use for each parallel usearch_global process
 #used in searchTaxDB and searchTaxDB_typestrain. Faster than multithreading
 export usearch_global_jobsize=${usearch_global_jobsize:-5}
+
+export maxrejects=${maxrejects:-"0"}
 
 ##################################
 ########## end of setup ##########
@@ -347,7 +349,7 @@ add99OTUclusters() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.99 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -sortedby size \
     -centroids temp/FL-OTUs.fa
 
@@ -669,7 +671,7 @@ searchTaxDB() {
     parallel --progress usearch11 -usearch_global {} \
       -db "$database" \
       -maxaccepts 0 \
-      -maxrejects 0 \
+      -maxrejects "${maxrejects}" \
       -top_hit_only \
       -strand plus \
       -id 0 \
@@ -742,7 +744,7 @@ searchTaxDB_typestrain() {
     parallel --progress usearch11 -usearch_global {} \
       -db "$database" \
       -maxaccepts 0 \
-      -maxrejects 0 \
+      -maxrejects "${maxrejects}" \
       -strand plus \
       -id 0.987 \
       -blast6out "{.}.b6" \
@@ -791,7 +793,7 @@ clusterSpecies() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.987 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -uc "$output" \
     -centroids "$centroids" \
     -sortedby other
@@ -827,7 +829,7 @@ clusterGenus() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.945 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -uc "$output" \
     -centroids "$centroids" \
     -sortedby other \
@@ -864,7 +866,7 @@ clusterFamily() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.865 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -uc "$output" \
     -centroids "$centroids" \
     -sortedby other \
@@ -901,7 +903,7 @@ clusterOrder() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.82 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -uc "$output" \
     -centroids "$centroids" \
     -sortedby other \
@@ -938,7 +940,7 @@ clusterClass() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.785 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -uc "$output" \
     -centroids "$centroids" \
     -sortedby other \
@@ -975,7 +977,7 @@ clusterPhylum() {
   usearch11 -cluster_smallmem \
     "$input" \
     -id 0.75 \
-    -maxrejects 0 \
+    -maxrejects "${maxrejects}" \
     -uc "$output" \
     -centroids "$centroids" \
     -sortedby other \
