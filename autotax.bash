@@ -26,6 +26,7 @@ export denoise_minsize=${denoise_minsize:-2}
 #used in searchTaxDB and searchTaxDB_typestrain. Faster than multithreading
 export usearch_global_jobsize=${usearch_global_jobsize:-5}
 
+#default maxrejects setting for usearch commands
 export maxrejects=${maxrejects:-"0"}
 
 ##################################

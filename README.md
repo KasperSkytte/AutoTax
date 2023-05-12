@@ -51,7 +51,7 @@ In brief, the script performs the following steps:
  - CSV files of the individual tables mentioned earlier as well as the combined, complete taxonomy for each FL-ASV (R)
 
 # Installation and requirements
-The easiest and recommended way to run AutoTax is through the official Docker container, either by using Docker (privileged, but most convenient) or Singularity (non-privileged), see [Running AutoTax from a container (recommended)](#running-autotax-from-a-container-recommended). This ensures complete reproducibility, and our unit tests have only been designed for running *AutoTax* through the container. 
+The easiest and recommended way to run AutoTax is through the official Docker container, either by using Docker (privileged, but most convenient) or Apptainer/Singularity (non-privileged), see [Running AutoTax from a container (recommended)](#running-autotax-from-a-container-recommended). This ensures complete reproducibility, and our unit tests have only been designed for running *AutoTax* through the container. 
 
 Alternatively, install *AutoTax* natively by downloading the `autotax.bash` script and then make sure the required tools are installed and available in the [PATH variable](https://opensource.com/article/17/6/set-path-linux):
 
@@ -138,23 +138,23 @@ docker run \
   ghcr.io/kasperskytte/autotax:latest -h
 ```
 
-Running the AutoTax docker container using [Singularity](https://sylabs.io/) instead is also possible (3.9 or later to be compatible with https://ghcr.io) and is as simple as:
+Running the AutoTax docker container using [Apptainer](https://apptainer.org/)/[Singularity](https://sylabs.io/) instead is also possible (singularity 3.9 or later to be compatible with https://ghcr.io) and is as simple as:
 ```
-singularity run \
+apptainer run \
   --bind ${PWD}:/autotax \
   --pwd /autotax \
   --env denovo_prefix="midas" \
   docker://ghcr.io/kasperskytte/autotax:latest -h
 ```
 
-Singularity has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I've made to install singularity [here](https://github.com/KasperSkytte/bioscripts#install_singularitysh).
+Apptainer has the advantage that it doesn't require elevated privileges by default like docker does. You can find a convenience script I've made to install Apptainer [here](https://github.com/KasperSkytte/bioscripts#install_apptainersh).
 
-Setting the required [Environment variables](#environment-variables) is done by using the `-e` option with docker, fx `-e denovo_prefix="midas" -e denoise_minsize=4`, and similarly `--env` with singularity.
+Setting the required [Environment variables](#environment-variables) is done by using the `-e` option with docker, fx `-e denovo_prefix="midas" -e denoise_minsize=4`, and similarly `--env` with apptainer/singularity.
 
 ## Running getsilvadb.sh through a container
-Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With singularity you have to use `exec` instead of `run`:
+Downloading the SILVA database files automagically is easiest through a container. With docker you can easily do so by just adding `--entrypoint getsilvadb.sh`. With apptainer/singularity you have to use `exec` instead of `run`:
 ```
-$ singularity exec --bind ${PWD}:/autotax --pwd /autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
+$ apptainer exec --bind ${PWD}:/autotax --pwd /autotax docker://ghcr.io/kasperskytte/autotax:latest getsilvadb.sh -h
 INFO:    Using cached SIF image
 This script downloads a desired release version of the SILVA database and makes it ready for AutoTax.
 Version: 1.0
