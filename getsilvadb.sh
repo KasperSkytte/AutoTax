@@ -159,6 +159,7 @@ sintax <- separate(
   col = "tax",
   into = taxCols,
   sep = ";")
+setDT(sintax)
 
 #cleanup
 sintax[
@@ -178,7 +179,7 @@ sintax[, Genus := ifelse(is.na(Genus), NA, paste0("g:", Genus))]
 sintax[, Species := ifelse(is.na(Species), NA, paste0("s:", Species))]
 
 #stitch together a string in SINTAX format
-sintax_header <- paste0(sintax[,ID], ";tax=", unite(sintax[,-1], col = "tax", sep = ",", na.rm = TRUE)[,tax], ";")
+sintax_header <- paste0(sintax[,ID], ";tax=", unite(sintax[,-1], col = "tax", sep = ",", na.rm = TRUE)[,"tax"], ";")
 
 #rename sequences and write out
 names(SILVA) <- sintax_header
