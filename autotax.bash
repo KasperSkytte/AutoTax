@@ -1377,7 +1377,7 @@ runTests() {
   #if running through docker use the data included in the image
   #(naive, doesnt check whether its actually an autotax image)
   #otherwise download directly from github
-  if [ -f /.dockerenv ]
+  if [ -f /.dockerenv ] || [ -f /.singularity.d/Singularity ] || [ -f /run/.containerenv ]
   then
     echoWithHeader "Unpacking data required for testing (using the data included in the container)"
     unzip -o /opt/autotax/test/testdata_SILVA138.1.zip -d test/
