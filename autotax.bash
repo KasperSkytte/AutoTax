@@ -1126,7 +1126,7 @@ mergeTaxonomy() {
 
     FLASV_typestrain_tax <- FLASV_typestrain_tax[,hits:=uniqueN(Species),by=FLASV][hits==1][,hits:=NULL][,idty:=NULL][Species!=""]
 
-    FLASV_typestrain_tax <- unique(FLASV_typestrain_tax)
+    FLASV_typestrain_tax <- FLASV_typestrain_tax[!duplicated(FLASV_typestrain_tax)]
 
   #write out
   write_tax(tax = FLASV_typestrain_tax, file = paste0(outputfolder, "/tax_typestrains.csv"))
