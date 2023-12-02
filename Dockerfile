@@ -1,4 +1,4 @@
-FROM ubuntu:focal-20210827
+FROM ubuntu:20.04
 
 WORKDIR /opt
 
