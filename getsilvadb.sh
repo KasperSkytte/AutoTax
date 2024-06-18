@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # This script downloads a desired version of SILVA and then generates 
-# a usearch11 UDB database file as well as converting the taxonomy in 
+# a usearch UDB database file as well as converting the taxonomy in 
 # the fasta headers to be compatible with usearch and SINTAX for classification
 
 # This BASH script is based on the template from https://github.com/kasperskytte/bash_template
@@ -187,22 +187,22 @@ writeXStringSet(SILVA, paste0(SILVAfastafile, "_sintax.fasta"))
 rscript
 
 scriptMessage "Making UDB database from FASTA file"
-usearch11 -makeudb_usearch ${SILVAfastafile}.fasta \
+usearch -makeudb_usearch ${SILVAfastafile}.fasta \
   -output ${SILVAfastafile}.udb
 
 scriptMessage "Making UDB database from FASTA file with SINTAX compatible headers"
-usearch11 -makeudb_usearch ${SILVAfastafile}_sintax.fasta \
+usearch -makeudb_usearch ${SILVAfastafile}_sintax.fasta \
   -output ${SILVAfastafile}_sintax.udb
 
 scriptMessage "Extracting typestrain sequences from the database"
-usearch11 -fastx_getseqs ${SILVAfastafile}.fasta \
+usearch -fastx_getseqs ${SILVAfastafile}.fasta \
   -labels typestrains_accessionIDs.txt \
   -fastaout ${SILVAfastafile}_typestrains.fasta \
   -label_substr_match \
   -threads ${maxthreads}
 
 scriptMessage "Making UDB database from typestrains FASTA file"
-usearch11 -makeudb_usearch ${SILVAfastafile}_typestrains.fasta \
+usearch -makeudb_usearch ${SILVAfastafile}_typestrains.fasta \
   -output ${SILVAfastafile}_typestrains.udb
 ##### END OF SCRIPT #####
 

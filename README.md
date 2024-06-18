@@ -167,7 +167,7 @@ Options:
 ```
 
 ## Important notes when running AutoTax through a container
-As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version which is preinstalled (limited to 4GB memory, most likely not sufficient). Place the executable in the same folder that is mounted inside the container and name it `usearch11` or mount it directly at `/autotax/usearch11`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
+As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version which is preinstalled (limited to 4GB memory, most likely not sufficient). Place the executable in the same folder that is mounted inside the container and name it `usearch` or mount it directly at `/autotax/usearch`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
 
 When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
 
@@ -189,7 +189,7 @@ ok 3 silva_udb database file
 ok 4 typestrains_udb database file
 ok 5 Variable set: denovo_prefix
 ok 6 Variable set: MAX_THREADS
-ok 7 usearch11 in $PATH
+ok 7 usearch in $PATH
 ok 8 sina in $PATH
 ok 9 R in $PATH
 ok 10 Rscript in $PATH
@@ -231,4 +231,4 @@ It is also possible to use full-length 16S sequences obtained from other methods
 In the future full ribosomal operon taxonomic databases may be possible using Nanopore Sequencing and Unique Molecular Tagging, see https://www.biorxiv.org/content/10.1101/645903v2.
 
 # vsearch to replace usearch
-A vsearch version of AutoTax is work in (slow) progress and is available at the development branch. But bear in mind that we have only used and tested usearch10 and usearch11 and the results presented in the paper has been done with usearch11, so results will likely be different compared to when using usearch (though still reliable in its own way, but don't mix output from both usearch and vsearch). `vsearch` is also installed in the docker image by default. CONTRIBUTIONS ARE WELCOME. I'm just a PhD student doing many other projects now.
+A vsearch version of AutoTax is work in (slow) progress and is available at the development branch. But bear in mind that we have only used and tested usearch10 and usearch and the results presented in the paper has been done with usearch, so results will likely be different compared to when using usearch (though still reliable in its own way, but don't mix output from both usearch and vsearch). `vsearch` is also installed in the docker image by default. CONTRIBUTIONS ARE WELCOME. I'm just a PhD student doing many other projects now.

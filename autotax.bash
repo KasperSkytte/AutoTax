@@ -200,7 +200,7 @@ orient() {
   done
   echoWithHeader "  - Orienting sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -orient "$input" -db "$database" -fastaout "$output" -threads 1 -quiet
+  usearch -orient "$input" -db "$database" -fastaout "$output" -threads 1 -quiet
 }
 
 derep() {
@@ -228,7 +228,7 @@ derep() {
   done
   echoWithHeader "  - Dereplicating sequences..."
   #note: threads must be set to 1 to make sure ordering is the same between runs
-  usearch11 -fastx_uniques "$input" -fastaout "$output" -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
+  usearch -fastx_uniques "$input" -fastaout "$output" -sizeout -minuniquesize 1 -strand plus -relabel preFLASV -threads 1 -quiet
 }
 
 denoise() {
@@ -260,7 +260,7 @@ denoise() {
   done
   # Denoise with UNOISE3 accepting sequences seen only twice (see article supplementary for why this is acceptable)
   echoWithHeader "  - Denoising sequences using UNOISE3"
-  usearch11 -unoise3 $input -zotus $output -minsize $minsize
+  usearch -unoise3 $input -zotus $output -minsize $minsize
 }
 
 findLongest() {
@@ -347,7 +347,7 @@ add99OTUclusters() {
   echoWithHeader "Expanding FLASV's with 99% clusters on top"
   ## Cluster sequences at 99% id using cluster_smallmem.
   echoWithHeader "  - Clustering sequences (at 99% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.99 \
     -maxrejects "${maxrejects}" \
@@ -356,7 +356,7 @@ add99OTUclusters() {
 
   ## Identity chimera using uchime2_ref with the FLASV's as a reference database.
   echoWithHeader "  - Identifying chimeras in the clusters"
-  usearch11 -uchime2_ref \
+  usearch -uchime2_ref \
     temp/FL-OTUs.fa \
     -db "$database" \
     -strand plus \
@@ -366,7 +366,7 @@ add99OTUclusters() {
 
   ## Remove chimera.
   echoWithHeader "  - Filtering chimeras"
-  usearch11 -search_exact \
+  usearch -search_exact \
     temp/FL-OTUs-chimeras.fa \
     -db temp/FL-OTUs.fa \
     -strand plus \
@@ -568,7 +568,7 @@ trimStripAlignment() {
   echoWithHeader "  - Trimming, formatting, and sorting data..."
   #trim sequences and strip alignment gaps
   awk '!/^>/ {$0=substr($0, 1048, 41788)}1' "$input" > "$output"
-  usearch11 -quiet -fasta_stripgaps "$output" -fastaout tmp.fa \
+  usearch -quiet -fasta_stripgaps "$output" -fastaout tmp.fa \
     && mv tmp.fa "$output"
 }
 
@@ -648,7 +648,7 @@ searchTaxDB() {
   done
   echoWithHeader "Finding taxonomy of best hit in SILVA database..."
 
-  #usearch11 -usearch_global does not scale linearly with the number of threads,
+  #usearch -usearch_global does not scale linearly with the number of threads,
   #it's much faster to split into smaller jobs and run in parallel using
   #GNU parallel, then concatenate tables afterwards
   
@@ -662,14 +662,14 @@ searchTaxDB() {
   mkdir -p "$tmpsplitdir"
   echoWithHeader "  - Splitting input file in $jobs to run in parallel"
   #minus 1 job because of leftover seqs from equal split
-  usearch11 -fastx_split "$input" \
+  usearch -fastx_split "$input" \
     -splits $((jobs - 1)) \
     -outname "${tmpsplitdir}/seqs_@.fa" \
     -quiet
 
   echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((jobs * usearch_global_jobsize)) total)"
   find "$tmpsplitdir" -type f -name 'seqs_*.fa' |\
-    parallel --progress usearch11 -usearch_global {} \
+    parallel --progress usearch -usearch_global {} \
       -db "$database" \
       -maxaccepts 0 \
       -maxrejects "${maxrejects}" \
@@ -721,7 +721,7 @@ searchTaxDB_typestrain() {
     esac
   done
   echoWithHeader "Finding the taxonomy of species within the 98.7% threshold in the typestrains database..."
-  #usearch11 -usearch_global does not scale linearly with the number of threads,
+  #usearch -usearch_global does not scale linearly with the number of threads,
   #it's much faster to split into smaller jobs and run in parallel using
   #GNU parallel, then concatenate tables afterwards
   
@@ -735,14 +735,14 @@ searchTaxDB_typestrain() {
   mkdir -p "$tmpsplitdir"
   echoWithHeader "  - Splitting input file in $jobs to run in parallel"
   #minus 1 job because of leftover seqs from equal split
-  usearch11 -fastx_split "$input" \
+  usearch -fastx_split "$input" \
     -splits $((jobs - 1)) \
     -outname "${tmpsplitdir}/seqs_@.fa" \
     -quiet
 
   echoWithHeader "  - Running $jobs jobs using max $usearch_global_jobsize threads each ($((jobs * $usearch_global_jobsize)) total)"
   find "$tmpsplitdir" -type f -name 'seqs_*.fa' |\
-    parallel --progress usearch11 -usearch_global {} \
+    parallel --progress usearch -usearch_global {} \
       -db "$database" \
       -maxaccepts 0 \
       -maxrejects "${maxrejects}" \
@@ -791,7 +791,7 @@ clusterSpecies() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Species level (98.7% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.987 \
     -maxrejects "${maxrejects}" \
@@ -827,7 +827,7 @@ clusterGenus() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Genus level (94.5% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.945 \
     -maxrejects "${maxrejects}" \
@@ -864,7 +864,7 @@ clusterFamily() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Family level (86.5% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.865 \
     -maxrejects "${maxrejects}" \
@@ -901,7 +901,7 @@ clusterOrder() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Order level (82.0% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.82 \
     -maxrejects "${maxrejects}" \
@@ -938,7 +938,7 @@ clusterClass() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Class level (78.5% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.785 \
     -maxrejects "${maxrejects}" \
@@ -975,7 +975,7 @@ clusterPhylum() {
     esac
   done
   echoWithHeader "Clustering FLASV's at Phylum level (75.0% identity)"
-  usearch11 -cluster_smallmem \
+  usearch -cluster_smallmem \
     "$input" \
     -id 0.75 \
     -maxrejects "${maxrejects}" \
@@ -1317,7 +1317,7 @@ autotax() {
   #set appropriate error handling
   set -o errexit -o pipefail -o nounset #-o noclobber
   checkBASH
-  checkCmd usearch11
+  checkCmd usearch
   checkCmd sina
   checkCmd R
   checkCmd Rscript

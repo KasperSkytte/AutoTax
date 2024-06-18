@@ -37,8 +37,8 @@ load autotax
   [ -n ${maxthreads} ]
 }
 
-@test "usearch11 in \$PATH" {
-	checkCmd usearch11
+@test "usearch in \$PATH" {
+	checkCmd usearch
 }
 
 @test "sina in \$PATH" {
