@@ -62,8 +62,8 @@ RUN wget -q https://github.com/epruesse/SINA/releases/download/v1.6.0/sina-1.6.0
   && ln -s /opt/sina-1.6.0-linux/bin/sina /usr/local/bin/sina \
   && chmod +x /usr/local/bin/sina
 
-### install usearch12
-RUN wget -q https://github.com/rcedgar/usearch12/releases/download/v12.0-beta1/usearch_linux_x86_12.0-beta -O usearch \
+### install usearch
+RUN wget -q https://github.com/rcedgar/usearch_old_binaries/raw/main/bin/usearch11.0.667_i86linux64 -O usearch \
   && ln -s /opt/usearch /usr/local/bin/usearch \
   && chmod +x /usr/local/bin/usearch
 
