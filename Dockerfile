@@ -62,18 +62,10 @@ RUN wget -q https://github.com/epruesse/SINA/releases/download/v1.6.0/sina-1.6.0
   && ln -s /opt/sina-1.6.0-linux/bin/sina /usr/local/bin/sina \
   && chmod +x /usr/local/bin/sina
 
-### install usearch 32-bit limited free version
-RUN wget -q http://drive5.com/downloads/usearch11.0.667_i86linux32.gz -O usearch11.gz \
-  && gunzip usearch11.gz \
-  && ln -s /opt/usearch11 /usr/local/bin/usearch11 \
-  && chmod +x /usr/local/bin/usearch11
-
-### install vsearch
-RUN wget -q https://github.com/torognes/vsearch/releases/download/v2.17.0/vsearch-2.17.0-linux-x86_64.tar.gz \
-  && tar -zxf vsearch-2.17.0-linux-x86_64.tar.gz \
-  && rm vsearch-2.17.0-linux-x86_64.tar.gz \
-  && ln -s /opt/vsearch-2.17.0-linux-x86_64/bin/vsearch /usr/local/bin/vsearch \
-  && chmod +x /usr/local/bin/vsearch
+### install usearch12
+RUN wget -q https://github.com/rcedgar/usearch12/releases/download/v12.0-beta1/usearch_linux_x86_12.0-beta -O usearch \
+  && ln -s /opt/usearch /usr/local/bin/usearch \
+  && chmod +x /usr/local/bin/usearch
 
 ### install BATS for unit testing
 RUN wget -q https://github.com/bats-core/bats-core/archive/refs/tags/v1.3.0.tar.gz \
