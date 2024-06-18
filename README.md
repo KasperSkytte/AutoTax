@@ -167,8 +167,6 @@ Options:
 ```
 
 ## Important notes when running AutoTax through a container
-As [usearch](http://drive5.com/usearch/) is non-free software it is not included in the image. You must buy it or use the free 32-bit version which is preinstalled (limited to 4GB memory, most likely not sufficient). Place the executable in the same folder that is mounted inside the container and name it `usearch` or mount it directly at `/autotax/usearch`. Please respect the [usearch software license](http://drive5.com/usearch/license64comm.html).
-
 When running through a container all paths must relative to the working directory. Absolute paths (i.e. starts with `/`) won't work as the container file system is separate from the host file system. 
 
 Furthermore, the output folders `temp` and `output` will likely be owned by root if you haven't done the [Post-installation steps for Linux](https://docs.docker.com/engine/install/linux-postinstall/), so it's a good idea to either run docker with appropriate user ID mapping (`--user` option), or adjust the ownership afterwards with fx:
@@ -229,6 +227,3 @@ It is also possible to use full-length 16S sequences obtained from other methods
 
 # See also
 In the future full ribosomal operon taxonomic databases may be possible using Nanopore Sequencing and Unique Molecular Tagging, see https://www.biorxiv.org/content/10.1101/645903v2.
-
-# vsearch to replace usearch
-A vsearch version of AutoTax is work in (slow) progress and is available at the development branch. But bear in mind that we have only used and tested usearch10 and usearch and the results presented in the paper has been done with usearch, so results will likely be different compared to when using usearch (though still reliable in its own way, but don't mix output from both usearch and vsearch). `vsearch` is also installed in the docker image by default. CONTRIBUTIONS ARE WELCOME. I'm just a PhD student doing many other projects now.

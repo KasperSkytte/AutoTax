@@ -87,7 +87,6 @@ RUN cd /opt/autotax/findLongSeqs && \
 
 ### make sure everything is in PATH
 ENV PATH="/opt/autotax:${PATH}"
-ENV PATH="/autotax:${PATH}"
 
 ### clean up
 RUN rm -rf /var/lib/apt/lists/* /var/cache/apt/*
