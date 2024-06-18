@@ -154,12 +154,14 @@ namesDT <- data.table(ID = names[,1], tax = names[,2])
 
 #extract taxonomy into separate columns
 taxCols <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
-sintax <- separate(
-  namesDT,
-  col = "tax",
-  into = taxCols,
-  sep = ";")
-setDT(sintax)
+sintax <- data.table(
+  separate(
+    namesDT,
+    col = "tax",
+    into = taxCols,
+    sep = ";"
+  )
+)
 
 #cleanup
 sintax[
